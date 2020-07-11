@@ -1,0 +1,225 @@
+\documentclass[main.tex]{subfiles}
+
+\begin{document}
+
+\section{Typed $\lambda_{\text{lvar}}$ calculus}
+\usingnamespace{llam}
+
+\subsection{Syntax}
+\label{sec:llam-syntax}
+
+\paragraph{Types and environments}
+\[
+\begin{array}{lcll}
+  \ty{T}, \ty{U}
+  & \coloneqq & \ty{\tyunit}        & \text{unit} \\
+  & \sep      & \ty{\typrod{T}{U}}  & \text{product} \\
+  & \sep      & \ty{\tyfun{T}{U}}   & \lambda \text{ abstraction}\\
+  & \sep      & \ty{\tyD{d}}        & D \text{ indexed by} \bigsqcup d \\
+  & \sep      & \ty{\tyL{J}}        & \text{locations indexed by } J \\
+  \\
+  \ty{\Gamma}
+  & \coloneqq & \ty{\emptyenv}                 & \text{empty environment}\\
+  & \sep      & \ty{\tmty{x}{T}}               & \text{environment extension} \\
+\end{array}
+\]
+
+\paragraph{Terms and Status bits}
+\[
+\begin{array}{lcll}
+  \tm{L}, \tm{M}, \tm{N}
+  & \coloneqq & \tm{x}                        & \text{variables} \\
+  & \sep      & \tm{V}                        & \text{values} \\
+  & \sep      & \tm{B}                        & \text{status bits}\\
+  & \sep      & \tm{K}                        & \text{constants} \\                                              
+  & \sep      & \tm{M\;N}                     & \text{parallel application} \\
+  & \sep      & \tm{\unit}                    & \text{unit introduction} \\
+  & \sep      & \tm{\letunit{M}{N}}           & \text{unit elimination} \\
+  & \sep      & \tm{\pair{M}{N}}              & \text{product introduction} \\
+  & \sep      & \tm{\letpair{x}{y}{M}{N}}     & \text{product elimination}\\
+\end{array}
+\]
+
+\[
+\begin{array}{lcll}
+  \tm{B}
+  & \coloneqq & \tm{1}                        & \text{frozen LVar} \\
+  & \sep      & \tm{0}                        & \text{unfrozen LVar} \\
+\end{array}
+\]
+
+\paragraph{Stores and Configurations}
+\[
+\begin{array}{lclr}
+  \tm{S}
+  & \coloneqq & \tm{\emptyenv}                & \text{empty store} \\
+  & \sep      & \tm{S, l \mapsto (B, V)}      & \text{store extension} \\
+  \end{array}
+\]
+
+\[
+\begin{array}{lclr}
+  \tm{C}
+  & \coloneqq & \tm{\config{M}{S}}                & \text{programs are pairs of
+                                                    terms and store} \\
+  \end{array}
+\]
+
+\paragraph{Values}
+\[
+\begin{array}{lcll}
+  \tm{V}, \tm{W}
+  & \coloneqq & \tm{l}                        & \text{locations} \\
+  & \sep      & \tm{J}                        & \text{threshold set} \\
+  & \sep      & \tm{D}                        & \text{distinguished set} \\
+  & \sep      & \tm{\lambda x.M}              & \lambda \text{ abstraction} \\
+  & \sep      & \tm{\unit}                    & \text{unit} \\
+  & \sep      & \tm{\pair{M}{N}}              & \text{product} \\
+\end{array}
+\]
+
+\paragraph{Constants}
+\[
+\begin{array}{lcll}
+  \tm{K}
+  & \coloneqq & \tm{\lvarnew}                        & \text{allocate new LVar} \\
+  & \sep      & \tm{\lvarfreeze}                     & \text{freeze LVar} \\
+  & \sep      & \tm{\lvarget}                        & \text{read threshold from
+                                                       LVar} \\
+  & \sep      & \tm{\lvarput}                        & \text{add value to LVar} \\
+\end{array}
+\]
+
+\paragraph{Evaluation Context}
+\[
+\begin{array}{lcll}
+  \tm{E}
+  & \coloneqq & \tm{V\; E}                 \\       
+  & \sep      & \tm{E\; V}                   \\     
+  & \sep      & \tm{(V, E)}                   \\   
+  & \sep      & \tm{(E, V)}                     \\   
+  & \sep      & \tm{\letunit{E}{M}}               \\                                                   
+  & \sep      & \tm{\letpair{x}{y}{E}{M}}           \\   
+\end{array}
+\]
+
+\subsection{Type System}%
+\label{sec:llam-typing}
+
+\begin{mathpar}
+  \inferrule*[lab=T-Var]{
+  }{\seq{\tmty{x}{T}}{x}{T}}
+
+  \inferrule*[lab=T-Lam]{
+    \seq{\ty{\Gamma},\tmty{x}{T}}{M}{U}
+  }{\seq{\ty{\Gamma}}{\lambda x.M}{\tyfun{T}{U}}}
+
+  \inferrule*[lab=T-App]{
+    \seq{\ty{\Gamma}}{M}{\tyfun{T}{U}}
+    \\
+    \seq{\ty{\Gamma}}{N}{T}
+  }{\seq{\ty{\Gamma}}{M\;N}{U}}
+  \\
+  \inferrule*[lab=T-Unit]{
+  }{\seq{\emptyenv}{\unit}{\tyunit}}
+
+  \inferrule*[lab=T-LetUnit]{
+    \seq{\ty{\Gamma}}{M}{\tyunit}
+    \\
+    \seq{\ty{\Gamma}}{N}{T}
+  }{\seq{\ty{\Gamma}}{\letunit{M}{N}}{T}}
+  \\
+  \inferrule*[lab=T-Pair]{
+    \seq{\ty{\Gamma}}{M}{T}
+    \\
+    \seq{\ty{\Gamma}}{N}{U}
+  }{\seq{\ty{\Gamma}}{\pair{M}{N}}{\typrod{T}{U}}}
+
+  \inferrule*[lab=T-LetPair]{
+    \seq{\ty{\Gamma}}{M}{\typrod{T}{T'}}
+    \\
+    \seq{\ty{\Gamma},\tmty{x}{T},\tmty{y}{T'}}{N}{U}
+  }{\seq{\ty{\Gamma}}{\letpair{x}{y}{M}{N}}{U}}
+  \\
+  
+\end{mathpar}
+
+\subsection{Operational semantics}
+\label{sec:llam-semantics}
+
+\paragraph{Configuration-independent reductions}
+\begin{mathpar}
+  \begin{array}{llcl}
+    \LabTirName{E-Lam}   & \tm{(\lambda x.M)\;V}
+                         & \red & \tm{\subst{M}{V}{x}}
+    \\
+    \LabTirName{E-Unit}  & \tm{\letunit{\unit}{M}}
+                         & \red & \tm{M}
+    \\
+    \LabTirName{E-Pair}  & \tm{\letpair{x}{y}{\pair{V}{W}}{M}}
+                         & \red & \tm{\subst{\subst{M}{V}{x}}{W}{y}}
+    \end{array}
+  \\
+  \inferrule*[lab=E-Lift]{
+    \tm{M}\red\tm{M'}
+  }{\tm{\plug{E}{M}}\red\tm{\plug{E}{M'}}}
+\end{mathpar}
+
+\paragraph{Configuration-dependent reductions}
+\begin{mathpar}
+  \begin{array}{llcl}
+    \LabTirName{E-New}     & \tm{\confige{\lvarnew}{S}}
+                           & \redc
+                           & \tm{\confige{l}{S, l \mapsto (0, \bot)}}
+    \\
+    \LabTirName{E-Freeze}  & \tm{\confige{\lvarfreeze}{S, l \mapsto (b, d)}}
+                           & \redc
+                           & \tm{\confige{d}{S, l \mapsto (1, d)}}
+    \\
+    \LabTirName{E-Put}     & \tm{\confige{\lvarput\;l\;d}{S, l \mapsto (0, d')}}
+                           & \redc
+                           & \tm{\confige{()}{S, l \mapsto (0, d' \sqcup d)}}
+    \\
+    \LabTirName{E-RunLVar}     & \tm{\confige{\lvarrun\;M}{S}}
+                           & \redc
+                           & \tm{\confige{(\lambda l. \letunit{M\;l}{\lvarfreeze\;l})\;\lvarnew}{S}}
+    \end{array}
+  \\
+  \inferrule*[lab=E-Get]{
+    incomp(J) 
+    \quad
+    d' \in J
+    \quad
+    d' \sqsubseteq d
+  }{\tm{\confige{\lvarget\;l\;J}{S, l \mapsto (b, d)}} \redc
+    \tm{\confige{d'}{S, l \mapsto (b, d)}}
+  }\\
+  \inferrule*[lab=E-Pair']{
+    \tm{\confige{M}{S}} \redc \tm{\confige{M'}{S'}}   
+    \quad
+    \tm{\confige{N}{S}} \redc  \tm{\confige{N'}{S''}}
+  }{\tm{\confige{\pair{M}{N}}{S}}
+    \redc
+    \tm{\confige{\pair{M'}{N'}}{S' \sqcup S''}}
+  }\\
+  \inferrule*[lab=E-App]{
+    \tm{\confige{M}{S}} \redc \tm{\confige{M'}{S'}}   
+    \quad
+    \tm{\confige{N}{S}} \redc  \tm{\confige{N'}{S''}}
+  }{\tm{\confige{M\;N}{S}}
+    \redc
+    \tm{\confige{M'\;N'}{S' \sqcup S''}}
+  }\\
+  \inferrule*[lab=E-Step]{
+    \tm{M} \red \tm{M'}   
+  }{\tm{\confige{M}{S}}
+    \redc
+    \tm{\confige{M'}{S}}
+  }\\
+\end{mathpar}
+
+\end{document}
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:
