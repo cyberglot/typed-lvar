@@ -75,8 +75,8 @@
 
 % sort macros
 \usepackage[dvipsnames]{xcolor}
-\newcommand{\tm}[1]{\ensuremath{{\color[HTML]{a40038}#1}}}
-\newcommand{\ty}[1]{\ensuremath{{\color[HTML]{00007a}#1}}}
+\newcommand{\tm}[1]{\ensuremath{{\color[HTML]{E15CFF}#1}}}
+\newcommand{\ty}[1]{\ensuremath{{\color[HTML]{6e4cef}#1}}}
 \newcommand{\cs}[1]{\ensuremath{{\color[HTML]{009180}#1}}}
 \newcommand{\tmty}[2]{\ensuremath{\tm{#1}:\ty{#2}}}
 
@@ -115,7 +115,8 @@
   \newcommand{\tylolli}[2]{\ensuremath{{#1}\mathbin{\multimap}{#2}}}
   \newcommand{\tyfun}[2]{\ensuremath{{#1}\mathbin{\rightarrow}{#2}}}
   \newcommand{\tyD}[1]{\ensuremath{{\mathbin{\mathcal{D}^{{#1}}}}}}
-  \newcommand{\tyL}[1]{\ensuremath{{\mathbin{\mathcal{L}^{{#1}}}}}}
+  \newcommand{\tyL}[1]{\ensuremath{{\mathbin{\mathcal{L}_{\mathcal{D}}^{{#1}}}}}}
+  \newcommand{\tyJ}[0]{\ensuremath{{\mathbin{\mathcal{J}}}}}
   % terms
   \newcommand{\andthen}[2]{\ensuremath{#1;#2}}
   \newcommand{\letbind}[3]{\ensuremath{\mathbf{let}\;#1\mathbin{=}#2\;\mathbf{in}\;#3}}
@@ -134,8 +135,8 @@
   \newcommand{\lvarget}[0]{\ensuremath{\mathbf{get}}}
   \newcommand{\lvarfreeze}[0]{\ensuremath{\mathbf{freeze}}}
   \newcommand{\lvarrun}[0]{\ensuremath{\mathbf{runLVar}}}
-  \newcommand{\config}[2]{\ensuremath{\langle {#1} | {#2} \rangle}}
-  \newcommand{\confige}[2]{\ensuremath{\langle E[{#1}] | {#2} \rangle}}
+  \newcommand{\config}[2]{\ensuremath{\langle {#1}\;\vert\;{#2} \rangle}}
+  \newcommand{\confige}[2]{\ensuremath{\langle E\lbrack{#1}\rbrack\;\vert\;{#2} \rangle}}
   % evaluation contexts
   \newcommand{\hole}[0]{\ensuremath{\square}}
   % typing judgements
