@@ -7,7 +7,7 @@
 
 Given a set $D$, let $\mathbb{D}$ be a 4-tuple $(D, \sqcup_{D}, \bot_{D},
 \top_{D})$, and let there be a function $incomp(d) \coloneqq \forall d' \in
-D. d' \neq d \wedge d \sqcup d' = \top_{D}$ that models $\sqcup$-incompatibility among
+D. (d' \neq d \Rightarrow d \sqcup d' = \top_{D})$ that models $\sqcup$-incompatibility among
 elements of $\mathbb{J}$, i.e $\mathbb{J} = \{ d \in D \vert incomp(d) \}$.
 
 \subsection{Syntax}
@@ -63,6 +63,7 @@ elements of $\mathbb{J}$, i.e $\mathbb{J} = \{ d \in D \vert incomp(d) \}$.
   \tm{S}
   & \coloneqq & \tm{\emptyenv}                & \text{empty store} \\
   & \sep      & \tm{S, l \mapsto (B, V)}      & \text{store extension} \\
+  & \sep      & \top                          & \text{top} \\
   \end{array}
 \]
 
@@ -71,6 +72,7 @@ elements of $\mathbb{J}$, i.e $\mathbb{J} = \{ d \in D \vert incomp(d) \}$.
   \tm{C}
   & \coloneqq & \tm{\config{M}{S}}            & \text{programs are pairs of
                                                     terms and store} \\
+  & \sep      & \tm{\lvarerror}               & \text{runtime crashes} \\
   \end{array}
 \]
 
@@ -80,7 +82,9 @@ elements of $\mathbb{J}$, i.e $\mathbb{J} = \{ d \in D \vert incomp(d) \}$.
   \tm{V}, \tm{W}
   & \coloneqq & \tm{l}                        & \text{locations} \\
   & \sep      & \tm{J}                        & \text{threshold set} \\
-  & \sep      & \tm{D}                        & \text{distinguished set} \\
+  & \sep      & \tm{(B, d)}                   & \text{states, where } D \text{
+                                                is the distinguished set,
+                                                and } d \in D\\
   & \sep      & \tm{\lambda x.M}              & \lambda \text{ abstraction} \\
   & \sep      & \tm{\unit}                    & \text{unit} \\
   & \sep      & \tm{\pair{M}{N}}              & \text{product} \\
@@ -184,36 +188,46 @@ elements of $\mathbb{J}$, i.e $\mathbb{J} = \{ d \in D \vert incomp(d) \}$.
 \subsection{Operational semantics}
 \label{sec:llam-semantics}
 
-\paragraph{Configuration-independent reductions}
+% \paragraph{Configuration-independent reductions}
 \begin{mathpar}
   \begin{array}{llcl}
-    \LabTirName{E-Lam}   & \tm{(\lambda x.M)\;V}
-                         & \red & \tm{\subst{M}{V}{x}}
+    \LabTirName{E-Lam}   & \tm{\config{(\lambda x.M)\;V}{S}}
+                         & \red & \tm{\config{\subst{M}{V}{x}}{S}}
     \\
-    \LabTirName{E-Unit}  & \tm{\letunit{\unit}{M}}
-                         & \red & \tm{M}
+    \LabTirName{E-Unit}  & \tm{\config{\letunit{\unit}{M}}{S}}
+                         & \red & \tm{\config{M}{S}}
     \\
-    \LabTirName{E-Pair}  & \tm{\letpair{x}{y}{\pair{V}{W}}{M}}
-                         & \red & \tm{\subst{\subst{M}{V}{x}}{W}{y}}
-  \end{array}\\
-\end{mathpar}
-
-\paragraph{Configuration-dependent reductions}
-\begin{mathpar}
-  \begin{array}{llcl}
-    \LabTirName{E-New}     & \tm{\confige{\lvarnew}{S}}
-                           & \redc
-                           & \tm{\confige{l}{S, l \mapsto (0, \bot)}}
+    \LabTirName{E-Pair}  & \tm{\config{\letpair{x}{y}{\pair{V}{W}}{M}}{S}}
+                         & \red & \tm{\config{\subst{\subst{M}{V}{x}}{W}{y}}{S}}
     \\
-    \LabTirName{E-Freeze}  & \tm{\confige{\lvarfreeze}{S, l \mapsto (b, d)}}
-                           & \redc
-                           & \tm{\confige{d}{S, l \mapsto (1, d)}}
+    \LabTirName{E-New}     & \tm{\config{\lvarnew}{S}}
+                           & \red
+                           & \tm{\config{l}{S, l \mapsto (0, \bot)}}
     \\
-    \LabTirName{E-Put}     & \tm{\confige{\lvarput\;l\;d}{S, l \mapsto (0, d')}}
-                           & \redc
-                           & \tm{\confige{()}{S, l \mapsto (0, d' \sqcup d)}}
-    
+    \LabTirName{E-Freeze}  & \tm{\config{\lvarfreeze}{S, l \mapsto (b, d)}}
+                           & \red
+                           & \tm{\config{d}{S, l \mapsto (1, d)}}
     \end{array}
+    \\
+    \inferrule*[lab=E-Put]{
+      s = (b, d)
+      \\
+      s' = (b, d')
+      \\
+      s \sqcup s' \neq \top
+  }{\tm{\config{\lvarput\;l\;d'}{S, l \mapsto s}} \red
+    \tm{\config{s'}{S, l \mapsto s'}}
+  }
+  \\
+  \inferrule*[lab=E-Put-Err]{
+    s = (b, d)
+      \\
+      s' = (b, d')
+      \\
+      s \sqcup s' = \top
+  }{\tm{\config{\lvarput\;l\;d'}{S, l \mapsto s}} \red
+    \tm{\lvarerror}
+  }
   \\
   \inferrule*[lab=E-Get]{
     J \in \mathcal{J}
@@ -221,37 +235,35 @@ elements of $\mathbb{J}$, i.e $\mathbb{J} = \{ d \in D \vert incomp(d) \}$.
     d' \in J
     \\
     d' \sqsubseteq d
-  }{\tm{\confige{\lvarget\;l\;J}{S, l \mapsto (b, d)}} \redc
-    \tm{\confige{d'}{S, l \mapsto (b, d)}}
+  }{\tm{\config{\lvarget\;l\;J}{S, l \mapsto (b, d)}} \red
+    \tm{\config{d'}{S, l \mapsto (b, d)}}
   }\\
   \inferrule*[lab=E-Pair']{
-    \tm{\confige{M}{S}} \redc \tm{\confige{M'}{S'}}   
+    \tm{\config{M}{S}} \red \tm{\config{M'}{S'}}   
     \\
-    \tm{\confige{N}{S}} \redc  \tm{\confige{N'}{S''}}
-  }{\tm{\confige{\pair{M}{N}}{S}}
-    \redc
-    \tm{\confige{\pair{M'}{N'}}{S' \sqcup S''}}
+    \tm{\config{N}{S}} \red  \tm{\config{N'}{S''}}
+  }{\tm{\config{\pair{M}{N}}{S}}
+    \red
+    \tm{\config{\pair{M'}{N'}}{S' \sqcup S''}}
   }\\
   \inferrule*[lab=E-App]{
-    \tm{\confige{M}{S}} \redc \tm{\confige{M'}{S'}}   
+    \tm{\config{M}{S}} \red \tm{\config{M'}{S'}}   
     \\
-    \tm{\confige{N}{S}} \redc  \tm{\confige{N'}{S''}}
-  }{\tm{\confige{M\;N}{S}}
-    \redc
-    \tm{\confige{M'\;N'}{S' \sqcup S''}}
+    \tm{\config{N}{S}} \red  \tm{\config{N'}{S''}}
+  }{\tm{\config{M\;N}{S}}
+    \red
+    \tm{\config{M'\;N'}{S' \sqcup S''}}
   }\\
   \inferrule*[lab=E-Lift]{
     \tm{M} \red \tm{M'}   
   }{\tm{\confige{M}{S}}
-    \redc
+    \rede
     \tm{\confige{M'}{S}}
   }\\
   
 \end{mathpar}
 
 \subsection{Syntax sugar}
-
-\paragraph{\lvarrun}
 
 \begin{mathpar}
 \inferrule*[lab=T-RunLVar]{
@@ -260,12 +272,139 @@ elements of $\mathbb{J}$, i.e $\mathbb{J} = \{ d \in D \vert incomp(d) \}$.
   \\
   \begin{array}{llcl}
     \LabTirName{E-RunLVar} & \tm{\lvarrun\;M}
-                           & \redc
+                           & \red
                            & \tm{(\lambda l.\letunit{M\;l}{\lvarfreeze\;l})\;\lvarnew}
   \end{array}
   \end{mathpar}
 
 \section{Metatheory of Typed $\lambda_{\text{lvar}}$ calculus}
+
+\subsection{Translation to $\lambda_{\text{LVar}}$ from typed
+  $\lambda_{\text{lvar}}$}
+
+\definition{A translation is a function $\zeta : C \rightarrow \sigma$,
+such that:
+
+\remember{Add partial-order rules for state $s$, where $s = (b, d)$.}
+\begin{itemize}
+\item it should maintain the same number of steps in $C$ when translated
+  into $\sigma$;
+\item it should not introduce sequentialisation.
+\end{itemize}
+}
+
+\begin{mathpar}
+  \begin{array}{lcll}
+    \zeta(\lvarerror)                       & = & \lvarerror \\
+    \zeta(\config{\lvarget\;l\;J}{S})       & = & \configl{S}{\lvarget\;l\;P}
+                                            & \text{where } p_1 \cong s \text{
+                                              and } P \cong J \\
+    \zeta(\config{\lvarput\;l\;d'}{S})      & = & \configl{S}{\lvarput_{i}\;l}
+                                             & \text{where } u_{p_{i}}
+                                               \coloneqq \lambda d_{i}.
+                                               d \sqcup d_{i}  \\
+    \zeta(\config{\lvarnew}{S})             & = & \configl{S}{\lvarnew} \\
+    \zeta(\config{\lvarfreeze\;l}{S})       & = & \configl{S}{\lvarfreeze\;l} \\
+    \zeta(\config{(\lambda x.M)\;V}{S})     & = & \configl{S}{(\lambda x.e)\;v} \\
+    \zeta(\config{M\;N}{S})                 & = & \configl{S}{e\;e'} \\
+    \zeta(\config{()}{S})                   & = & \configl{S}{()} \\
+    \zeta(\config{\letunit{M}{N}}{S})       & = & \configl{S}{(\lambda ().e)\;e'} \\
+    \zeta(\config{\pair{M}{N}}{S})          & = & \configl{S}{(\lambda x. \lambda y.
+                                                   \lambda f. f x y)\;e\;e'} \\
+    \zeta(\config{\letpair{x}{y}{M}{N}}{S}) & = & \configl{S}{e\;(\lambda x.
+                                                   \lambda y. e')} \\
+    \zeta(\config{M}{S, l \mapsto (0, d)})  & = & \configl{S[l \mapsto (d,
+                                                  \tt{false})]}{e} \\
+    \zeta(\config{M}{S, l \mapsto (1, d)})  & = & \configl{S[l \mapsto (d,
+                                                  \tt{true})]}{e} \\
+  \end{array}\\
+\end{mathpar}
+
+\begin{lemma}[Translation, Typed $\lambda_{\text{lvar}} \; \rightsquigarrow
+  \;\lambda_{\text{LVar}}$]
+  For any translation $\zeta$,
+  \begin{itemize}
+    \item if $C \red C'$ and $\sigma \hookrightarrow \sigma'$ and $\zeta(C) =
+      \sigma$ , then $\zeta(C') = \sigma'$;
+    \item if $C \rede C'$ and $\sigma \mapsto \sigma'$ and $\zeta(C) =
+      \sigma$ , then $\zeta(C') = \sigma'$.
+  \end{itemize}
+\end{lemma}
+
+\begin{proof}
+  By induction on the structure of $C$.
+
+ \case{$C = \config{\lvarerror}{S}, \; \sigma = \configl{S}{\lvarerror}$.}\\
+ $C$ and $\sigma$ cannot step. Hence, the translation is vacuously valid.\\
+
+ % ----------------------
+
+ \case{$C = \config{\lvarget\;l\;J}{S}, \; \sigma = \configl{S}{\lvarget\;l\;P}$.}\\
+  Given the operational semantics, $C$ steps to $C' = \config{s'}{S, l \mapsto (b,
+    d)}$.
+  And given $\lambda_{\text{LVar}}$'s operational semantics, $\sigma$ steps to
+  $\sigma' = \configl{S}{p_2}$. Applying $\zeta (C')$, we get
+  $\configl{S}{p_2}$. Hence, the translation is valid. \\
+
+  % ----------------------
+
+  \case{$C = \config{\lvarput\;l\;d'}{S}, \; \sigma = \configl{S}{\lvarput_{i}\;l}$.}\\
+  Given the operational semantics, $C$ can either error or take a step.\\
+
+    \subcase{$C' = \config{s'}{S, l \mapsto s'}$} \\
+    Given $\lambda_{\text{LVar}}$'s operational semantics, $\sigma$ steps to
+    $\sigma' = \configl{S}{p_2}$ if $d \sqcup d_{i} \neq \top$, which is exactly
+    the same as applying $\zeta$ to $C'$. \\
+    
+
+    % ----------------------
+    \subcase{$C' = \lvarerror$}\\
+     Given $\lambda_{\text{LVar}}$'s operational semantics, $\sigma$ steps to
+    $\sigma' = \lvarerror$ if $d \sqcup d_{i} = \top$, which is exactly
+    the same as applying $\zeta$ to $C'$. \\
+
+  Hence, the translation is valid. \\
+
+  \case{$ C = \config{\lvarnew}{S}$, $\sigma = \configl{S}{\lvarnew}$}\\
+  \case{$ C = \config{\lvarfreeze}{S}$, $\sigma = \configl{S}{\lvarfreeze}$}\\
+  \case{$ C = \config{\pair{M}{N}}{S}$,
+    $\sigma = \configl{S}{(\lambda x. \lambda y.\lambda f. f x y)\;e\;e'}$} \\
+  \case{$ C = \config{\letpair{x}{y}{M}{N}}{S}$
+    , $\sigma = \configl{S}{e' \;(\lambda x.\lambda y. e)}$} \\
+  
+  
+\end{proof}
+
+
+\subsection{Determinism}
+
+Determinism proof as stated in Kuper'15.
+
+\definition{Permutation}
+
+\definition{Permutation of an expression}
+
+\definition{Permutation of a store}
+
+\definition{Permutation of configurations}
+
+\lemma{Permutability}
+
+\lemma{Internal Determinism}
+
+\lemma{Strong Confluence}
+
+\lemma{Confluence}
+
+\theorem{Determinism}
+
+\subsection{Type safety}
+
+\theorem{Progress}
+
+\theorem{Preservation}
+
+\corollary{Type Safety}
 
 \end{document}
 

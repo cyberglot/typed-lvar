@@ -41,7 +41,8 @@
 \usepackage{pdflscape}
 
 % gotsta have a todo command
-\newcommand{\todo}[1]{{\textcolor{red}{\textbf{TODO:}~#1}}}
+% \newcommand{\todo}[1]{{\textcolor{red}{\textbf{TODO:}~#1}}}
+\newcommand{\remember}[1]{\todo[color=pink!40]{#1}}
 
 % theorem environments
 % (you can do way fancier theorems but they usually break when you have to
@@ -63,6 +64,7 @@
 
 \theoremstyle{break}
 \newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
 \newtheorem{lemma}{Lemma}
 
 \theoremstyle{definition}
@@ -72,6 +74,7 @@
 % this one is for use within a proof environment
 \theoremstyle{remark}
 \newtheorem*{case}{Case}
+\newtheorem*{subcase}{Sub-case}
 
 % sort macros
 \usepackage[dvipsnames]{xcolor}
@@ -135,15 +138,17 @@
   \newcommand{\lvarget}[0]{\ensuremath{\mathbf{get}}}
   \newcommand{\lvarfreeze}[0]{\ensuremath{\mathbf{freeze}}}
   \newcommand{\lvarrun}[0]{\ensuremath{\mathbf{runLVar}}}
+  \newcommand{\lvarerror}[0]{\ensuremath{\mathbf{error}}}
   \newcommand{\config}[2]{\ensuremath{\langle {#1}\;\vert\;{#2} \rangle}}
-  \newcommand{\confige}[2]{\ensuremath{\langle E\lbrack{#1}\rbrack\;\vert\;{#2} \rangle}}
+  \newcommand{\confige}[2]{\ensuremath{\langle E\lbrack {#1} \rbrack \; \vert\;{#2} \rangle}}
+  \newcommand{\configl}[2]{\ensuremath{\langle {#1} \; ; \;{#2} \rangle}}
   % evaluation contexts
   \newcommand{\hole}[0]{\ensuremath{\square}}
   % typing judgements
   \newcommand{\seq}[3]{\ensuremath{#1\vdash\tmty{#2}{#3}}}
   % reduction relations
-  \newcommand{\red}[0]{\ensuremath{\longrightarrow_{M}}}
-  \newcommand{\redc}[0]{\ensuremath{\longrightarrow}}
+  \newcommand{\red}[0]{\ensuremath{\longrightarrow}}
+  \newcommand{\rede}[0]{\ensuremath{\longrightarrow_{E}}}
 }{}
 \newcommand{\llam}[1]{\namespace*{llam}{}{#1}}
 
@@ -151,6 +156,9 @@
 \usepackage{varioref}
 \usepackage{hyperref}
 \usepackage{cleveref}
+
+% load todonotes
+\usepackage{todonotes}
 
 \begin{document}
 \renewcommand{\onlyinsubfile}[1]{}
