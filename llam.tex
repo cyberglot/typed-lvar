@@ -279,8 +279,7 @@ elements of $\mathbb{J}$, i.e $\mathbb{J} = \{ d \in D \vert incomp(d) \}$.
 
 \section{Metatheory of Typed $\lambda_{\text{lvar}}$ calculus}
 
-\subsection{Translation to $\lambda_{\text{LVar}}$ from typed
-  $\lambda_{\text{lvar}}$}
+\subsection{Translation to \lvar \mspc from \typedlvar}
 
 \definition{A translation is a function $\zeta : C \rightarrow \sigma$,
 such that:
@@ -289,7 +288,7 @@ such that:
 \begin{itemize}
 \item it should maintain the same number of steps in $C$ when translated
   into $\sigma$;
-\item it should not introduce sequentialisation.
+\item it should not introduce synchronisation.
 \end{itemize}
 }
 
@@ -305,10 +304,10 @@ such that:
                                                d \sqcup d_{i}  \\
     \zeta(\config{\lvarnew}{S})             & = & \configl{S}{\lvarnew} \\
     \zeta(\config{\lvarfreeze\;l}{S})       & = & \configl{S}{\lvarfreeze\;l} \\
-    \zeta(\config{(\lambda x.M)\;V}{S})     & = & \configl{S}{(\lambda x.e)\;v} \\
+    \zeta(\config{\lambda x.M}{S})          & = & \configl{S}{\lambda x.e} \\
     \zeta(\config{M\;N}{S})                 & = & \configl{S}{e\;e'} \\
     \zeta(\config{()}{S})                   & = & \configl{S}{()} \\
-    \zeta(\config{\letunit{M}{N}}{S})       & = & \configl{S}{(\lambda ().e)\;e'} \\
+    \zeta(\config{\letunit{M}{N}}{S})       & = & \configl{S}{\lambda ().e} \\
     \zeta(\config{\pair{M}{N}}{S})          & = & \configl{S}{(\lambda x. \lambda y.
                                                    \lambda f. f x y)\;e\;e'} \\
     \zeta(\config{\letpair{x}{y}{M}{N}}{S}) & = & \configl{S}{e\;(\lambda x.
@@ -320,8 +319,8 @@ such that:
   \end{array}\\
 \end{mathpar}
 
-\begin{lemma}[Translation, Typed $\lambda_{\text{lvar}} \; \rightsquigarrow
-  \;\lambda_{\text{LVar}}$]
+\begin{lemma}[Translation, \typedlvar \mspc $\rightsquigarrow$
+  \mspc \lvar]
   For any translation $\zeta$,
   \begin{itemize}
     \item if $C \red C'$ and $\sigma \hookrightarrow \sigma'$ and $\zeta(C) =
@@ -332,7 +331,8 @@ such that:
 \end{lemma}
 
 \begin{proof}
-  By induction on the structure of $C$.
+  By induction on the structure of $C$. All cases are straight-forward, except
+  for the introduction and elimination of pairs.
 
  \case{$C = \config{\lvarerror}{S}, \; \sigma = \configl{S}{\lvarerror}$.}\\
  $C$ and $\sigma$ cannot step. Hence, the translation is vacuously valid.\\
@@ -363,22 +363,102 @@ such that:
     $\sigma' = \lvarerror$ if $d \sqcup d_{i} = \top$, which is exactly
     the same as applying $\zeta$ to $C'$. \\
 
-  Hence, the translation is valid. \\
+    Hence, the translation is valid. \\
+
+  % ----------------------
 
   \case{$ C = \config{\lvarnew}{S}$, $\sigma = \configl{S}{\lvarnew}$}\\
+  Straight-forwardly, $C'$ steps to $\config{l}{S, l \mapsto (0, \bot)}$ which
+  is equivalent to $\configl{S(l) = (\bot, false)}{l}$, as showed in the last two
+  cases of the proof. Hence, this translation is valid.  \\
+  
+  % ----------------------
   \case{$ C = \config{\lvarfreeze}{S}$, $\sigma = \configl{S}{\lvarfreeze}$}\\
+  Straight-forwardly, $C'$ steps to $\config{d}{S, l \mapsto (1, d)}$ which
+  is equivalent to $\configl{S(l) = (p, true)}{p}$, as showed in the last two
+  cases of the proof. Hence, this translation is valid. \\
+  
+  % ----------------------
+
+  \case{$C = \config{\lambda x.M}{S}$,
+    $\sigma = \configl{S}{\lambda x.e}$}\\
+  $C$ and $\sigma$ do not step since lambda abstractions are values. Also, $C$
+  and $\sigma$ are immediately equivalent up to $\alpha$-equivalence.\\
+
+  % ----------------------
+
+  \case{$\config{M\;N}{S}$, $ \sigma = & \configl{S}{e\;e'}$}\\
+  The application case is simple, where expressions take one step each in
+  parallel in both languages. Hence, this translation is valid. \\
+
+  % ----------------------
+
+  \case{$ C = \config{()}{S}$, $\sigma = \configl{S}{()}$}\\
+  $C$ and $\sigma$ do not step since unit is a value. Also, $C$
+  and $\sigma$ are immediately equivalent.\\
+
+  % ----------------------
+
+  \case{$ C = \config{\letunit{M}{N}}{S}$,
+    $\sigma = \configl{S}{(\lambda (). e') \mspc e}$}\\
+  The \lvar calculus does not provide an elimination rule for unit, since it
+  introduces an explicit synchronisation construct. However, such construct is
+  easily defined by forcing $e$ to evaluate before $e'$ by introducing and
+  eliminating a lambda abstraction. Kuper'15 informally uses a generalised
+  version of this construct. Both $C$ and $\sigma$ steps to the outermost
+  expression, $N$ and $e'$, respectively.\\
+
+  % ----------------------
+  
   \case{$ C = \config{\pair{M}{N}}{S}$,
     $\sigma = \configl{S}{(\lambda x. \lambda y.\lambda f. f x y)\;e\;e'}$} \\
-  \case{$ C = \config{\letpair{x}{y}{M}{N}}{S}$
-    , $\sigma = \configl{S}{e' \;(\lambda x.\lambda y. e)}$} \\
+  In \typedlvar, pair components are evaluated in parallel and the next step will
+  be blocked until both components are evaluated to a value. The \lvar calculus
+  does not provide pairs, therefore we encode them using lambda abstractions.
+  In our encoding, a function takes two values and returns function that takes
+  both values. According to the semantics of the \lvar \mspc calculus, when those two
+  expressions are passed to a function, they are evaluated in parallel. Hence,
+  our encoding does not introduce synchronisation, blocking the next step
+  unnecessarily, and produces a valid translation. \\
   
+  % ----------------------
+  \case{$C = \config{\letpair{x}{y}{M}{N}}{S}$,
+    $\sigma = \configl{S}{e' \;(\lambda x.\lambda y. e)}$} \\
+  In \typedlvar, the elimination rule for pairs require that both components are 
+  values, and those are substituted within the next computation by using two
+  fresh variables. Given that we encoded pairs as a function that takes a
+  function with two arguments, we need to create said function in order to
+  eliminate pairs. The eliminating function has to make the values within the
+  pair available to the next computation, in this case $e'$. According to the
+  \lvar calculus, parameters must be fully evaluated before being passed on to a
+  lambda abstraction - fact easily verifiable since \lvar \mspc has call-by-value
+  semantics. Hence, our encoding does not introduce synchronisation, blocking
+  the next step unnecessarily, and produces a valid translation. \\
+  
+  % ----------------------
+
+  \remember{Add case for lifted environment contexts.}
+
+  \case{$C = \config{M}{S, l \mapsto (0, d)} $,
+    $ \sigma = \configl{S[l \mapsto (d, \tt{false})]}{e}$} \\
+  The encoding of LVar's writeability status in \typedlvar uses $0$ and $1$,
+  while in \lvar, they are encoded as regular booleans. Irregardless of the most
+  common representation of booleans as numbers, the LVar should be initialised
+  with one status and switch to a different one once frozen, which happens in
+  both \lvar and \typedlvar.\\
+
+  \case{$C = \config{M}{S, l \mapsto (1, d)}$,
+    $ \sigma = \configl{S[l \mapsto (d, \tt{true})]}{e}$}\\
+  Follows an analogous argument as previous case.
   
 \end{proof}
 
 
 \subsection{Determinism}
 
-Determinism proof as stated in Kuper'15.
+Given the translation of \typedlvar \mspc into \lvar \mspc is valid, we can infer that
+\typedlvar \mspc is quasi-deterministic as well. Here, we restate all proofs and
+definitions leading to the quasi-determinism proof as stated in Kuper'15.
 
 \definition{Permutation}
 
@@ -396,7 +476,7 @@ Determinism proof as stated in Kuper'15.
 
 \lemma{Confluence}
 
-\theorem{Determinism}
+\theorem{Quasi-Determinism}
 
 \subsection{Type safety}
 
@@ -405,6 +485,15 @@ Determinism proof as stated in Kuper'15.
 \theorem{Preservation}
 
 \corollary{Type Safety}
+
+\subsection{Fully deterministic programming with LVars}
+
+In this section, we prove that \typedlvar \mspc is deterministic, which is the main
+contribution of this work. We proceed by proving that all \lvarerror \mspc states
+within the \typedlvar calculus are not typeable given our type rules.
+
+\theorem{Untypeable \lvarerror s}
+\corollary{Full Determinism}
 
 \end{document}
 
