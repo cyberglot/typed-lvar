@@ -6,9 +6,8 @@
 \usingnamespace{llam}
 
 Given a set $D$, let $\mathbb{D}$ be a 4-tuple $(D, \sqcup_{D}, \bot_{D},
-\top_{D})$, and let there be a function $incomp(d) \coloneqq \forall d' \in
-D. (d' \neq d \Rightarrow d \sqcup d' = \top_{D})$ that models $\sqcup$-incompatibility among
-elements of $\mathbb{J}$, i.e $\mathbb{J} = \{ d \in D \vert incomp(d) \}$.
+\top_{D})$, and let $J$ be threshold sets, where $J \subseteq D$ such that  
+$\forall d, d' \in J. d \sqcup d' = \top_{D}$.
 
 \subsection{Syntax}
 \label{sec:llam-syntax}
@@ -20,12 +19,11 @@ elements of $\mathbb{J}$, i.e $\mathbb{J} = \{ d \in D \vert incomp(d) \}$.
   & \coloneqq & \ty{\tyunit}        & \text{unit} \\
   & \sep      & \ty{\typrod{T}{U}}  & \text{product} \\
   & \sep      & \ty{\tyfun{T}{U}}   & \lambda \text{ abstraction}\\
-  & \sep      & \ty{\tyJ}           & \text{threshold set, where } \tyJ
-                                      \subseteq \mathbb{J} \\
-  & \sep      & \ty{\tyD{d}}        & \text{values } d \text{ in } D \text{ indexed by }
-                                      \bigsqcup d\\
+  & \sep      & \ty{\tyJ}           & \text{threshold sets} \\
+  & \sep      & \ty{\tyD{d}}        & \text{elements } d \text{ in } D \text{ such
+                                      that } \bigsqcup D^{d} = d \\
   & \sep      & \ty{\tyL{d}}        & \text{locations (indexed by } d \text{) of
-                                      values in } \tyD{d}\\
+                                      elements in } \tyD{d}\\
   \\
   \ty{\Gamma}
   & \coloneqq & \ty{\emptyenv}                 & \text{empty environment}\\
@@ -33,80 +31,53 @@ elements of $\mathbb{J}$, i.e $\mathbb{J} = \{ d \in D \vert incomp(d) \}$.
 \end{array}
 \]
 
-\paragraph{Terms and Status bits}
+\paragraph{Term-level syntax}
 \[
 \begin{array}{lcll}
-  \tm{L}, \tm{M}, \tm{N}
+  \textit{terms }\tm{L}, \tm{M}, \tm{N}
   & \coloneqq & \tm{x}                        & \text{variables} \\
-  & \sep      & \tm{V}                        & \text{values} \\
-  & \sep      & \tm{B}                        & \text{status bits}\\
+  & \sep      & \tm{l} \sep \tm{J} \sep \tm{d} \sep \tm{\lambda x.M}
+                                              & \text{values} \\
   & \sep      & \tm{K}                        & \text{constants} \\                                              
-  & \sep      & \tm{M\;N}                     & \text{parallel application} \\
+  & \sep      & \tm{M\;N}                     & \text{application} \\
   & \sep      & \tm{\unit}                    & \text{unit introduction} \\
   & \sep      & \tm{\letunit{M}{N}}           & \text{unit elimination} \\
-  & \sep      & \tm{\pair{M}{N}}              & \text{product introduction} \\
+  & \sep      & \tm{\pair{V}{W}}              & \text{product introduction} \\
   & \sep      & \tm{\letpair{x}{y}{M}{N}}     & \text{product elimination}\\
-\end{array}
-\]
-
-\[
-\begin{array}{lcll}
-  \tm{B}
+  \\
+  \textit{status bits }\tm{B}
   & \coloneqq & \tm{1}                        & \text{frozen LVar} \\
-  & \sep      & \tm{0}                        & \text{unfrozen LVar} \\
-\end{array}
-\]
-
-\paragraph{Stores and Configurations}
-\[
-\begin{array}{lcll}
-  \tm{S}
+  & \sep      & \tm{0}                        & \text{non-frozen LVar} \\
+  \\
+  \textit{state } \tm{s}
+  & \coloneqq & \tm{\langle B, d \rangle}     & \text{states} \\
+  \\
+  \textit{stores } \tm{S}
   & \coloneqq & \tm{\emptyenv}                & \text{empty store} \\
-  & \sep      & \tm{S, l \mapsto (B, V)}      & \text{store extension} \\
+  & \sep      & \tm{S, l \mapsto s}           & \text{store extension} \\
   & \sep      & \top                          & \text{top} \\
-  \end{array}
-\]
-
-\[
-\begin{array}{lcll}
-  \tm{C}
-  & \coloneqq & \tm{\config{M}{S}}            & \text{programs are pairs of
+  \\
+  \textit{configurations }\tm{C}
+  & \coloneqq & \tm{\config{M}{S}}            & \text{programs are composed of
                                                     terms and store} \\
-  & \sep      & \tm{\lvarerror}               & \text{runtime crashes} \\
-  \end{array}
-\]
-
-\paragraph{Values}
-\[
-\begin{array}{lcll}
-  \tm{V}, \tm{W}
+  & \sep      & \tm{\lvarerror}               & \text{runtime crash} \\
+  \\
+  \textit{values }\tm{V}, \tm{W}
   & \coloneqq & \tm{l}                        & \text{locations} \\
   & \sep      & \tm{J}                        & \text{threshold set} \\
-  & \sep      & \tm{(B, d)}                   & \text{states, where } D \text{
-                                                is the distinguished set,
-                                                and } d \in D\\
+  & \sep      & \tm{s}                        & \text{states} \\
   & \sep      & \tm{\lambda x.M}              & \lambda \text{ abstraction} \\
   & \sep      & \tm{\unit}                    & \text{unit} \\
-  & \sep      & \tm{\pair{M}{N}}              & \text{product} \\
-\end{array}
-\]
-
-\paragraph{Constants}
-\[
-\begin{array}{lcll}
-  \tm{K}
+  & \sep      & \tm{\pair{V}{W}}              & \text{product} \\
+  \\
+  \textit{constants }\tm{K}
   & \coloneqq & \tm{\lvarnew}                 & \text{allocate new LVar} \\
   & \sep      & \tm{\lvarfreeze}              & \text{freeze LVar} \\
   & \sep      & \tm{\lvarget}                 & \text{read threshold from
                                                   LVar} \\
   & \sep      & \tm{\lvarput}                 & \text{add value to LVar} \\
-\end{array}
-\]
-
-\paragraph{Evaluation Context}
-\[
-\begin{array}{lcll}
-  \tm{E}
+  \\
+  \textit{evaluation contexts }\tm{E}
   & \coloneqq & \tm{\hole}                 \\
   & \sep      & \tm{V\; E}                 \\       
   & \sep      & \tm{E\; V}                 \\     
@@ -119,6 +90,8 @@ elements of $\mathbb{J}$, i.e $\mathbb{J} = \{ d \in D \vert incomp(d) \}$.
 
 \subsection{Type System}%
 \label{sec:llam-typing}
+
+\definition{$ \sqsubseteq_{J}(d) = \exists d' \in \tyJ. d \sqsubseteq d' $}
 
 \begin{mathpar}
   \inferrule*[lab=T-Var]{
@@ -159,26 +132,26 @@ elements of $\mathbb{J}$, i.e $\mathbb{J} = \{ d \in D \vert incomp(d) \}$.
   \\
 
   \inferrule*[lab=T-New]{
-  }{\seq{\ty{\Gamma}, \tm{l} : \ty{\tyL{\bot}}}{\lvarnew}{\tyL{\bot}}}
+  }{\seq{\ty{\Gamma}}{\lvarnew}{\tyL{\bot}}}
 
   \inferrule*[lab=T-Freeze]{
-    \seq{\ty{\Gamma}}{l}{\tyL{d}}
-  }{\seq{\ty{\Gamma}}{\lvarfreeze\;l}{\tyD{d}}}
+    \seq{\ty{\Gamma}}{M}{\tyL{d}}
+  }{\seq{\ty{\Gamma}}{\lvarfreeze\;M}{\tyD{d}}}
   \\
 
   \inferrule*[lab=T-Get]{
-    \seq{\ty{\Gamma}}{l}{\tyL{d}}
+    \seq{\ty{\Gamma}}{M}{\tyL{d}}
     \\
-    \seq{\ty{\Gamma}}{J}{\tyJ}
+    \seq{\ty{\Gamma}}{N}{\tyJ}
     \\
-    \exists \ty{d'} \in \ty{\tyJ}. \ty{d} \sqsubseteq \ty{d'}
-  }{\seq{\ty{\Gamma}}{\lvarget\;l\;J}{\tyD{d}}}
+    \sqsubseteq_{J}(d)
+  }{\seq{\ty{\Gamma}}{\lvarget\;M\;N}{\tyD{d}}}
 
   \inferrule*[lab=T-Put]{
-    \seq{\ty{\Gamma}}{l}{\tyL{d}}
+    \seq{\ty{\Gamma}}{M}{\tyL{d}}
     \\
-    \seq{\ty{\Gamma}}{M}{\tyD{d'}}
-  }{\seq{\ty{\Gamma}, \tm{l} : \ty{\tyL{d \sqcup d'}}}{\lvarput\;l\;M}{1}}
+    \seq{\ty{\Gamma}}{N}{\tyD{d'}}
+  }{\seq{\ty{\Gamma}}{\lvarput\;M\;N}{1}}
   \\
 
   
@@ -210,33 +183,23 @@ elements of $\mathbb{J}$, i.e $\mathbb{J} = \{ d \in D \vert incomp(d) \}$.
     \end{array}
     \\
     \inferrule*[lab=E-Put]{
-      s = (b, d)
-      \\
-      s' = (b, d')
-      \\
-      s \sqcup s' \neq \top
-  }{\tm{\config{\lvarput\;l\;d'}{S, l \mapsto s}} \red
-    \tm{\config{s'}{S, l \mapsto s'}}
+      d \sqcup d' \neq \top
+  }{\tm{\config{\lvarput\;l\;d'}{S, l \mapsto \sts{0}{d}}} \red
+    \tm{\config{()}{S, l \mapsto \sts{0}{d'}}}
   }
   \\
   \inferrule*[lab=E-Put-Err]{
-    s = (b, d)
-      \\
-      s' = (b, d')
-      \\
-      s \sqcup s' = \top
+    d \sqcup d' = \top
   }{\tm{\config{\lvarput\;l\;d'}{S, l \mapsto s}} \red
     \tm{\lvarerror}
   }
   \\
   \inferrule*[lab=E-Get]{
-    J \in \mathcal{J}
-    \\
     d' \in J
     \\
     d' \sqsubseteq d
-  }{\tm{\config{\lvarget\;l\;J}{S, l \mapsto (b, d)}} \red
-    \tm{\config{d'}{S, l \mapsto (b, d)}}
+  }{\tm{\config{\lvarget\;l\;J}{S, l \mapsto \sts{b}{d}}} \red
+    \tm{\config{d'}{S, l \mapsto \sts{b}{d}}}
   }\\
   \inferrule*[lab=E-Pair']{
     \tm{\config{M}{S}} \red \tm{\config{M'}{S'}}   
@@ -255,15 +218,15 @@ elements of $\mathbb{J}$, i.e $\mathbb{J} = \{ d \in D \vert incomp(d) \}$.
     \tm{\config{M'\;N'}{S' \sqcup S''}}
   }\\
   \inferrule*[lab=E-Lift]{
-    \tm{M} \red \tm{M'}   
+    \config{M}{S} \red \config{N}{S'}   
   }{\tm{\confige{M}{S}}
     \rede
-    \tm{\confige{M'}{S}}
+    \tm{\confige{N}{S'}}
   }\\
   
 \end{mathpar}
 
-\subsection{Syntax sugar}
+\subsection{Syntatic sugar}
 
 \begin{mathpar}
 \inferrule*[lab=T-RunLVar]{
@@ -272,7 +235,7 @@ elements of $\mathbb{J}$, i.e $\mathbb{J} = \{ d \in D \vert incomp(d) \}$.
   \\
   \begin{array}{llcl}
     \LabTirName{E-RunLVar} & \tm{\lvarrun\;M}
-                           & \red
+                           & \coloneqq
                            & \tm{(\lambda l.\letunit{M\;l}{\lvarfreeze\;l})\;\lvarnew}
   \end{array}
   \end{mathpar}
@@ -344,7 +307,8 @@ such that:
     d)}$.
   And given $\lambda_{\text{LVar}}$'s operational semantics, $\sigma$ steps to
   $\sigma' = \configl{S}{p_2}$. Applying $\zeta (C')$, we get
-  $\configl{S}{p_2}$. Hence, the translation is valid. \\
+  $\configl{S}{p_2}$. \typedlvar maintains the same number of steps and there is
+  no unwanted synchronisation introduced. Hence, this translation is valid. \\
 
   % ----------------------
 
@@ -354,29 +318,33 @@ such that:
     \subcase{$C' = \config{s'}{S, l \mapsto s'}$} \\
     Given $\lambda_{\text{LVar}}$'s operational semantics, $\sigma$ steps to
     $\sigma' = \configl{S}{p_2}$ if $d \sqcup d_{i} \neq \top$, which is exactly
-    the same as applying $\zeta$ to $C'$. \\
+    the same as applying $\zeta$ to $C'$. \typedlvar maintains the same number
+    of steps and there is no unwanted synchronisation introduced. \\
     
 
     % ----------------------
     \subcase{$C' = \lvarerror$}\\
      Given $\lambda_{\text{LVar}}$'s operational semantics, $\sigma$ steps to
     $\sigma' = \lvarerror$ if $d \sqcup d_{i} = \top$, which is exactly
-    the same as applying $\zeta$ to $C'$. \\
+    the same as applying $\zeta$ to $C'$. \typedlvar maintains the same number
+    of steps and there is no unwanted synchronisation introduced.
 
-    Hence, the translation is valid. \\
+    Hence, this translation is valid. \\ 
 
   % ----------------------
 
   \case{$ C = \config{\lvarnew}{S}$, $\sigma = \configl{S}{\lvarnew}$}\\
-  Straight-forwardly, $C'$ steps to $\config{l}{S, l \mapsto (0, \bot)}$ which
-  is equivalent to $\configl{S(l) = (\bot, false)}{l}$, as showed in the last two
-  cases of the proof. Hence, this translation is valid.  \\
+  $C'$ steps to $\config{l}{S, l \mapsto (0, \bot)}$ which
+  is equivalent to $\configl{S[l \mapsto (\bot, false)]}{l}$, as showed in the last two
+  cases of the proof. \typedlvar maintains the same number of steps and there is
+  no unwanted synchronisation introduced. Hence, this translation is valid.  \\
   
   % ----------------------
   \case{$ C = \config{\lvarfreeze}{S}$, $\sigma = \configl{S}{\lvarfreeze}$}\\
-  Straight-forwardly, $C'$ steps to $\config{d}{S, l \mapsto (1, d)}$ which
-  is equivalent to $\configl{S(l) = (p, true)}{p}$, as showed in the last two
-  cases of the proof. Hence, this translation is valid. \\
+  $C'$ steps to $\config{d}{S, l \mapsto (1, d)}$ which
+  is equivalent to $\configl{S[l \mapsto (p, true)]}{p}$, as showed in the last two
+  cases of the proof. \typedlvar maintains the same number of steps and there is
+  no unwanted synchronisation introduced. Hence, this translation is valid. \\
   
   % ----------------------
 
@@ -389,7 +357,9 @@ such that:
 
   \case{$\config{M\;N}{S}$, $ \sigma = \configl{S}{e\;e'}$}\\
   The application case is simple, where expressions take one step each in
-  parallel in both languages. Hence, this translation is valid. \\
+  parallel in both languages. \typedlvar maintains the same number of steps and
+  there is no unwanted synchronisation introduced. Hence, this translation is
+  valid. \\ 
 
   % ----------------------
 
@@ -403,10 +373,12 @@ such that:
     $\sigma = \configl{S}{(\lambda (). e') \mspc e}$}\\
   The \lvar calculus does not provide an elimination rule for unit, since it
   introduces an explicit synchronisation construct. However, such construct is
-  easily defined by forcing $e$ to evaluate before $e'$ by introducing and
-  eliminating a lambda abstraction. Kuper'15 informally uses a generalised
+  easily defined by forcing $e$ to evaluate before $e'$ via the introduction and
+  elimination a lambda abstraction. Kuper'15 informally uses a generalised
   version of this construct. Both $C$ and $\sigma$ steps to the outermost
-  expression, $N$ and $e'$, respectively.\\
+  expression, $N$ and $e'$, respectively. Explicit unit elimination here is used
+  to synchronise and necessary for \tt{runLVars} to work. No extra steps are
+  taken in the translation, hence, this translation is valid.\\
 
   % ----------------------
   
@@ -419,7 +391,8 @@ such that:
   both values. According to the semantics of the \lvar \mspc calculus, when those two
   expressions are passed to a function, they are evaluated in parallel. Hence,
   our encoding does not introduce synchronisation, blocking the next step
-  unnecessarily, and produces a valid translation. \\
+  unnecessarily. The translation maintains the same number of steps and, hence,
+  is valid. \\
   
   % ----------------------
   \case{$C = \config{\letpair{x}{y}{M}{N}}{S}$,
@@ -432,8 +405,9 @@ such that:
   pair available to the next computation, in this case $e'$. According to the
   \lvar calculus, parameters must be fully evaluated before being passed on to a
   lambda abstraction - fact easily verifiable since \lvar \mspc has call-by-value
-  semantics. Hence, our encoding does not introduce synchronisation, blocking
-  the next step unnecessarily, and produces a valid translation. \\
+  semantics. Therefore, our encoding does not introduce synchronisation, blocking
+  the next step unnecessarily, and maintains the same number of steps. Hence,
+  this translation is valid. \\
   
   % ----------------------
 
