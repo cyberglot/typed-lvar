@@ -31,6 +31,8 @@ $\forall d, d' \in J. d \sqcup d' = \top_{D}$.
 \end{array}
 \]
 
+\remember{Define the incompatibility criterion for threshold sets.}
+
 \paragraph{Term-level syntax}
 \[
 \begin{array}{lcll}
@@ -109,7 +111,7 @@ $\forall d, d' \in J. d \sqcup d' = \top_{D}$.
   \\
   
   \inferrule*[lab=T-Unit]{
-  }{\seq{\emptyenv}{\unit}{\tyunit}}
+  }{\seq{\ty{\Gamma}}{\unit}{\tyunit}}
 
   \inferrule*[lab=T-LetUnit]{
     \seq{\ty{\Gamma}}{M}{\tyunit}
@@ -152,11 +154,30 @@ $\forall d, d' \in J. d \sqcup d' = \top_{D}$.
     \\
     \seq{\ty{\Gamma}}{N}{\tyD{d'}}
   }{\seq{\ty{\Gamma}}{\lvarput\;M\;N}{1}}
-  \\
-
-  
-  
 \end{mathpar}
+
+\todo[author=Wen,inline,color=pink!40]{%
+  I~think there's something wonky going on with the typing rules for the LVar
+  functions. For instance, the typing rule for $\lvarput$ doesn't create any
+  link between the two values $d$ and $d'$, so we don't register that the type
+  of the location is updated by the $\lvarput$ action. Heck, we don't even know
+  what particular location we're talking about, and we don't want to know,
+  either, since having a \emph{specific} location at the call site would break
+  abstraction\dots
+
+  I~think we can remedy this by seeing the LVar type system as an instance of
+  Quantitative Type Theory, where for parallel rules, \ie \LabTirName{T-App} and
+  \LabTirName{T-Pair}, we merge contexts with pointwise $\sqcup$, and for
+  sequential rules, \ie \LabTirName{T-LetUnit} and \LabTirName{T-LetPair}, we
+  require the context to be the same in both branches of the typing derivation.
+
+  The merging operation is \emph{partial}, which isn't really a problem in the
+  pen-and-paper work, since we can just say that typing derivations are only
+  well-formed if the merging of the two contexts is defined. For the
+  formalisation, we'll have to follow a different approach, but fortunately, we
+  can base ourselves on the well-established QTT literature (see Agda
+  formalisation). 
+}
 
 \subsection{Operational semantics}
 \label{sec:llam-semantics}
