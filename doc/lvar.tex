@@ -1,13 +1,10 @@
 \documentclass[main.tex]{subfiles}
-
 \begin{document}
 
 \section{Typed $\lambda_{\text{lvar}}$ calculus}
 \usingnamespace{llam}
 
-Given a set $D$, let $\mathbb{D}$ be a 4-tuple $(D, \sqcup_{D}, \bot_{D},
-\top_{D})$, and let $J$ be threshold sets, where $J \subseteq D$ such that  
-$\forall d, d' \in J. d \sqcup d' = \top_{D}$.
+Given a set $D$, let $\mathbb{D}$ be a 4-tuple $(D, \sqcup_{D}, \bot_{D}, \top_{D})$, and let $J$ range over threshold sets, where $J \subseteq D$ such that $\forall d, d' \in J. d \sqcup d' = \top_{D}$.
 
 \subsection{Syntax}
 \label{sec:llam-syntax}
@@ -19,15 +16,13 @@ $\forall d, d' \in J. d \sqcup d' = \top_{D}$.
   & \coloneqq & \ty{\tyunit}        & \text{unit} \\
   & \sep      & \ty{\typrod{T}{U}}  & \text{product} \\
   & \sep      & \ty{\tyfun{T}{U}}   & \lambda \text{ abstraction}\\
-  & \sep      & \ty{\tyJ}           & \text{threshold sets} \\
-  & \sep      & \ty{\tyD{d}}        & \text{elements } d \text{ in } D \text{ such
-                                      that } \bigsqcup D^{d} = d \\
-  & \sep      & \ty{\tyL{d}}        & \text{locations (indexed by } d \text{) of
-                                      elements in } \tyD{d}\\
+  & \sep      & \ty{\tyJ}         & \text{threshold sets} \\
+  & \sep      & \ty{\tyD{d}}        & \text{elements }d\text{ in }D\text{ such that }\bigsqcup{D^d}=d\\
+  & \sep      & \ty{\tyL{d}}        & \text{locations (indexed by }d\text{) of elements in }\tyD{d}\\
   \\
   \ty{\Gamma}
   & \coloneqq & \ty{\emptyenv}                 & \text{empty environment}\\
-  & \sep      & \ty{\tmty{x}{T}}               & \text{environment extension} \\
+  & \sep      & \ty{\ty{\Gamma},\tmty{x}{T}}   & \text{environment extension} \\
 \end{array}
 \]
 
@@ -93,7 +88,50 @@ $\forall d, d' \in J. d \sqcup d' = \top_{D}$.
 \subsection{Type System}%
 \label{sec:llam-typing}
 
-\definition{$ \sqsubseteq_{J}(d) = \exists d' \in \tyJ. d \sqsubseteq d' $}
+\begin{definition}
+  A~domain $\ty{d}$ is below a threshold set $\tyJ$, written $\ty{d}\sqsubseteq\tyJ$, if there exists a $\ty{d'}\in\tyJ$ such that $\ty{d}\sqsubseteq\ty{d'}$.
+\end{definition}
+
+\begin{definition}[$\ty{T}\sqcup\ty{U}$]
+  We can take the maximum of the domain bounds in two types $\ty{T}$ and $\ty{U}$ as $\ty{T}\sqcup\ty{U}$ if the structure of the types $\ty{T}$ and $\ty{U}$ is identical up to the domain bounds:
+  \[
+    \setlength{\arraycolsep}{2pt}
+    \begin{array}{lclcl}
+      \ty{\tyunit} & \sqcup & \ty{\tyunit}
+      & = & \ty{\tyunit}
+      \\
+      \ty{\typrod{T}{U}} & \sqcup & \ty{\typrod{T'}{U'}}
+      & = & \typrod{(\ty{T}\sqcup\ty{T'})}{(\ty{U}\sqcup\ty{U'})}
+      \\
+      \ty{\tyfun{T}{U}} & \sqcup & \ty{\tyfun{T'}{U'}}
+      & = & \tyfun{(\ty{T}\sqcup\ty{T'})}{(\ty{U}\sqcup\ty{U'})}
+      \\
+      \tyJ & \sqcup & \tyJ
+      & = & \tyJ
+      \\
+      \tyD{d} & \sqcup & \tyD{d'}
+      & = & \tyD{{d}\sqcup{d'}}
+      \\
+      \tyL{d} & \sqcup & \tyL{d'}
+      & = & \tyL{{d}\sqcup{d'}}
+    \end{array}
+  \]
+\end{definition}
+
+\begin{definition}[$\ty{\Gamma}\sqcup\ty{\Delta}$]
+  We can take the maximum of the domain bounds in two contexts $\ty{\Gamma}$ and $\ty{\Delta}$ as $\ty{\Gamma}\sqcup\ty{\Delta}$ if the structure of the contexts $\ty{\Gamma}$ and $\ty{\Delta}$ is identical up to the domain bounds.
+  \[
+    \setlength{\arraycolsep}{2pt}
+    \begin{array}{lclcl}
+      \ty{\emptyenv} & \sqcup & \ty{\emptyenv}
+      & = & \ty{\emptyenv}
+      \\
+      \ty{\Gamma},\tmty{x}{T} & \sqcup & \ty{\Delta},\tmty{x}{U}
+      & = & \ty{\Gamma}\sqcup\ty{\Delta},\tm{x}:{\ty{T}\sqcup\ty{U}}
+    \end{array}
+  \]
+\end{definition}
+
 
 \begin{mathpar}
   \inferrule*[lab=T-Var]{
@@ -106,8 +144,8 @@ $\forall d, d' \in J. d \sqcup d' = \top_{D}$.
   \inferrule*[lab=T-App]{
     \seq{\ty{\Gamma}}{M}{\tyfun{T}{U}}
     \\
-    \seq{\ty{\Gamma}}{N}{T}
-  }{\seq{\ty{\Gamma}}{M\;N}{U}}
+    \seq{\ty{\Delta}}{N}{T}
+  }{\seq{\ty{\Gamma}\sqcup\ty{\Delta}}{M\;N}{U}}
   \\
   
   \inferrule*[lab=T-Unit]{
@@ -116,21 +154,21 @@ $\forall d, d' \in J. d \sqcup d' = \top_{D}$.
   \inferrule*[lab=T-LetUnit]{
     \seq{\ty{\Gamma}}{M}{\tyunit}
     \\
-    \seq{\ty{\Gamma}}{N}{T}
-  }{\seq{\ty{\Gamma}}{\letunit{M}{N}}{T}}
+    \seq{\ty{\Delta}}{N}{T}
+  }{\seq{\ty{\Gamma}\sqcup\ty{\Delta}}{\letunit{M}{N}}{T}}
   \\
   
   \inferrule*[lab=T-Pair]{
     \seq{\ty{\Gamma}}{M}{T}
     \\
-    \seq{\ty{\Gamma}}{N}{U}
-  }{\seq{\ty{\Gamma}}{\pair{M}{N}}{\typrod{T}{U}}}
+    \seq{\ty{\Delta}}{N}{U}
+  }{\seq{\ty{\Gamma}\sqcup\ty{\Delta}}{\pair{M}{N}}{\typrod{T}{U}}}
 
   \inferrule*[lab=T-LetPair]{
     \seq{\ty{\Gamma}}{M}{\typrod{T}{T'}}
     \\
-    \seq{\ty{\Gamma},\tmty{x}{T},\tmty{y}{T'}}{N}{U}
-  }{\seq{\ty{\Gamma}}{\letpair{x}{y}{M}{N}}{U}}
+    \seq{\ty{\Delta},\tmty{x}{T},\tmty{y}{T'}}{N}{U}
+  }{\seq{\ty{\Gamma}\sqcup\ty{\Delta}}{\letpair{x}{y}{M}{N}}{U}}
   \\
 
   \inferrule*[lab=T-New]{
@@ -144,40 +182,17 @@ $\forall d, d' \in J. d \sqcup d' = \top_{D}$.
   \inferrule*[lab=T-Get]{
     \seq{\ty{\Gamma}}{M}{\tyL{d}}
     \\
-    \seq{\ty{\Gamma}}{N}{\tyJ}
+    \seq{\ty{\Delta}}{N}{\tyJ}
     \\
-    \sqsubseteq_{J}(d)
-  }{\seq{\ty{\Gamma}}{\lvarget\;M\;N}{\tyD{d}}}
+    \ty{d}\sqsubseteq\tyJ
+  }{\seq{\ty{\Gamma}\sqcup\ty{\Delta}}{\lvarget\;M\;N}{\tyD{d}}}
 
   \inferrule*[lab=T-Put]{
     \seq{\ty{\Gamma}}{M}{\tyL{d}}
     \\
-    \seq{\ty{\Gamma}}{N}{\tyD{d'}}
-  }{\seq{\ty{\Gamma}}{\lvarput\;M\;N}{1}}
+    \seq{\ty{\Delta}}{N}{\tyD{d'}}
+  }{\seq{\ty{\Gamma}\sqcup\ty{\Delta}}{\lvarput\;M\;N}{1}}
 \end{mathpar}
-
-\todo[author=Wen,inline,color=pink!40]{%
-  I~think there's something wonky going on with the typing rules for the LVar
-  functions. For instance, the typing rule for $\lvarput$ doesn't create any
-  link between the two values $d$ and $d'$, so we don't register that the type
-  of the location is updated by the $\lvarput$ action. Heck, we don't even know
-  what particular location we're talking about, and we don't want to know,
-  either, since having a \emph{specific} location at the call site would break
-  abstraction\dots
-
-  I~think we can remedy this by seeing the LVar type system as an instance of
-  Quantitative Type Theory, where for parallel rules, \ie \LabTirName{T-App} and
-  \LabTirName{T-Pair}, we merge contexts with pointwise $\sqcup$, and for
-  sequential rules, \ie \LabTirName{T-LetUnit} and \LabTirName{T-LetPair}, we
-  require the context to be the same in both branches of the typing derivation.
-
-  The merging operation is \emph{partial}, which isn't really a problem in the
-  pen-and-paper work, since we can just say that typing derivations are only
-  well-formed if the merging of the two contexts is defined. For the
-  formalisation, we'll have to follow a different approach, but fortunately, we
-  can base ourselves on the well-established QTT literature (see Agda
-  formalisation). 
-}
 
 \subsection{Operational semantics}
 \label{sec:llam-semantics}
@@ -283,9 +298,7 @@ such that:
                                             & \text{where } p_1 \cong s \text{
                                               and } P \cong J \\
     \zeta(\config{\lvarput\;l\;d'}{S})      & = & \configl{S}{\lvarput_{i}\;l}
-                                             & \text{where } u_{p_{i}}
-                                               \coloneqq \lambda d_{i}.
-                                               d \sqcup d_{i}  \\
+                                            & \text{where }u_{p_{i}}\coloneqq\lambda{d_i}.d\sqcup{d_i}  \\
     \zeta(\config{\lvarnew}{S})             & = & \configl{S}{\lvarnew} \\
     \zeta(\config{\lvarfreeze\;l}{S})       & = & \configl{S}{\lvarfreeze\;l} \\
     \zeta(\config{\lambda x.M}{S})          & = & \configl{S}{\lambda x.e} \\

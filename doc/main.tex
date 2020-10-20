@@ -33,6 +33,8 @@
 
 % useful for defining commands to use in text mode
 \usepackage{xspace}
+\newcommand{\lambdaLVar}[0]{$\lambda_{LVar}$\xspace}
+\newcommand{\lambdalvar}[0]{$\lambda_{lvar}$\xspace}
 
 % inference rules
 \usepackage{mathpartir}
@@ -110,15 +112,15 @@
 % open globally with \usingnamespace{llam}, locally with \llam{}
 \namespace*{llam}{
   % types
-  \newcommand{\tyunit}[0]{\ensuremath{\mathbf{1}}}
-  \newcommand{\tyvoid}[0]{\ensuremath{\mathbf{0}}}
-  \newcommand{\typrod}[2]{\ensuremath{{#1}\mathbin{\times}{#2}}}
-  \newcommand{\tysum}[2]{\ensuremath{{#1}\mathbin{+}{#2}}}
-  \newcommand{\tylolli}[2]{\ensuremath{{#1}\mathbin{\multimap}{#2}}}
-  \newcommand{\tyfun}[2]{\ensuremath{{#1}\mathbin{\rightarrow}{#2}}}
-  \newcommand{\tyD}[1]{\ensuremath{{\mathbin{\mathcal{D}^{{#1}}}}}}
-  \newcommand{\tyL}[1]{\ensuremath{{\mathbin{\mathcal{L}_{\mathcal{D}}^{{#1}}}}}}
-  \newcommand{\tyJ}[0]{\ensuremath{{\mathbin{\mathcal{J}}}}}
+  \newcommand{\tyunit}[0]{\ensuremath{\ty{\mathbf{1}}}}
+  \newcommand{\tyvoid}[0]{\ensuremath{\ty{\mathbf{0}}}}
+  \newcommand{\typrod}[2]{\ensuremath{{#1}\mathbin{\ty{\times}}{#2}}}
+  \newcommand{\tysum}[2]{\ensuremath{{#1}\mathbin{\ty{+}}{#2}}}
+  \newcommand{\tylolli}[2]{\ensuremath{{#1}\mathbin{\ty{\multimap}}{#2}}}
+  \newcommand{\tyfun}[2]{\ensuremath{{#1}\mathbin{\ty{\rightarrow}}{#2}}}
+  \newcommand{\tyD}[1]{\ensuremath{\ty{\mathcal{D}^{#1}}}}
+  \newcommand{\tyL}[1]{\ensuremath{\ty{\mathcal{L}_{\mathcal{D}}^{#1}}}}
+  \newcommand{\tyJ}[0]{\ensuremath{\ty{\mathcal{J}}}}
   % terms
   \newcommand{\andthen}[2]{\ensuremath{#1;#2}}
   \newcommand{\letbind}[3]{\ensuremath{\mathbf{let}\;#1\mathbin{=}#2\;\mathbf{in}\;#3}}
