@@ -33,8 +33,8 @@
 
 % useful for defining commands to use in text mode
 \usepackage{xspace}
-\newcommand{\lambdaLVar}[0]{$\lambda_{LVar}$\xspace}
-\newcommand{\lambdalvar}[0]{$\lambda_{lvar}$\xspace}
+\newcommand{\lvar}[0]{\ensuremath{\lambda_{lvar}}\xspace}
+\newcommand{\typedlvar}[0]{\ensuremath{\text{Typed }\lambda_{lvar}}\xspace}
 
 % inference rules
 \usepackage{mathpartir}
@@ -122,6 +122,7 @@
   \newcommand{\tyL}[1]{\ensuremath{\ty{\mathcal{L}_{\mathcal{D}}^{#1}}}}
   \newcommand{\tyJ}[0]{\ensuremath{\ty{\mathcal{J}}}}
   % terms
+  \newcommand{\tmJ}[0]{\ensuremath{\tm{\mathcal{J}}}}
   \newcommand{\andthen}[2]{\ensuremath{#1;#2}}
   \newcommand{\letbind}[3]{\ensuremath{\mathbf{let}\;#1\mathbin{=}#2\;\mathbf{in}\;#3}}
   \newcommand{\pair}[2]{\ensuremath{(#1,#2)}}
@@ -151,11 +152,6 @@
   % reduction relations
   \newcommand{\red}[0]{\ensuremath{\longrightarrow}}
   \newcommand{\rede}[0]{\ensuremath{\longrightarrow_{E}}}
-
-  % simplifying terminology usually repeated verbetim
-  \newcommand{\lvar}[0]{\ensuremath{\lambda_{\text{LVar}}}}
-  \newcommand{\typedlvar}[0]{\ensuremath{\text{Typed } \lambda_{\text{lvar}}}}
-  \newcommand{\mspc}[0]{\ensuremath{\;}}
 }{}
 \newcommand{\llam}[1]{\namespace*{llam}{}{#1}}
 

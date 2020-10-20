@@ -1,7 +1,7 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
 
-\section{Typed $\lambda_{\text{lvar}}$ calculus}
+\section{\typedlvar calculus}
 \usingnamespace{llam}
 
 Given a set $D$, let $\mathbb{D}$ be a 4-tuple $(D, \sqcup_{D}, \bot_{D}, \top_{D})$, and let $J$ range over threshold sets, where $J \subseteq D$ such that $\forall d, d' \in J. d \sqcup d' = \top_{D}$.
@@ -171,6 +171,9 @@ Given a set $D$, let $\mathbb{D}$ be a 4-tuple $(D, \sqcup_{D}, \bot_{D}, \top_{
   }{\seq{\ty{\Gamma}\sqcup\ty{\Delta}}{\letpair{x}{y}{M}{N}}{U}}
   \\
 
+  \inferrule*[lab=T-Threshold]{
+  }{\seq{\ty{\Gamma}}{\tmJ}{\tyJ}}
+
   \inferrule*[lab=T-New]{
   }{\seq{\ty{\Gamma}}{\lvarnew}{\tyL{\bot}}}
 
@@ -193,6 +196,9 @@ Given a set $D$, let $\mathbb{D}$ be a 4-tuple $(D, \sqcup_{D}, \bot_{D}, \top_{
     \seq{\ty{\Delta}}{N}{\tyD{d'}}
   }{\seq{\ty{\Gamma}\sqcup\ty{\Delta}}{\lvarput\;M\;N}{1}}
 \end{mathpar}
+
+\todo[inline,caption={Overestimation of upper bound due to weakening}]{%
+  I~think we've got a bit of an issue with weakening. For instance, take \LabTirName{T-Unit}. It can be typed under an \emph{arbitrary} context $\Gamma$, which means that we can use it to set arbitrary upper bounds on the domain values and locations, which will then be merged into the main context. This means our upper bound need not be exact, but could be an over-estimate\dots I~don't actually think this will lead to problems with our proofs, since it'll never lead to an under-estimate, but it's something to keep in mind.}
 
 \subsection{Operational semantics}
 \label{sec:llam-semantics}
@@ -276,9 +282,9 @@ Given a set $D$, let $\mathbb{D}$ be a 4-tuple $(D, \sqcup_{D}, \bot_{D}, \top_{
   \end{array}
   \end{mathpar}
 
-\section{Metatheory of Typed $\lambda_{\text{lvar}}$ calculus}
+\section{Metatheory of \typedlvar calculus}
 
-\subsection{Translation to \lvar \mspc from \typedlvar}
+\subsection{Translation to \lvar  from \typedlvar}
 
 \definition{A translation is a function $\zeta : C \rightarrow \sigma$,
 such that:
@@ -316,8 +322,8 @@ such that:
   \end{array}\\
 \end{mathpar}
 
-\begin{lemma}[Translation, \typedlvar \mspc $\rightsquigarrow$
-  \mspc \lvar]
+\begin{lemma}[Translation, \typedlvar  $\rightsquigarrow$
+   \lvar]
   For any translation $\zeta$,
   \begin{itemize}
     \item if $C \red C'$ and $\sigma \hookrightarrow \sigma'$ and $\zeta(C) =
@@ -404,7 +410,7 @@ such that:
   % ----------------------
 
   \case{$ C = \config{\letunit{M}{N}}{S}$,
-    $\sigma = \configl{S}{(\lambda (). e') \mspc e}$}\\
+    $\sigma = \configl{S}{(\lambda (). e')  e}$}\\
   The \lvar calculus does not provide an elimination rule for unit, since it
   introduces an explicit synchronisation construct. However, such construct is
   easily defined by forcing $e$ to evaluate before $e'$ via the introduction and
@@ -422,7 +428,7 @@ such that:
   be blocked until both components are evaluated to a value. The \lvar calculus
   does not provide pairs, therefore we encode them using lambda abstractions.
   In our encoding, a function takes two values and returns function that takes
-  both values. According to the semantics of the \lvar \mspc calculus, when those two
+  both values. According to the semantics of the \lvar  calculus, when those two
   expressions are passed to a function, they are evaluated in parallel. Hence,
   our encoding does not introduce synchronisation, blocking the next step
   unnecessarily. The translation maintains the same number of steps and, hence,
@@ -438,7 +444,7 @@ such that:
   eliminate pairs. The eliminating function has to make the values within the
   pair available to the next computation, in this case $e'$. According to the
   \lvar calculus, parameters must be fully evaluated before being passed on to a
-  lambda abstraction - fact easily verifiable since \lvar \mspc has call-by-value
+  lambda abstraction - fact easily verifiable since \lvar  has call-by-value
   semantics. Therefore, our encoding does not introduce synchronisation, blocking
   the next step unnecessarily, and maintains the same number of steps. Hence,
   this translation is valid. \\
@@ -464,8 +470,8 @@ such that:
 
 \subsection{Determinism}
 
-Given the translation of \typedlvar \mspc into \lvar \mspc is valid, we can infer that
-\typedlvar \mspc is quasi-deterministic as well. Here, we restate all proofs and
+Given the translation of \typedlvar  into \lvar  is valid, we can infer that
+\typedlvar  is quasi-deterministic as well. Here, we restate all proofs and
 definitions leading to the quasi-determinism proof as stated in Kuper'15.
 
 \definition{Permutation}
@@ -496,8 +502,8 @@ definitions leading to the quasi-determinism proof as stated in Kuper'15.
 
 \subsection{Fully deterministic programming with LVars}
 
-In this section, we prove that \typedlvar \mspc is deterministic, which is the main
-contribution of this work. We proceed by proving that all \lvarerror \mspc states
+In this section, we prove that \typedlvar  is deterministic, which is the main
+contribution of this work. We proceed by proving that all \lvarerror  states
 within the \typedlvar calculus are not typeable given our type rules.
 
 \theorem{Untypeable \lvarerror s}
