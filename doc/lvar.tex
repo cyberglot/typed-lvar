@@ -201,7 +201,7 @@
 
 \subsection{Operational semantics}
 \label{sec:llam-semantics}
-
+\todo{Wait, ain't E-Pair' and E-App just a bigger step than E-Lift?}
 \begin{mathpar}
   \begin{array}{llcl}
     \LabTirName{E-Lam}   & \tm{\config{(\lambda x.M)\;V}{S}}
@@ -229,7 +229,7 @@
                           & \red
                           & \tm{\config{d'}{S, l \mapsto \sts{b}{d}}}
     \end{array}
-  \todo{Wait, ain't E-Pair' and E-App just a bigger step than E-Lift?}
+
   \\
   \inferrule*[lab=E-Pair']{
     \tm{\config{M}{S}} \red \tm{\config{M'}{S'}}
@@ -253,7 +253,6 @@
     \rede
     \tm{\confige{N}{S'}}
   }\\
-
 \end{mathpar}
 
 \subsection{Syntatic sugar}
@@ -405,7 +404,7 @@ such that:
   elimination a lambda abstraction. Kuper'15 informally uses a generalised
   version of this construct. Both $C$ and $\sigma$ steps to the outermost
   expression, $N$ and $e'$, respectively. Explicit unit elimination here is used
-  to synchronise and necessary for \tt{runLVars} to work. No extra steps are
+  to synchronise and necessary for \texttt{runLVars} to work. No extra steps are
   taken in the translation, hence, this translation is valid.\\
 
   % ----------------------
