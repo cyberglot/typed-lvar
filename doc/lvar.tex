@@ -4,7 +4,9 @@
 \section{\typedlvar calculus}
 \usingnamespace{llam}
 
-Given a set $D$, let $\mathbb{D}$ be a 4-tuple $(D, \sqcup_{D}, \bot_{D}, \top_{D})$, and let $J$ range over threshold sets, where $J \subseteq D$ such that $\forall d, d' \in J. d \sqcup d' = \top_{D}$.
+\begin{definition}[Domains]
+  Given a set $D$, let $\mathbb{D}$ be a 4-tuple $(D, \sqcup_{D}, \bot_{D}, \top_{D})$.
+\end{definition}
 
 \subsection{Syntax}
 \label{sec:llam-syntax}
@@ -26,8 +28,6 @@ Given a set $D$, let $\mathbb{D}$ be a 4-tuple $(D, \sqcup_{D}, \bot_{D}, \top_{
 \end{array}
 \]
 
-\remember{Define the incompatibility criterion for threshold sets.}
-
 \paragraph{Term-level syntax}
 \[
 \begin{array}{lcll}
@@ -35,7 +35,7 @@ Given a set $D$, let $\mathbb{D}$ be a 4-tuple $(D, \sqcup_{D}, \bot_{D}, \top_{
   & \coloneqq & \tm{x}                        & \text{variables} \\
   & \sep      & \tm{l} \sep \tm{J} \sep \tm{d} \sep \tm{\lambda x.M}
                                               & \text{values} \\
-  & \sep      & \tm{K}                        & \text{constants} \\                                              
+  & \sep      & \tm{K}                        & \text{constants} \\
   & \sep      & \tm{M\;N}                     & \text{application} \\
   & \sep      & \tm{\unit}                    & \text{unit introduction} \\
   & \sep      & \tm{\letunit{M}{N}}           & \text{unit elimination} \\
@@ -52,12 +52,10 @@ Given a set $D$, let $\mathbb{D}$ be a 4-tuple $(D, \sqcup_{D}, \bot_{D}, \top_{
   \textit{stores } \tm{S}
   & \coloneqq & \tm{\emptyenv}                & \text{empty store} \\
   & \sep      & \tm{S, l \mapsto s}           & \text{store extension} \\
-  & \sep      & \top                          & \text{top} \\
   \\
   \textit{configurations }\tm{C}
   & \coloneqq & \tm{\config{M}{S}}            & \text{programs are composed of
                                                     terms and store} \\
-  & \sep      & \tm{\lvarerror}               & \text{runtime crash} \\
   \\
   \textit{values }\tm{V}, \tm{W}
   & \coloneqq & \tm{l}                        & \text{locations} \\
@@ -76,20 +74,21 @@ Given a set $D$, let $\mathbb{D}$ be a 4-tuple $(D, \sqcup_{D}, \bot_{D}, \top_{
   \\
   \textit{evaluation contexts }\tm{E}
   & \coloneqq & \tm{\hole}                 \\
-  & \sep      & \tm{V\; E}                 \\       
-  & \sep      & \tm{E\; V}                 \\     
-  & \sep      & \tm{(V, E)}                \\   
-  & \sep      & \tm{(E, V)}                \\   
-  & \sep      & \tm{\letunit{E}{M}}        \\                                                   
-  & \sep      & \tm{\letpair{x}{y}{E}{M}}  \\   
+  & \sep      & \tm{V\; E}                 \\
+  & \sep      & \tm{E\; V}                 \\
+  & \sep      & \tm{(V, E)}                \\
+  & \sep      & \tm{(E, V)}                \\
+  & \sep      & \tm{\letunit{E}{M}}        \\
+  & \sep      & \tm{\letpair{x}{y}{E}{M}}  \\
 \end{array}
 \]
 
 \subsection{Type System}%
 \label{sec:llam-typing}
 
-\begin{definition}
-  A~domain $\ty{d}$ is below a threshold set $\tyJ$, written $\ty{d}\sqsubseteq\tyJ$, if there exists a $\ty{d'}\in\tyJ$ such that $\ty{d}\sqsubseteq\ty{d'}$.
+\begin{definition}[Threshold set]
+  A~threshold set $\ty{\tyJ}$ is a subset of $D$, where all elements are pair-wise incompatible, meaning,  for all $\ty{d}, \ty{d'} \in \ty{D}$, if $\ty{d} \neq \ty{d'}$ then $\ty{d} \sqcup \ty{d'} = \top$.
+  A~domain $\ty{d}$ is within a threshold set $\tyJ$, written $\ty{d}\sqsupseteq\tyJ$, if there exists a $\ty{d'}\in\tyJ$ such that $\ty{d'}\sqsubseteq\ty{d}$.
 \end{definition}
 
 \begin{definition}[$\ty{T}\sqcup\ty{U}$]
@@ -118,24 +117,25 @@ Given a set $D$, let $\mathbb{D}$ be a 4-tuple $(D, \sqcup_{D}, \bot_{D}, \top_{
   \]
 \end{definition}
 
-\begin{definition}[$\ty{\Gamma}\sqcup\ty{\Delta}$]
-  We can take the maximum of the domain bounds in two contexts $\ty{\Gamma}$ and $\ty{\Delta}$ as $\ty{\Gamma}\sqcup\ty{\Delta}$ if the structure of the contexts $\ty{\Gamma}$ and $\ty{\Delta}$ is identical up to the domain bounds.
+\begin{definition}[$\ty{\Gamma}\sqcup\ty{\Gamma'}$]
+  We can take the maximum of the domain bounds in two contexts $\ty{\Gamma}$ and $\ty{\Gamma'}$ as $\ty{\Gamma}\sqcup\ty{\Gamma'}$ if the structure of the contexts $\ty{\Gamma}$ and $\ty{\Gamma'}$ is identical up to the domain bounds.
   \[
     \setlength{\arraycolsep}{2pt}
     \begin{array}{lclcl}
       \ty{\emptyenv} & \sqcup & \ty{\emptyenv}
       & = & \ty{\emptyenv}
       \\
-      \ty{\Gamma},\tmty{x}{T} & \sqcup & \ty{\Delta},\tmty{x}{U}
-      & = & \ty{\Gamma}\sqcup\ty{\Delta},\tm{x}:{\ty{T}\sqcup\ty{U}}
+      \ty{\Gamma},\tmty{x}{T} & \sqcup & \ty{\Gamma'},\tmty{x}{U}
+      & = & \ty{\Gamma}\sqcup\ty{\Gamma'},\tm{x}:{\ty{T}\sqcup\ty{U}}
     \end{array}
   \]
 \end{definition}
 
-
+\paragraph{Typing rules}
 \begin{mathpar}
   \inferrule*[lab=T-Var]{
-  }{\seq{\tmty{x}{T}}{x}{T}}
+    \tmty{x}{T} \in \ty{\Gamma}
+  }{\seq{\ty{\Gamma}}{x}{T}}
 
   \inferrule*[lab=T-Lam]{
     \seq{\ty{\Gamma},\tmty{x}{T}}{M}{U}
@@ -144,31 +144,31 @@ Given a set $D$, let $\mathbb{D}$ be a 4-tuple $(D, \sqcup_{D}, \bot_{D}, \top_{
   \inferrule*[lab=T-App]{
     \seq{\ty{\Gamma}}{M}{\tyfun{T}{U}}
     \\
-    \seq{\ty{\Delta}}{N}{T}
-  }{\seq{\ty{\Gamma}\sqcup\ty{\Delta}}{M\;N}{U}}
+    \seq{\ty{\Gamma'}}{N}{T}
+  }{\seq{\ty{\Gamma}\sqcup\ty{\Gamma'}}{M\;N}{U}}
   \\
-  
+
   \inferrule*[lab=T-Unit]{
   }{\seq{\ty{\Gamma}}{\unit}{\tyunit}}
 
   \inferrule*[lab=T-LetUnit]{
     \seq{\ty{\Gamma}}{M}{\tyunit}
     \\
-    \seq{\ty{\Delta}}{N}{T}
-  }{\seq{\ty{\Gamma}\sqcup\ty{\Delta}}{\letunit{M}{N}}{T}}
+    \seq{\ty{\Gamma'}}{N}{T}
+  }{\seq{\ty{\Gamma}\sqcup\ty{\Gamma'}}{\letunit{M}{N}}{T}}
   \\
-  
+
   \inferrule*[lab=T-Pair]{
     \seq{\ty{\Gamma}}{M}{T}
     \\
-    \seq{\ty{\Delta}}{N}{U}
-  }{\seq{\ty{\Gamma}\sqcup\ty{\Delta}}{\pair{M}{N}}{\typrod{T}{U}}}
+    \seq{\ty{\Gamma'}}{N}{U}
+  }{\seq{\ty{\Gamma}\sqcup\ty{\Gamma'}}{\pair{M}{N}}{\typrod{T}{U}}}
 
   \inferrule*[lab=T-LetPair]{
     \seq{\ty{\Gamma}}{M}{\typrod{T}{T'}}
     \\
-    \seq{\ty{\Delta},\tmty{x}{T},\tmty{y}{T'}}{N}{U}
-  }{\seq{\ty{\Gamma}\sqcup\ty{\Delta}}{\letpair{x}{y}{M}{N}}{U}}
+    \seq{\ty{\Gamma'},\tmty{x}{T},\tmty{y}{T'}}{N}{U}
+  }{\seq{\ty{\Gamma}\sqcup\ty{\Gamma'}}{\letpair{x}{y}{M}{N}}{U}}
   \\
 
   \inferrule*[lab=T-Threshold]{
@@ -185,25 +185,23 @@ Given a set $D$, let $\mathbb{D}$ be a 4-tuple $(D, \sqcup_{D}, \bot_{D}, \top_{
   \inferrule*[lab=T-Get]{
     \seq{\ty{\Gamma}}{M}{\tyL{d}}
     \\
-    \seq{\ty{\Delta}}{N}{\tyJ}
+    \seq{\ty{\Gamma'}}{N}{\tyJ}
     \\
-    \ty{d}\sqsubseteq\tyJ
-  }{\seq{\ty{\Gamma}\sqcup\ty{\Delta}}{\lvarget\;M\;N}{\tyD{d}}}
+    \ty{d}\sqsupseteq\tyJ
+  }{\seq{\ty{\Gamma}\sqcup\ty{\Gamma'}}{\lvarget\;M\;N}{\tyD{d}}}
 
   \inferrule*[lab=T-Put]{
     \seq{\ty{\Gamma}}{M}{\tyL{d}}
     \\
-    \seq{\ty{\Delta}}{N}{\tyD{d'}}
-  }{\seq{\ty{\Gamma}\sqcup\ty{\Delta}}{\lvarput\;M\;N}{1}}
+    \seq{\ty{\Gamma'}}{N}{\tyD{d'}}
+    \\
+    \ty{d}\sqsubseteq\ty{d'}
+  }{\seq{\ty{\Gamma}\sqcup\ty{\Gamma'}}{\lvarput\;M\;N}{1}}
 \end{mathpar}
-
-\todo[inline,caption={Overestimation of upper bound due to weakening}]{%
-  I~think we've got a bit of an issue with weakening. For instance, take \LabTirName{T-Unit}. It can be typed under an \emph{arbitrary} context $\Gamma$, which means that we can use it to set arbitrary upper bounds on the domain values and locations, which will then be merged into the main context. This means our upper bound need not be exact, but could be an over-estimate\dots I~don't actually think this will lead to problems with our proofs, since it'll never lead to an under-estimate, but it's something to keep in mind.}
 
 \subsection{Operational semantics}
 \label{sec:llam-semantics}
 
-% \paragraph{Configuration-independent reductions}
 \begin{mathpar}
   \begin{array}{llcl}
     \LabTirName{E-Lam}   & \tm{\config{(\lambda x.M)\;V}{S}}
@@ -222,29 +220,19 @@ Given a set $D$, let $\mathbb{D}$ be a 4-tuple $(D, \sqcup_{D}, \bot_{D}, \top_{
     \LabTirName{E-Freeze}  & \tm{\config{\lvarfreeze}{S, l \mapsto (b, d)}}
                            & \red
                            & \tm{\config{d}{S, l \mapsto (1, d)}}
+    \\
+    \LabTirName{E-Put}  & \tm{\config{\lvarput\;l\;d'}{S, l \mapsto \sts{0}{d}}}
+                           & \red
+                           & \tm{\config{()}{S, l \mapsto \sts{0}{d'}}}
+     \\
+    \LabTirName{E-Get}  & \tm{\config{\lvarget\;l\;J}{S, l \mapsto \sts{b}{d}}}
+                          & \red
+                          & \tm{\config{d'}{S, l \mapsto \sts{b}{d}}}
     \end{array}
-    \\
-    \inferrule*[lab=E-Put]{
-      d \sqcup d' \neq \top
-  }{\tm{\config{\lvarput\;l\;d'}{S, l \mapsto \sts{0}{d}}} \red
-    \tm{\config{()}{S, l \mapsto \sts{0}{d'}}}
-  }
+  \todo{Wait, ain't E-Pair' and E-App just a bigger step than E-Lift?}
   \\
-  \inferrule*[lab=E-Put-Err]{
-    d \sqcup d' = \top
-  }{\tm{\config{\lvarput\;l\;d'}{S, l \mapsto s}} \red
-    \tm{\lvarerror}
-  }
-  \\
-  \inferrule*[lab=E-Get]{
-    d' \in J
-    \\
-    d' \sqsubseteq d
-  }{\tm{\config{\lvarget\;l\;J}{S, l \mapsto \sts{b}{d}}} \red
-    \tm{\config{d'}{S, l \mapsto \sts{b}{d}}}
-  }\\
   \inferrule*[lab=E-Pair']{
-    \tm{\config{M}{S}} \red \tm{\config{M'}{S'}}   
+    \tm{\config{M}{S}} \red \tm{\config{M'}{S'}}
     \\
     \tm{\config{N}{S}} \red  \tm{\config{N'}{S''}}
   }{\tm{\config{\pair{M}{N}}{S}}
@@ -252,7 +240,7 @@ Given a set $D$, let $\mathbb{D}$ be a 4-tuple $(D, \sqcup_{D}, \bot_{D}, \top_{
     \tm{\config{\pair{M'}{N'}}{S' \sqcup S''}}
   }\\
   \inferrule*[lab=E-App]{
-    \tm{\config{M}{S}} \red \tm{\config{M'}{S'}}   
+    \tm{\config{M}{S}} \red \tm{\config{M'}{S'}}
     \\
     \tm{\config{N}{S}} \red  \tm{\config{N'}{S''}}
   }{\tm{\config{M\;N}{S}}
@@ -260,12 +248,12 @@ Given a set $D$, let $\mathbb{D}$ be a 4-tuple $(D, \sqcup_{D}, \bot_{D}, \top_{
     \tm{\config{M'\;N'}{S' \sqcup S''}}
   }\\
   \inferrule*[lab=E-Lift]{
-    \config{M}{S} \red \config{N}{S'}   
+    \config{M}{S} \red \config{N}{S'}
   }{\tm{\confige{M}{S}}
     \rede
     \tm{\confige{N}{S'}}
   }\\
-  
+
 \end{mathpar}
 
 \subsection{Syntatic sugar}
@@ -360,7 +348,7 @@ such that:
     $\sigma' = \configl{S}{p_2}$ if $d \sqcup d_{i} \neq \top$, which is exactly
     the same as applying $\zeta$ to $C'$. \typedlvar maintains the same number
     of steps and there is no unwanted synchronisation introduced. \\
-    
+
 
     % ----------------------
     \subcase{$C' = \lvarerror$}\\
@@ -369,7 +357,7 @@ such that:
     the same as applying $\zeta$ to $C'$. \typedlvar maintains the same number
     of steps and there is no unwanted synchronisation introduced.
 
-    Hence, this translation is valid. \\ 
+    Hence, this translation is valid. \\
 
   % ----------------------
 
@@ -378,14 +366,14 @@ such that:
   is equivalent to $\configl{S[l \mapsto (\bot, false)]}{l}$, as showed in the last two
   cases of the proof. \typedlvar maintains the same number of steps and there is
   no unwanted synchronisation introduced. Hence, this translation is valid.  \\
-  
+
   % ----------------------
   \case{$ C = \config{\lvarfreeze}{S}$, $\sigma = \configl{S}{\lvarfreeze}$}\\
   $C'$ steps to $\config{d}{S, l \mapsto (1, d)}$ which
   is equivalent to $\configl{S[l \mapsto (p, true)]}{p}$, as showed in the last two
   cases of the proof. \typedlvar maintains the same number of steps and there is
   no unwanted synchronisation introduced. Hence, this translation is valid. \\
-  
+
   % ----------------------
 
   \case{$C = \config{\lambda x.M}{S}$,
@@ -399,7 +387,7 @@ such that:
   The application case is simple, where expressions take one step each in
   parallel in both languages. \typedlvar maintains the same number of steps and
   there is no unwanted synchronisation introduced. Hence, this translation is
-  valid. \\ 
+  valid. \\
 
   % ----------------------
 
@@ -421,7 +409,7 @@ such that:
   taken in the translation, hence, this translation is valid.\\
 
   % ----------------------
-  
+
   \case{$ C = \config{\pair{M}{N}}{S}$,
     $\sigma = \configl{S}{(\lambda x. \lambda y.\lambda f. f x y)\;e\;e'}$} \\
   In \typedlvar, pair components are evaluated in parallel and the next step will
@@ -433,11 +421,11 @@ such that:
   our encoding does not introduce synchronisation, blocking the next step
   unnecessarily. The translation maintains the same number of steps and, hence,
   is valid. \\
-  
+
   % ----------------------
   \case{$C = \config{\letpair{x}{y}{M}{N}}{S}$,
     $\sigma = \configl{S}{e' \;(\lambda x.\lambda y. e)}$} \\
-  In \typedlvar, the elimination rule for pairs require that both components are 
+  In \typedlvar, the elimination rule for pairs require that both components are
   values, and those are substituted within the next computation by using two
   fresh variables. Given that we encoded pairs as a function that takes a
   function with two arguments, we need to create said function in order to
@@ -448,7 +436,7 @@ such that:
   semantics. Therefore, our encoding does not introduce synchronisation, blocking
   the next step unnecessarily, and maintains the same number of steps. Hence,
   this translation is valid. \\
-  
+
   % ----------------------
 
   \remember{Add case for lifted environment contexts.}
@@ -464,7 +452,7 @@ such that:
   \case{$C = \config{M}{S, l \mapsto (1, d)}$,
     $ \sigma = \configl{S[l \mapsto (d, \tt{true})]}{e}$}\\
   Follows an analogous argument as previous case.
-  
+
 \end{proof}
 
 
