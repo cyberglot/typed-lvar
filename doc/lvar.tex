@@ -68,8 +68,7 @@
   \textit{constants }\tm{K}
   & \coloneqq & \tm{\lvarnew}                 & \text{allocate new LVar} \\
   & \sep      & \tm{\lvarfreeze}              & \text{freeze LVar} \\
-  & \sep      & \tm{\lvarget}                 & \text{read threshold from
-                                                  LVar} \\
+  & \sep      & \tm{\lvarget}                 & \text{read threshold from LVar} \\
   & \sep      & \tm{\lvarput}                 & \text{add value to LVar} \\
   \\
   \textit{evaluation contexts }\tm{E}
@@ -273,39 +272,41 @@
 
 \subsection{Translation to \lvar  from \typedlvar}
 
-\definition{A translation is a function $\zeta : C \rightarrow \sigma$,
-such that:
+\definition[Ordering of stores]{
+  We define a binary operator $\sqcup_S~: D_S \times D_S \rightarrow D_S$ as follows:
+  \begin{mathpar}
+  \begin{array}{lcll}
+    (0, d)   \sqcup_S  (0, d')   & = & (0, d \sqcup d')  \\
+    (1, d)   \sqcup_S  (1, d')   & = & (1, d')  \\
+    (0, d)   \sqcup_S  (1, d')   & = & (1, d')  \\
+    (1, d)   \sqcup_S  (0, d')   & = & (1, d')  \\
+  \end{array}\\
+\end{mathpar}
+}
 
-\remember{Add partial-order rules for state $s$, where $s = (b, d)$.}
+\definition[Translation to \lvar  from \typedlvar]{A translation is a function $\zeta : C \rightarrow \sigma$, such that:
+
 \begin{itemize}
 \item it should maintain the same number of steps in $C$ when translated
   into $\sigma$;
-\item it should not introduce synchronisation.
+\item it should not introduce unintentional synchronisation.
 \end{itemize}
 }
 
 \begin{mathpar}
   \begin{array}{lcll}
-    \zeta(\lvarerror)                       & = & \lvarerror \\
-    \zeta(\config{\lvarget\;l\;J}{S})       & = & \configl{S}{\lvarget\;l\;P}
-                                            & \text{where } p_1 \cong s \text{
-                                              and } P \cong J \\
-    \zeta(\config{\lvarput\;l\;d'}{S})      & = & \configl{S}{\lvarput_{i}\;l}
-                                            & \text{where }u_{p_{i}}\coloneqq\lambda{d_i}.d\sqcup{d_i}  \\
-    \zeta(\config{\lvarnew}{S})             & = & \configl{S}{\lvarnew} \\
+    \zeta(\config{\lvarget\;l\;J}{S})       & = & \configl{S}{\lvarget\;l\;P} & \text{where } p_1 \cong s \text{ and } P \cong J \\
+    \zeta(\config{\lvarput\;l\;d'}{S})      & = & \configl{S}{\lvarput_{i}\;l} & \text{where }u_{p_{i}}\coloneqq\lambda{d_i}.d\sqcup{d_i}  \\
+    \zeta(\config{\lvarnew}{S})                & = & \configl{S}{\lvarnew} \\
     \zeta(\config{\lvarfreeze\;l}{S})       & = & \configl{S}{\lvarfreeze\;l} \\
     \zeta(\config{\lambda x.M}{S})          & = & \configl{S}{\lambda x.e} \\
-    \zeta(\config{M\;N}{S})                 & = & \configl{S}{e\;e'} \\
-    \zeta(\config{()}{S})                   & = & \configl{S}{()} \\
-    \zeta(\config{\letunit{M}{N}}{S})       & = & \configl{S}{\lambda ().e} \\
-    \zeta(\config{\pair{M}{N}}{S})          & = & \configl{S}{(\lambda x. \lambda y.
-                                                   \lambda f. f x y)\;e\;e'} \\
-    \zeta(\config{\letpair{x}{y}{M}{N}}{S}) & = & \configl{S}{e\;(\lambda x.
-                                                   \lambda y. e')} \\
-    \zeta(\config{M}{S, l \mapsto (0, d)})  & = & \configl{S[l \mapsto (d,
-                                                  \tt{false})]}{e} \\
-    \zeta(\config{M}{S, l \mapsto (1, d)})  & = & \configl{S[l \mapsto (d,
-                                                  \tt{true})]}{e} \\
+    \zeta(\config{M\;N}{S})                      & = & \configl{S}{e\;e'} \\
+    \zeta(\config{()}{S})                            & = & \configl{S}{()} \\
+    \zeta(\config{\letunit{M}{N}}{S})      & = & \configl{S}{\lambda ().e} \\
+    \zeta(\config{\pair{M}{N}}{S})           & = & \configl{S}{(\lambda x. \lambda y.\lambda f. f x y)\;e\;e'} \\
+    \zeta(\config{\letpair{x}{y}{M}{N}}{S}) & = & \configl{S}{e\;(\lambda x.\lambda y. e')} \\
+    \zeta(\config{M}{S, l \mapsto (0, d)})  & = & \configl{S[l \mapsto (d,\tt{false})]}{e} \\
+    \zeta(\config{M}{S, l \mapsto (1, d)})  & = & \configl{S[l \mapsto (d,\tt{true})]}{e} \\
   \end{array}\\
 \end{mathpar}
 
@@ -438,7 +439,6 @@ such that:
 
   % ----------------------
 
-  \remember{Add case for lifted environment contexts.}
 
   \case{$C = \config{M}{S, l \mapsto (0, d)} $,
     $ \sigma = \configl{S[l \mapsto (d, \tt{false})]}{e}$} \\
@@ -452,18 +452,43 @@ such that:
     $ \sigma = \configl{S[l \mapsto (d, \tt{true})]}{e}$}\\
   Follows an analogous argument as previous case.
 
+  % ------------------------
+
+  \remember{Add case for lifted environment contexts.}
+
 \end{proof}
 
 
 \subsection{Determinism}
 
-Given the translation of \typedlvar  into \lvar  is valid, we can infer that
-\typedlvar  is quasi-deterministic as well. Here, we restate all proofs and
-definitions leading to the quasi-determinism proof as stated in Kuper'15.
+Given the translation of \typedlvar  into \lvar  is valid, we can infer that \typedlvar  is quasi-deterministic as well. Here, we restate all proofs and definitions leading to the quasi-determinism proof as stated in Kuper'15.
 
-\definition{Permutation}
+\definition[Permutation]{
+  A~permutation function is a function $\pi : \ty{L} \rightarrow \ty{L}$ such that:
+\begin{itemize}
+\item it is invertible, that is, there is an inverse function $\pi^{-1}i : \ty{L} \rightarrow \ty{L}$ with the property that $\pi(l) = l'$ iff $\pi^{-1}(l') = l$;
+\item it is the identity on all but finitely many elements of $\ty{L}$.
+\end{itemize}
+}
 
-\definition{Permutation of an expression}
+\definition[Permutation of expressions]{
+  A~permutation of an expression $M$ is a function $\pi$ defined as follows:
+ \todo{find the base case where something happens?}
+  \begin{mathpar}
+  \begin{array}{lcll}
+    \pi(\lvarget\;l\;J)       & = & \lvarget\;\pi(l)\;\pi(J) \\
+    \pi(\lvarput\;l\;d')      & = & \lvarput\;\pi(l) \\
+    \pi(\lvarnew)                & = & \lvarnew \\
+    \pi(\lvarfreeze\;l)       & = & \lvarfreeze\;\pi(l) \\
+    \pi(\lambda x.M)         & = & \lambda x.\pi(M) \\
+    \pi(M\;N)                      & = & \pi(M) \; \pi(N)\\
+    \pi(())                            & = & () \\
+    \pi(x)                            & = & x \\
+    \pi(\letunit{M}{N})      & = & \letunit{\pi(M)}{\pi(N)} \\
+    \pi(\pair{M}{N})           & = &  \pair{\pi(M)}{\pi(N)} \\
+    \pi(\letpair{x}{y}{M}{N}) & = & \letpair{x}{y}{\pi(M)}{\pi(N)} \\
+  \end{array}\\
+\end{mathpar}}
 
 \definition{Permutation of a store}
 
