@@ -1,0 +1,63 @@
+\begin{figure*}
+  \noindent
+  \begin{minipage}{.6\textwidth}
+  \begin{mathpar}
+    \begin{array}{llrl}
+      \LabTirName{E-Lam}     & \tm{\config{(\lambda x.M)\;V}{S}}
+                             & \red & \tm{\config{\subst{M}{V}{x}}{S}}
+      \\
+      \LabTirName{E-Unit}    & \tm{\config{\letunit{\unit}{M}}{S}}
+                             & \red & \tm{\config{M}{S}}
+      \\
+      \LabTirName{E-Pair}    & \tm{\config{\letpair{x}{y}{\pair{V}{W}}{M}}{S}}
+                             & \red & \tm{\config{\subst{\subst{M}{V}{x}}{W}{y}}{S}}
+      \\
+      \LabTirName{E-New}     & \tm{\config{\lvarnew}{S}}
+                             & \red
+                             & \tm{\config{l}{S, l \mapsto (0, \bot)}}
+      \\
+      \LabTirName{E-Freeze}  & \tm{\config{\lvarfreeze}{S, l \mapsto (b, d)}}
+                             & \red
+                             & \tm{\config{d}{S, l \mapsto (1, d)}}
+      \\
+      \LabTirName{E-Put}     & \tm{\config{\lvarput\;l\;d'}{S, l \mapsto \sts{0}{d}}}
+                             & \red
+                             & \tm{\config{()}{S, l \mapsto \sts{0}{d'}}}
+      \\
+      \LabTirName{E-Get}     & \tm{\config{\lvarget\;l\;J}{S, l \mapsto \sts{b}{d}}}
+                             & \red
+                             & \tm{\config{d'}{S, l \mapsto \sts{b}{d}}}
+    \end{array}
+  \end{mathpar}
+  \end{minipage}%
+  \begin{minipage}{.4\textwidth}
+  \begin{mathpar}
+    \inferrule*[lab=E-Par-App]{
+      \tm{\config{M}{S}} \red \tm{\config{M'}{S'}}
+      \\
+      \tm{\config{N}{S}} \red  \tm{\config{N'}{S''}}
+    }{\tm{\config{M\;N}{S}}
+      \red
+      \tm{\config{M'\;N'}{S' \sqcup S''}}
+    }
+    \\ 
+    \inferrule*[lab=E-Par-Pair]{
+      \tm{\config{M}{S}} \red \tm{\config{M'}{S'}}
+      \\
+      \tm{\config{N}{S}} \red  \tm{\config{N'}{S''}}
+    }{\tm{\config{\pair{M}{N}}{S}}
+      \red
+      \tm{\config{\pair{M'}{N'}}{S' \sqcup S''}}
+    }
+    \\
+    \inferrule*[lab=E-Lift]{
+      \tm{\config{M}{S}} \red \tm{\config{N}{S'}}
+    }{\tm{\confige{M}{S}}
+      \red
+      \tm{\confige{N}{S'}}
+    }
+  \end{mathpar}
+  \end{minipage}
+  \caption{Operational semantics for \typedlambdalvar.}
+  \label{fig:semantics}
+\end{figure*}

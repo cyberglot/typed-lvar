@@ -1,276 +1,149 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
 
-\section{\typedlvar calculus}
-\usingnamespace{llam}
+\section{\typedlambdalvar calculus}
+\usingnamespace{lvar}
 
-\begin{definition}[Domains]
-  Given a set $D$, let $\mathbb{D}$ be a 4-tuple $(D, \sqcup_{D}, \bot_{D}, \top_{D})$.
-\end{definition}
+\subsection{Syntax}%
+\typedlambdalvar is defined over an abstract domain $\mathcal{D}$ which forms a lattice. We write $\bot$ and $\top$ for the minimum and maximum elements, $\sqsubseteq$ for its partial order, and $\sqcup$ for the \emph{maximum}.
 
-\subsection{Syntax}
-\label{sec:llam-syntax}
-
-\paragraph{Types and environments}
+\paragraph*{Types}
 \[
-\begin{array}{lcll}
+\begin{array}{lrll}
   \ty{T}, \ty{U}
-  & \coloneqq & \ty{\tyunit}        & \text{unit} \\
-  & \sep      & \ty{\typrod{T}{U}}  & \text{product} \\
-  & \sep      & \ty{\tyfun{T}{U}}   & \lambda \text{ abstraction}\\
-  & \sep      & \ty{\tyJ}         & \text{threshold sets} \\
-  & \sep      & \ty{\tyD{d}}        & \text{elements }d\text{ in }D\text{ such that }\bigsqcup{D^d}=d\\
-  & \sep      & \ty{\tyL{d}}        & \text{locations (indexed by }d\text{) of elements in }\tyD{d}\\
+  & \coloneqq & \ty{\tyunit}        & \text{units} \\
+  & \sep      & \ty{\typrod{T}{U}}  & \text{pairs} \\
+  & \sep      & \ty{\tyfun{T}{U}}   & \text{functions}\\
+  & \sep      & \ty{\tyJ}           & \text{thresholds} \\
+  & \sep      & \ty{\tyD{d}}        & \text{domain values }{\sqsubseteq d}\\
+  & \sep      & \ty{\tyL{d}}        & \text{location with values }{\sqsubseteq d}
+  \\
   \\
   \ty{\Gamma}
-  & \coloneqq & \ty{\emptyenv}                 & \text{empty environment}\\
-  & \sep      & \ty{\ty{\Gamma},\tmty{x}{T}}   & \text{environment extension} \\
+  & \coloneqq & \multicolumn{2}{l}{\ty{\emptyenv} \sep \ty{\ty{\Gamma},\tmty{x}{T}}}
 \end{array}
 \]
-
-\paragraph{Term-level syntax}
+We write $\ty{T}\sqcup\ty{U}$ for the type with the maximum domain bound from either $\ty{T}$ or $\ty{U}$ at each subtype $\tyD{d}$ and $\tyL{d}$. The operation is only defined if the structure of $\ty{T}$ and $\ty{U}$ is identical \emph{up to domain bounds}. Similarly for $\ty{\Gamma}\sqcup\ty{\Gamma'}$:
 \[
-\begin{array}{lcll}
-  \textit{terms }\tm{L}, \tm{M}, \tm{N}
-  & \coloneqq & \tm{x}                        & \text{variables} \\
-  & \sep      & \tm{l} \sep \tm{J} \sep \tm{d} \sep \tm{\lambda x.M}
-                                              & \text{values} \\
-  & \sep      & \tm{K}                        & \text{constants} \\
-  & \sep      & \tm{M\;N}                     & \text{application} \\
-  & \sep      & \tm{\unit}                    & \text{unit introduction} \\
-  & \sep      & \tm{\letunit{M}{N}}           & \text{unit elimination} \\
-  & \sep      & \tm{\pair{V}{W}}              & \text{product introduction} \\
-  & \sep      & \tm{\letpair{x}{y}{M}{N}}     & \text{product elimination}\\
+  \setlength{\arraycolsep}{2pt}
+  \begin{array}{lclcl}
+    \ty{\tyunit} & \sqcup & \ty{\tyunit}
+    & = & \ty{\tyunit}
+    \\
+    \ty{\typrod{T}{U}} & \sqcup & \ty{\typrod{T'}{U'}}
+    & = & \typrod{(\ty{T}\sqcup\ty{T'})}{(\ty{U}\sqcup\ty{U'})}
+    \\
+    \ty{\tyfun{T}{U}} & \sqcup & \ty{\tyfun{T'}{U'}}
+    & = & \tyfun{(\ty{T}\sqcup\ty{T'})}{(\ty{U}\sqcup\ty{U'})}
+    \\
+    \tyJ & \sqcup & \tyJ
+    & = & \tyJ
+    \\
+    \tyD{d} & \sqcup & \tyD{d'}
+    & = & \tyD{{d}\sqcup{d'}}
+    \\
+    \tyL{d} & \sqcup & \tyL{d'}
+    & = & \tyL{{d}\sqcup{d'}}
+    \\
+    \\
+    \ty{\emptyenv} & \sqcup & \ty{\emptyenv}
+    & = & \ty{\emptyenv}
+    \\
+    \ty{\Gamma},\tmty{x}{T} & \sqcup & \ty{\Gamma'},\tmty{x}{U}
+    & = & \ty{\Gamma}\sqcup\ty{\Gamma'},\tm{x}:{\ty{T}\sqcup\ty{U}}
+  \end{array}
+\]
+
+\paragraph*{Terms}
+\[
+  \begin{array}{lrll}
+  \tm{L}, \tm{M}, \tm{N}
+  & \coloneqq & \tm{x}
+    \sep        \tm{\lambda x.M}
+    \sep        \tm{M\;N}                     & \text{functions} \\
+  & \sep      & \tm{K}                        
+    \sep        \tm{l}
+    \sep        \tmJ
+    \sep        \tm{d}                        & \text{constants} \\
+  & \sep      & \tm{\unit}                    
+    \sep        \tm{\letunit{M}{N}}           & \text{units} \\
+  & \sep      & \tm{\pair{M}{N}}              
+    \sep        \tm{\letpair{x}{y}{M}{N}}     & \text{pairs}
   \\
-  \textit{status bits }\tm{B}
-  & \coloneqq & \tm{1}                        & \text{frozen LVar} \\
-  & \sep      & \tm{0}                        & \text{non-frozen LVar} \\
   \\
-  \textit{state } \tm{s}
-  & \coloneqq & \tm{\langle B, d \rangle}     & \text{states} \\
-  \\
-  \textit{stores } \tm{S}
-  & \coloneqq & \tm{\emptyenv}                & \text{empty store} \\
-  & \sep      & \tm{S, l \mapsto s}           & \text{store extension} \\
-  \\
-  \textit{configurations }\tm{C}
-  & \coloneqq & \tm{\config{M}{S}}            & \text{programs are composed of
-                                                    terms and store} \\
-  \\
-  \textit{values }\tm{V}, \tm{W}
-  & \coloneqq & \tm{l}                        & \text{locations} \\
-  & \sep      & \tm{J}                        & \text{threshold set} \\
-  & \sep      & \tm{s}                        & \text{states} \\
-  & \sep      & \tm{\lambda x.M}              & \lambda \text{ abstraction} \\
-  & \sep      & \tm{\unit}                    & \text{unit} \\
-  & \sep      & \tm{\pair{V}{W}}              & \text{product} \\
-  \\
-  \textit{constants }\tm{K}
-  & \coloneqq & \tm{\lvarnew}                 & \text{allocate new LVar} \\
-  & \sep      & \tm{\lvarfreeze}              & \text{freeze LVar} \\
-  & \sep      & \tm{\lvarget}                 & \text{read threshold from LVar} \\
-  & \sep      & \tm{\lvarput}                 & \text{add value to LVar} \\
-  \\
-  \textit{evaluation contexts }\tm{E}
-  & \coloneqq & \tm{\hole}                 \\
-  & \sep      & \tm{V\; E}                 \\
-  & \sep      & \tm{E\; V}                 \\
-  & \sep      & \tm{(V, E)}                \\
-  & \sep      & \tm{(E, V)}                \\
-  & \sep      & \tm{\letunit{E}{M}}        \\
-  & \sep      & \tm{\letpair{x}{y}{E}{M}}  \\
+  \tm{K}
+  & \coloneqq & \tm{\lvarnew}
+    \sep        \tm{\lvarfreeze}
+    \sep        \tm{\lvarget}
+    \sep        \tm{\lvarput}
 \end{array}
 \]
 
-\subsection{Type System}%
-\label{sec:llam-typing}
+\paragraph*{Thresholds}
+Thresholds are \emph{singletons}, \ie they occur on both the term- and the type-level, and the type of a threshold $\tmJ$ is that same threshold $\tyJ$. 
 
-\begin{definition}[Threshold set]
-  A~threshold set $\ty{\tyJ}$ is a subset of $D$, where all elements are pair-wise incompatible, meaning,  for all $\ty{d}, \ty{d'} \in \ty{D}$, if $\ty{d} \neq \ty{d'}$ then $\ty{d} \sqcup \ty{d'} = \top$.
-  A~domain $\ty{d}$ is within a threshold set $\tyJ$, written $\ty{d}\sqsupseteq\tyJ$, if there exists a $\ty{d'}\in\tyJ$ such that $\ty{d'}\sqsubseteq\ty{d}$.
-\end{definition}
+A~threshold $\mathcal{J}$ is a subset of $\mathcal{D}$ where all elements are pair-wise incompatible, \ie for all $d,d'\in\mathcal{D}$, if ${d}\neq{d'}$ then ${d}\sqcup{d'}={\top}$.
+A~domain value $d$ is below a threshold $\mathcal{J}$, written ${d}\sqsubseteq\mathcal{J}$, if there exists a ${d'}\in\mathcal{J}$ such that ${d}\sqsubseteq{d'}$.
 
-\begin{definition}[$\ty{T}\sqcup\ty{U}$]
-  We can take the maximum of the domain bounds in two types $\ty{T}$ and $\ty{U}$ as $\ty{T}\sqcup\ty{U}$ if the structure of the types $\ty{T}$ and $\ty{U}$ is identical up to the domain bounds:
-  \[
-    \setlength{\arraycolsep}{2pt}
-    \begin{array}{lclcl}
-      \ty{\tyunit} & \sqcup & \ty{\tyunit}
-      & = & \ty{\tyunit}
-      \\
-      \ty{\typrod{T}{U}} & \sqcup & \ty{\typrod{T'}{U'}}
-      & = & \typrod{(\ty{T}\sqcup\ty{T'})}{(\ty{U}\sqcup\ty{U'})}
-      \\
-      \ty{\tyfun{T}{U}} & \sqcup & \ty{\tyfun{T'}{U'}}
-      & = & \tyfun{(\ty{T}\sqcup\ty{T'})}{(\ty{U}\sqcup\ty{U'})}
-      \\
-      \tyJ & \sqcup & \tyJ
-      & = & \tyJ
-      \\
-      \tyD{d} & \sqcup & \tyD{d'}
-      & = & \tyD{{d}\sqcup{d'}}
-      \\
-      \tyL{d} & \sqcup & \tyL{d'}
-      & = & \tyL{{d}\sqcup{d'}}
-    \end{array}
-  \]
-\end{definition}
+\paragraph*{Syntactic sugar}
+We use syntactic sugar to make terms more readable: we write $\tm{\andthen{M}{N}}$ in place of $\tm{\letunit{M}{N}}$, $\tm{\letbind{x}{M}{N}}$ in place of $\tm{(\lambda x.N)\;M}$, and pattern matching functions $\tm{\lambda\unit.M}$ in place of $\tm{\lambda z.\letunit{z}{M}}$ and $\tm{\lambda\pair{x}{y}.M}$ in place of $\tm{\lambda z.\letpair{x}{y}{z}{M}}$. Finally, we use $\tm{\lvarrun}$ in place of the idiom $\tm{\lambda x.\letbind{l}{\lvarnew}{\letunit{x\;l}{\lvarfreeze\;l}}}$.
 
-\begin{definition}[$\ty{\Gamma}\sqcup\ty{\Gamma'}$]
-  We can take the maximum of the domain bounds in two contexts $\ty{\Gamma}$ and $\ty{\Gamma'}$ as $\ty{\Gamma}\sqcup\ty{\Gamma'}$ if the structure of the contexts $\ty{\Gamma}$ and $\ty{\Gamma'}$ is identical up to the domain bounds.
-  \[
-    \setlength{\arraycolsep}{2pt}
-    \begin{array}{lclcl}
-      \ty{\emptyenv} & \sqcup & \ty{\emptyenv}
-      & = & \ty{\emptyenv}
-      \\
-      \ty{\Gamma},\tmty{x}{T} & \sqcup & \ty{\Gamma'},\tmty{x}{U}
-      & = & \ty{\Gamma}\sqcup\ty{\Gamma'},\tm{x}:{\ty{T}\sqcup\ty{U}}
-    \end{array}
-  \]
-\end{definition}
-
-\paragraph{Typing rules}
-\begin{mathpar}
-  \inferrule*[lab=T-Var]{
-    \tmty{x}{T} \in \ty{\Gamma}
-  }{\seq{\ty{\Gamma}}{x}{T}}
-
-  \inferrule*[lab=T-Lam]{
-    \seq{\ty{\Gamma},\tmty{x}{T}}{M}{U}
-  }{\seq{\ty{\Gamma}}{\lambda x.M}{\tyfun{T}{U}}}
-
-  \inferrule*[lab=T-App]{
-    \seq{\ty{\Gamma}}{M}{\tyfun{T}{U}}
-    \\
-    \seq{\ty{\Gamma'}}{N}{T}
-  }{\seq{\ty{\Gamma}\sqcup\ty{\Gamma'}}{M\;N}{U}}
+\paragraph*{Configurations}
+\[
+\begin{array}{lrll}
+  \tm{B}
+  & \coloneqq & \tm{1}
+    \sep        \tm{0} & \text{status bits}
   \\
-
-  \inferrule*[lab=T-Unit]{
-  }{\seq{\ty{\Gamma}}{\unit}{\tyunit}}
-
-  \inferrule*[lab=T-LetUnit]{
-    \seq{\ty{\Gamma}}{M}{\tyunit}
-    \\
-    \seq{\ty{\Gamma'}}{N}{T}
-  }{\seq{\ty{\Gamma}\sqcup\ty{\Gamma'}}{\letunit{M}{N}}{T}}
+  \tm{s}
+  & \coloneqq & \tm{\langle B, d \rangle}
   \\
-
-  \inferrule*[lab=T-Pair]{
-    \seq{\ty{\Gamma}}{M}{T}
-    \\
-    \seq{\ty{\Gamma'}}{N}{U}
-  }{\seq{\ty{\Gamma}\sqcup\ty{\Gamma'}}{\pair{M}{N}}{\typrod{T}{U}}}
-
-  \inferrule*[lab=T-LetPair]{
-    \seq{\ty{\Gamma}}{M}{\typrod{T}{T'}}
-    \\
-    \seq{\ty{\Gamma'},\tmty{x}{T},\tmty{y}{T'}}{N}{U}
-  }{\seq{\ty{\Gamma}\sqcup\ty{\Gamma'}}{\letpair{x}{y}{M}{N}}{U}}
+  \tm{S}
+  & \coloneqq & \tm{\emptyenv}
+    \sep        \tm{S, l \mapsto s} & \text{stores}
   \\
+  \tm{C}
+  & \coloneqq & \tm{\config{M}{S}} & \text{configurations}
+\end{array}
+\]
 
-  \inferrule*[lab=T-Threshold]{
-  }{\seq{\ty{\Gamma}}{\tmJ}{\tyJ}}
-
-  \inferrule*[lab=T-New]{
-  }{\seq{\ty{\Gamma}}{\lvarnew}{\tyL{\bot}}}
-
-  \inferrule*[lab=T-Freeze]{
-    \seq{\ty{\Gamma}}{M}{\tyL{d}}
-  }{\seq{\ty{\Gamma}}{\lvarfreeze\;M}{\tyD{d}}}
+\paragraph*{Values and evaluation contexts}
+\[
+\begin{array}{lrll}
+  \tm{V}, \tm{W}
+  & \coloneqq & \tm{l}
+    \sep        \tm{J}
+    \sep        \tm{s}
+    \sep        \tm{\lambda x.M}
+    \sep        \tm{\unit}
+    \sep        \tm{\pair{V}{W}}
   \\
-
-  \inferrule*[lab=T-Get]{
-    \seq{\ty{\Gamma}}{M}{\tyL{d}}
-    \\
-    \seq{\ty{\Gamma'}}{N}{\tyJ}
-    \\
-    \ty{d}\sqsupseteq\tyJ
-  }{\seq{\ty{\Gamma}\sqcup\ty{\Gamma'}}{\lvarget\;M\;N}{\tyD{d}}}
-
-  \inferrule*[lab=T-Put]{
-    \seq{\ty{\Gamma}}{M}{\tyL{d}}
-    \\
-    \seq{\ty{\Gamma'}}{N}{\tyD{d'}}
-    \\
-    \ty{d}\sqsubseteq\ty{d'}
-  }{\seq{\ty{\Gamma}\sqcup\ty{\Gamma'}}{\lvarput\;M\;N}{1}}
-\end{mathpar}
+  \tm{E}
+  & \coloneqq & \tm{\hole}
+    \sep        \tm{V\; E}
+    \sep        \tm{E\; V}
+    \sep        \tm{(V, E)}
+    \sep        \tm{(E, V)} \\
+  & \sep      & \tm{\letunit{E}{M}}
+    \sep        \tm{\letpair{x}{y}{E}{M}}
+\end{array}
+\]
 
 \subsection{Operational semantics}
-\label{sec:llam-semantics}
-\todo{Wait, ain't E-Pair' and E-App just a bigger step than E-Lift?}
-\begin{mathpar}
-  \begin{array}{llcl}
-    \LabTirName{E-Lam}   & \tm{\config{(\lambda x.M)\;V}{S}}
-                         & \red & \tm{\config{\subst{M}{V}{x}}{S}}
-    \\
-    \LabTirName{E-Unit}  & \tm{\config{\letunit{\unit}{M}}{S}}
-                         & \red & \tm{\config{M}{S}}
-    \\
-    \LabTirName{E-Pair}  & \tm{\config{\letpair{x}{y}{\pair{V}{W}}{M}}{S}}
-                         & \red & \tm{\config{\subst{\subst{M}{V}{x}}{W}{y}}{S}}
-    \\
-    \LabTirName{E-New}     & \tm{\config{\lvarnew}{S}}
-                           & \red
-                           & \tm{\config{l}{S, l \mapsto (0, \bot)}}
-    \\
-    \LabTirName{E-Freeze}  & \tm{\config{\lvarfreeze}{S, l \mapsto (b, d)}}
-                           & \red
-                           & \tm{\config{d}{S, l \mapsto (1, d)}}
-    \\
-    \LabTirName{E-Put}  & \tm{\config{\lvarput\;l\;d'}{S, l \mapsto \sts{0}{d}}}
-                           & \red
-                           & \tm{\config{()}{S, l \mapsto \sts{0}{d'}}}
-     \\
-    \LabTirName{E-Get}  & \tm{\config{\lvarget\;l\;J}{S, l \mapsto \sts{b}{d}}}
-                          & \red
-                          & \tm{\config{d'}{S, l \mapsto \sts{b}{d}}}
-    \end{array}
+\label{sec:lvar-semantics}
+\input{fig/semantics}
+See~\cref{fig:semantics}.
 
-  \\
-  \inferrule*[lab=E-Pair']{
-    \tm{\config{M}{S}} \red \tm{\config{M'}{S'}}
-    \\
-    \tm{\config{N}{S}} \red  \tm{\config{N'}{S''}}
-  }{\tm{\config{\pair{M}{N}}{S}}
-    \red
-    \tm{\config{\pair{M'}{N'}}{S' \sqcup S''}}
-  }\\
-  \inferrule*[lab=E-App]{
-    \tm{\config{M}{S}} \red \tm{\config{M'}{S'}}
-    \\
-    \tm{\config{N}{S}} \red  \tm{\config{N'}{S''}}
-  }{\tm{\config{M\;N}{S}}
-    \red
-    \tm{\config{M'\;N'}{S' \sqcup S''}}
-  }\\
-  \inferrule*[lab=E-Lift]{
-    \config{M}{S} \red \config{N}{S'}
-  }{\tm{\confige{M}{S}}
-    \rede
-    \tm{\confige{N}{S'}}
-  }\\
-\end{mathpar}
+Recall that the evaluation contexts for pairs are $\tm{(V, E)}$ and $\tm{(E, V)}$. Consequently, we can only apply \LabTirName{E-Lift} if either of the components of the pair has already reduced to a value. If both components can still reduce, we are forced to apply \LabTirName{E-Par-Pair}, which reduces both sides in parallel. Similarly for function applications.
 
-\subsection{Syntatic sugar}
+\subsection{Typing rules}%
+\label{sec:lvar-typing}
+\input{fig/typing}
+See~\cref{fig:typing}.
 
-\begin{mathpar}
-\inferrule*[lab=T-RunLVar]{
-    \seq{\ty{\Gamma}}{M}{\tyfun{\tyL{d}}{()}}
-  }{\seq{\ty{\Gamma}}{\lvarrun\;M}{\tyD{d}}}
-  \\
-  \begin{array}{llcl}
-    \LabTirName{E-RunLVar} & \tm{\lvarrun\;M}
-                           & \coloneqq
-                           & \tm{(\lambda l.\letunit{M\;l}{\lvarfreeze\;l})\;\lvarnew}
-  \end{array}
-  \end{mathpar}
+\section{Metatheory of \typedlambdalvar calculus}
 
-\section{Metatheory of \typedlvar calculus}
-
-\subsection{Translation to \lvar  from \typedlvar}
+\subsection{Translation to \lambdalvar  from \typedlambdalvar}
 
 \definition[Ordering of stores]{
   We define a binary operator $\sqcup_S~: D_S \times D_S \rightarrow D_S$ as follows:
@@ -284,34 +157,55 @@
 \end{mathpar}
 }
 
-\definition[Translation to \lvar  from \typedlvar]{A translation is a function $\zeta : C \rightarrow \sigma$, such that:
+\todo{%
+  The translation function $\trans{\cdot}$ should have a tight operational correspondence, \ie terms in \typedlambdalvar should reduce in the same number of steps when translated to \lambdalvar, and should not add or remove synchronisation.}
 
-\begin{itemize}
-\item it should maintain the same number of steps in $C$ when translated
-  into $\sigma$;
-\item it should not introduce unintentional synchronisation.
-\end{itemize}
-}
+\todo{%
+  The translation function below is unfinished. You probably want to replace each occurrence of an $e$-style variable with a recursive call?}
 
 \begin{mathpar}
   \begin{array}{lcll}
-    \zeta(\config{\lvarget\;l\;J}{S})       & = & \configl{S}{\lvarget\;l\;P} & \text{where } p_1 \cong s \text{ and } P \cong J \\
-    \zeta(\config{\lvarput\;l\;d'}{S})      & = & \configl{S}{\lvarput_{i}\;l} & \text{where }u_{p_{i}}\coloneqq\lambda{d_i}.d\sqcup{d_i}  \\
-    \zeta(\config{\lvarnew}{S})                & = & \configl{S}{\lvarnew} \\
-    \zeta(\config{\lvarfreeze\;l}{S})       & = & \configl{S}{\lvarfreeze\;l} \\
-    \zeta(\config{\lambda x.M}{S})          & = & \configl{S}{\lambda x.e} \\
-    \zeta(\config{M\;N}{S})                      & = & \configl{S}{e\;e'} \\
-    \zeta(\config{()}{S})                            & = & \configl{S}{()} \\
-    \zeta(\config{\letunit{M}{N}}{S})      & = & \configl{S}{\lambda ().e} \\
-    \zeta(\config{\pair{M}{N}}{S})           & = & \configl{S}{(\lambda x. \lambda y.\lambda f. f x y)\;e\;e'} \\
-    \zeta(\config{\letpair{x}{y}{M}{N}}{S}) & = & \configl{S}{e\;(\lambda x.\lambda y. e')} \\
-    \zeta(\config{M}{S, l \mapsto (0, d)})  & = & \configl{S[l \mapsto (d,\tt{false})]}{e} \\
-    \zeta(\config{M}{S, l \mapsto (1, d)})  & = & \configl{S[l \mapsto (d,\tt{true})]}{e} \\
-  \end{array}\\
+    \tm{\trans{\config{\lvarget\;l\;\tmJ}{S}}}
+    & = & \configl{S}{\lvarget\;l\;P}
+    \\ & & \multicolumn{2}{l}{\text{where } p_1 \cong s \text{ and } P \cong \tmJ}
+    \\
+    \tm{\trans{\config{\lvarput\;l\;d'}{S}}}
+    & = & \configl{S}{\lvarput_{i}\;l}
+    \\ & & \multicolumn{2}{l}{\text{where }u_{p_{i}}\coloneqq\lambda{d_i}.d\sqcup{d_i}}
+    \\
+    \tm{\trans{\config{\lvarnew}{S}}}
+    & = & \configl{S}{\lvarnew}
+    \\
+    \tm{\trans{\config{\lvarfreeze\;l}{S}}}
+    & = & \configl{S}{\lvarfreeze\;l}
+    \\
+    \tm{\trans{\config{\lambda x.M}{S}}}
+    & = & \configl{S}{\lambda x.e}
+    \\
+    \tm{\trans{\config{M\;N}{S}}}
+    & = & \configl{S}{e\;e'}
+    \\
+    \tm{\trans{\config{()}{S}}}
+    & = & \configl{S}{()}
+    \\
+    \tm{\trans{\config{\letunit{M}{N}}{S}}}
+    & = & \configl{S}{\lambda ().e}
+    \\
+    \tm{\trans{\config{\pair{M}{N}}{S}}}
+    & = & \configl{S}{(\lambda x. \lambda y.\lambda f. f x y)\;e\;e'}
+    \\
+    \tm{\trans{\config{\letpair{x}{y}{M}{N}}{S}}}
+    & = & \configl{S}{e\;(\lambda x.\lambda y. e')}
+    \\
+    \tm{\trans{\config{M}{S, l \mapsto (0, d)}}}
+    & = & \configl{S[l \mapsto (d,\tt{false})]}{e}
+    \\
+    \tm{\trans{\config{M}{S, l \mapsto (1, d)}}}
+    & = & \configl{S[l \mapsto (d,\tt{true})]}{e}
+  \end{array}
 \end{mathpar}
 
-\begin{lemma}[Translation, \typedlvar  $\rightsquigarrow$
-   \lvar]
+\begin{lemma}[Translation, \typedlambdalvar  $\rightsquigarrow$ \lambdalvar]
   For any translation $\zeta$,
   \begin{itemize}
     \item if $C \red C'$ and $\sigma \hookrightarrow \sigma'$ and $\zeta(C) =
@@ -325,143 +219,102 @@
   By induction on the structure of $C$. All cases are straight-forward, except
   for the introduction and elimination of pairs.
 
- \case{$C = \config{\lvarerror}{S}, \; \sigma = \configl{S}{\lvarerror}$.}\\
- $C$ and $\sigma$ cannot step. Hence, the translation is vacuously valid.\\
+  \begin{case}{%
+      $C = \config{\lvarerror}{S}$,
+      $\sigma = \configl{S}{\lvarerror}$}
+    $C$ and $\sigma$ cannot step. Hence, the translation is vacuously valid.
+  \end{case}
 
- % ----------------------
+  \begin{case}{%
+      $C = \config{\lvarget\;l\;J}{S}$,
+      $\sigma = \configl{S}{\lvarget\;l\;P}$}
+    Given the operational semantics, $C$ steps to $C' = \config{s'}{S, l \mapsto (b, d)}$. And given $\lambda_{\text{LVar}}$'s operational semantics, $\sigma$ steps to $\sigma' = \configl{S}{p_2}$. Applying $\zeta (C')$, we get $\configl{S}{p_2}$. \typedlambdalvar maintains the same number of steps and there is no unwanted synchronisation introduced. Hence, this translation is valid.
+  \end{case}
 
- \case{$C = \config{\lvarget\;l\;J}{S}, \; \sigma = \configl{S}{\lvarget\;l\;P}$.}\\
-  Given the operational semantics, $C$ steps to $C' = \config{s'}{S, l \mapsto (b,
-    d)}$.
-  And given $\lambda_{\text{LVar}}$'s operational semantics, $\sigma$ steps to
-  $\sigma' = \configl{S}{p_2}$. Applying $\zeta (C')$, we get
-  $\configl{S}{p_2}$. \typedlvar maintains the same number of steps and there is
-  no unwanted synchronisation introduced. Hence, this translation is valid. \\
+  \begin{case}{%
+      $C = \config{\lvarput\;l\;d'}{S}$,
+      $\sigma = \configl{S}{\lvarput_{i}\;l}$}
+    Given the operational semantics, $C$ can either error or take a step.
+    \begin{subcase}{$C' = \config{s'}{S, l \mapsto s'}$}
+      Given $\lambda_{\text{LVar}}$'s operational semantics, $\sigma$ steps to $\sigma' = \configl{S}{p_2}$ if $d \sqcup d_{i} \neq \top$, which is exactly the same as applying $\zeta$ to $C'$. \typedlambdalvar maintains the same number of steps and there is no unwanted synchronisation introduced.
+    \end{subcase}
+    \begin{subcase}{$C' = \lvarerror$}
+      Given $\lambda_{\text{LVar}}$'s operational semantics, $\sigma$ steps to $\sigma' = \lvarerror$ if $d \sqcup d_{i} = \top$, which is exactly the same as applying $\zeta$ to $C'$. \typedlambdalvar maintains the same number of steps and there is no unwanted synchronisation introduced. Hence, this translation is valid.
+    \end{subcase}
+  \end{case}
 
-  % ----------------------
+  \begin{case}{%
+      $C = \config{\lvarnew}{S}$,
+      $\sigma = \configl{S}{\lvarnew}$}
+    $C'$ steps to $\config{l}{S, l \mapsto (0, \bot)}$ which is equivalent to $\configl{S[l \mapsto (\bot, false)]}{l}$, as showed in the last two cases of the proof. \typedlambdalvar maintains the same number of steps and there is no unwanted synchronisation introduced. Hence, this translation is valid.
+  \end{case}
 
-  \case{$C = \config{\lvarput\;l\;d'}{S}, \; \sigma = \configl{S}{\lvarput_{i}\;l}$.}\\
-  Given the operational semantics, $C$ can either error or take a step.\\
+  \begin{case}{%
+      $C = \config{\lvarfreeze}{S}$,
+      $\sigma = \configl{S}{\lvarfreeze}$}
+    $C'$ steps to $\config{d}{S, l \mapsto (1, d)}$ which is equivalent to $\configl{S[l \mapsto (p, true)]}{p}$, as showed in the last two cases of the proof. \typedlambdalvar maintains the same number of steps and there is no unwanted synchronisation introduced. Hence, this translation is valid.
+  \end{case}
 
-    \subcase{$C' = \config{s'}{S, l \mapsto s'}$} \\
-    Given $\lambda_{\text{LVar}}$'s operational semantics, $\sigma$ steps to
-    $\sigma' = \configl{S}{p_2}$ if $d \sqcup d_{i} \neq \top$, which is exactly
-    the same as applying $\zeta$ to $C'$. \typedlvar maintains the same number
-    of steps and there is no unwanted synchronisation introduced. \\
+  \begin{case}{%
+      $C = \config{\lambda x.M}{S}$,
+      $\sigma = \configl{S}{\lambda x.e}$}
+    $C$ and $\sigma$ do not step since lambda abstractions are values. Also, $C$ and $\sigma$ are immediately equivalent up to $\alpha$-equivalence.
+  \end{case}
 
+  \begin{case}{%
+      $\config{M\;N}{S}$,
+      $ \sigma = \configl{S}{e\;e'}$}
+    The application case is simple, where expressions take one step each in parallel in both languages. \typedlambdalvar maintains the same number of steps and there is no unwanted synchronisation introduced. Hence, this translation is valid.
+  \end{case}
 
-    % ----------------------
-    \subcase{$C' = \lvarerror$}\\
-     Given $\lambda_{\text{LVar}}$'s operational semantics, $\sigma$ steps to
-    $\sigma' = \lvarerror$ if $d \sqcup d_{i} = \top$, which is exactly
-    the same as applying $\zeta$ to $C'$. \typedlvar maintains the same number
-    of steps and there is no unwanted synchronisation introduced.
+  \begin{case}{%
+      $ C = \config{()}{S}$,
+      $\sigma = \configl{S}{()}$}
+    $C$ and $\sigma$ do not step since unit is a value. Also, $C$ and $\sigma$ are immediately equivalent.
+  \end{case}
 
-    Hence, this translation is valid. \\
+  \begin{case}{%
+      $ C = \config{\letunit{M}{N}}{S}$,
+      $\sigma = \configl{S}{(\lambda (). e')  e}$}
+    The \lambdalvar calculus does not provide an elimination rule for unit, since it introduces an explicit synchronisation construct. However, such construct is easily defined by forcing $e$ to evaluate before $e'$ via the introduction and elimination a lambda abstraction. \citet{kuper15} informally uses a generalised version of this construct. Both $C$ and $\sigma$ steps to the outermost expression, $N$ and $e'$, respectively. Explicit unit elimination here is used to synchronise and necessary for \texttt{runLVars} to work. No extra steps are taken in the translation, hence, this translation is valid.
+  \end{case}
 
-  % ----------------------
+  \begin{case}{%
+      $ C = \config{\pair{M}{N}}{S}$,
+      $\sigma = \configl{S}{(\lambda x. \lambda y.\lambda f. f x y)\;e\;e'}$}
+    In \typedlambdalvar, pair components are evaluated in parallel and the next step will be blocked until both components are evaluated to a value. The \lambdalvar calculus does not provide pairs, therefore we encode them using lambda abstractions. In our encoding, a function takes two values and returns function that takes both values. According to the semantics of the \lambdalvar  calculus, when those two expressions are passed to a function, they are evaluated in parallel. Hence, our encoding does not introduce synchronisation, blocking the next step unnecessarily. The translation maintains the same number of steps and, hence, is valid.
+  \end{case}
 
-  \case{$ C = \config{\lvarnew}{S}$, $\sigma = \configl{S}{\lvarnew}$}\\
-  $C'$ steps to $\config{l}{S, l \mapsto (0, \bot)}$ which
-  is equivalent to $\configl{S[l \mapsto (\bot, false)]}{l}$, as showed in the last two
-  cases of the proof. \typedlvar maintains the same number of steps and there is
-  no unwanted synchronisation introduced. Hence, this translation is valid.  \\
+  \begin{case}{%
+      $C = \config{\letpair{x}{y}{M}{N}}{S}$,
+      $\sigma = \configl{S}{e' \;(\lambda x.\lambda y. e)}$}
+    In \typedlambdalvar, the elimination rule for pairs require that both components are values, and those are substituted within the next computation by using two fresh variables. Given that we encoded pairs as a function that takes a function with two arguments, we need to create said function in order to eliminate pairs. The eliminating function has to make the values within the pair available to the next computation, in this case $e'$. According to the \lambdalvar calculus, parameters must be fully evaluated before being passed on to a lambda abstraction - fact easily verifiable since \lambdalvar has call-by-value semantics. Therefore, our encoding does not introduce synchronisation, blocking the next step unnecessarily, and maintains the same number of steps. Hence, this translation is valid.
+  \end{case}
 
-  % ----------------------
-  \case{$ C = \config{\lvarfreeze}{S}$, $\sigma = \configl{S}{\lvarfreeze}$}\\
-  $C'$ steps to $\config{d}{S, l \mapsto (1, d)}$ which
-  is equivalent to $\configl{S[l \mapsto (p, true)]}{p}$, as showed in the last two
-  cases of the proof. \typedlvar maintains the same number of steps and there is
-  no unwanted synchronisation introduced. Hence, this translation is valid. \\
+  \begin{case}{%
+      $C = \config{M}{S, l \mapsto (0, d)}$,
+      $\sigma = \configl{S[l \mapsto (d, \tt{false})]}{e}$}
+    The encoding of LVar's writeability status in \typedlambdalvar uses $0$ and $1$,
+    while in \lambdalvar, they are encoded as regular booleans. Irregardless of the most
+    common representation of booleans as numbers, the LVar should be initialised
+    with one status and switch to a different one once frozen, which happens in
+    both \lambdalvar and \typedlambdalvar.
+  \end{case}
 
-  % ----------------------
+  \begin{case}{%
+      $C = \config{M}{S, l \mapsto (1, d)}$,
+      $ \sigma = \configl{S[l \mapsto (d, \tt{true})]}{e}$}
+    Follows an analogous argument as previous case.
+  \end{case}
 
-  \case{$C = \config{\lambda x.M}{S}$,
-    $\sigma = \configl{S}{\lambda x.e}$}\\
-  $C$ and $\sigma$ do not step since lambda abstractions are values. Also, $C$
-  and $\sigma$ are immediately equivalent up to $\alpha$-equivalence.\\
-
-  % ----------------------
-
-  \case{$\config{M\;N}{S}$, $ \sigma = \configl{S}{e\;e'}$}\\
-  The application case is simple, where expressions take one step each in
-  parallel in both languages. \typedlvar maintains the same number of steps and
-  there is no unwanted synchronisation introduced. Hence, this translation is
-  valid. \\
-
-  % ----------------------
-
-  \case{$ C = \config{()}{S}$, $\sigma = \configl{S}{()}$}\\
-  $C$ and $\sigma$ do not step since unit is a value. Also, $C$
-  and $\sigma$ are immediately equivalent.\\
-
-  % ----------------------
-
-  \case{$ C = \config{\letunit{M}{N}}{S}$,
-    $\sigma = \configl{S}{(\lambda (). e')  e}$}\\
-  The \lvar calculus does not provide an elimination rule for unit, since it
-  introduces an explicit synchronisation construct. However, such construct is
-  easily defined by forcing $e$ to evaluate before $e'$ via the introduction and
-  elimination a lambda abstraction. Kuper'15 informally uses a generalised
-  version of this construct. Both $C$ and $\sigma$ steps to the outermost
-  expression, $N$ and $e'$, respectively. Explicit unit elimination here is used
-  to synchronise and necessary for \texttt{runLVars} to work. No extra steps are
-  taken in the translation, hence, this translation is valid.\\
-
-  % ----------------------
-
-  \case{$ C = \config{\pair{M}{N}}{S}$,
-    $\sigma = \configl{S}{(\lambda x. \lambda y.\lambda f. f x y)\;e\;e'}$} \\
-  In \typedlvar, pair components are evaluated in parallel and the next step will
-  be blocked until both components are evaluated to a value. The \lvar calculus
-  does not provide pairs, therefore we encode them using lambda abstractions.
-  In our encoding, a function takes two values and returns function that takes
-  both values. According to the semantics of the \lvar  calculus, when those two
-  expressions are passed to a function, they are evaluated in parallel. Hence,
-  our encoding does not introduce synchronisation, blocking the next step
-  unnecessarily. The translation maintains the same number of steps and, hence,
-  is valid. \\
-
-  % ----------------------
-  \case{$C = \config{\letpair{x}{y}{M}{N}}{S}$,
-    $\sigma = \configl{S}{e' \;(\lambda x.\lambda y. e)}$} \\
-  In \typedlvar, the elimination rule for pairs require that both components are
-  values, and those are substituted within the next computation by using two
-  fresh variables. Given that we encoded pairs as a function that takes a
-  function with two arguments, we need to create said function in order to
-  eliminate pairs. The eliminating function has to make the values within the
-  pair available to the next computation, in this case $e'$. According to the
-  \lvar calculus, parameters must be fully evaluated before being passed on to a
-  lambda abstraction - fact easily verifiable since \lvar  has call-by-value
-  semantics. Therefore, our encoding does not introduce synchronisation, blocking
-  the next step unnecessarily, and maintains the same number of steps. Hence,
-  this translation is valid. \\
-
-  % ----------------------
-
-
-  \case{$C = \config{M}{S, l \mapsto (0, d)} $,
-    $ \sigma = \configl{S[l \mapsto (d, \tt{false})]}{e}$} \\
-  The encoding of LVar's writeability status in \typedlvar uses $0$ and $1$,
-  while in \lvar, they are encoded as regular booleans. Irregardless of the most
-  common representation of booleans as numbers, the LVar should be initialised
-  with one status and switch to a different one once frozen, which happens in
-  both \lvar and \typedlvar.\\
-
-  \case{$C = \config{M}{S, l \mapsto (1, d)}$,
-    $ \sigma = \configl{S[l \mapsto (d, \tt{true})]}{e}$}\\
-  Follows an analogous argument as previous case.
-
-  % ------------------------
-
-  \remember{Add case for lifted environment contexts.}
-
+  \remember{Add case for lifted evaluation contexts.}
 \end{proof}
 
 
 \subsection{Determinism}
 
-Given the translation of \typedlvar  into \lvar  is valid, we can infer that \typedlvar  is quasi-deterministic as well. Here, we restate all proofs and definitions leading to the quasi-determinism proof as stated in Kuper'15.
+Given the translation of \typedlambdalvar  into \lambdalvar  is valid, we can infer that \typedlambdalvar  is quasi-deterministic as well. Here, we restate definitions leading to the quasi-determinism proof as stated in \citet{kuper15}.
+\remember{Please don't restate the proofs.}
 
 \definition[Permutation]{
   A~permutation function is a function $\pi : \ty{L} \rightarrow \ty{L}$ such that:
@@ -514,9 +367,9 @@ Given the translation of \typedlvar  into \lvar  is valid, we can infer that \ty
 
 \subsection{Fully deterministic programming with LVars}
 
-In this section, we prove that \typedlvar  is deterministic, which is the main
+In this section, we prove that \typedlambdalvar  is deterministic, which is the main
 contribution of this work. We proceed by proving that all \lvarerror  states
-within the \typedlvar calculus are not typeable given our type rules.
+within the \typedlambdalvar calculus are not typeable given our type rules.
 
 \theorem{Untypeable \lvarerror s}
 \corollary{Full Determinism}

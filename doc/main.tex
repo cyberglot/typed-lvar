@@ -1,174 +1,227 @@
-\documentclass{article}
+\documentclass[sigplan,10pt,review,anonymous]{acmart}
+\settopmatter{printfolios=true,printccs=false,printacmref=false}
 
-% use for separate compilation
+%% Conference information
+%% Supplied to authors by publisher for camera-ready submission;
+%% use defaults for review submission.
+\acmConference[PL'18]{ACM SIGPLAN Conference on Programming Languages}{January 01--03, 2018}{New York, NY, USA}
+\acmYear{2018}
+\acmISBN{} % \acmISBN{978-x-xxxx-xxxx-x/YY/MM}
+\acmDOI{} % \acmDOI{10.1145/nnnnnnn.nnnnnnn}
+\startPage{1}
+
+%% Separate compilation of subfiles
 \usepackage{subfiles}
 \newcommand{\onlyinsubfile}[1]{#1}
 \newcommand{\notinsubfile}[1]{}
 
-% bibtex setup
-% (most conferences require a bibtex style which is incompatible with biber,
-% leaving you to redo all the nice complex \textcite commands by hand)
-\usepackage[%
-  backend=biber,
-  bibencoding=utf8,
-  style=authoryear,
-  sorting=nyt,
-  sortcites=true,
-  natbib=true,
-  backref=false,
-  backrefstyle=all+,
-  hyperref=true,
-]{biblatex}
-\bibliography{main.bib}
+%% Copyright information
+%% Supplied to authors (based on authors' rights management selection;
+%% see authors.acm.org) by publisher for camera-ready submission;
+%% use 'none' for review submission.
+\setcopyright{none}
 
-% gives you \ie, \eg, \etc
+%% Bibliography and citation style
+\bibliographystyle{ACM-Reference-Format}
+\citestyle{acmauthoryear}
+
+% Gives you \ie, \eg, \etc
 \usepackage[all]{foreign}
 
-% mathematical symbol packages go here
-\usepackage[fleqn]{amsmath}
-\usepackage{amssymb}
+% Mathematical symbols
 \usepackage{stmaryrd}
 \usepackage{mathtools}
 \usepackage{textgreek}
 
-% useful for defining commands to use in text mode
+% Useful for defining commands to use in text mode
 \usepackage{xspace}
-\newcommand{\lvar}[0]{\ensuremath{\lambda_{lvar}}\xspace}
-\newcommand{\typedlvar}[0]{\ensuremath{\text{Typed }\lambda_{lvar}}\xspace}
+\newcommand{\lambdalvar}[0]{\ensuremath{\lambda_{\text{lvar}}}\xspace}
+\newcommand{\typedlambdalvar}[0]{\ensuremath{\text{Typed }\lambda_{\text{lvar}}}\xspace}
 
-% inference rules
+% Inference rules
 \usepackage{mathpartir}
 
-% landscape pages using \begin{landscape}\end{landscape}
+% Theorem environments
+\newenvironment{case}[1]{\textbf{Case}~(#1).}{}
+\newenvironment{subcase}[1]{\textbf{Subcase}~(#1).}{}
+
+% Landscape pages using \begin{landscape}\end{landscape}
 \usepackage{pdflscape}
 
-% gotsta have a todo command
-\newcommand{\remember}[1]{\todo[color=pink!40]{#1}}
+% Gotta have a todo command
+\usepackage{todonotes}
+\usepackage{regexpatch}
+\makeatletter
+\xpatchcmd{\@todo}{\setkeys{todonotes}{#1}}{\setkeys{todonotes}{inline,#1}}{}{}
+\makeatother
+\newcommand{\remember}[2][]{\todo[color=pink!40,#1]{#2}}
 
-% theorem environments
-% (you can do way fancier theorems but they usually break when you have to
-% convert your work to use one of the ancient latex conference templates)
-\usepackage{amsthm}
-
-% personally I~hate it when some math mode shit starts immediately after the
-% thing that says `theorem 3', but your mileage may vary -- regardless, this
-% is a good bit of documentation
-\newtheoremstyle{break}% name
-  {}%          Space above, empty = `usual value'
-  {}%          Space below
-  {\itshape}%  Body font
-  {}%          Indent amount (empty = no indent, \parindent = para indent)
-  {\bfseries}% Thm head font
-  {.}%         Punctuation after thm head
-  {\newline}%  Space after thm head: \newline = linebreak
-  {}%          Thm head spec
-
-\theoremstyle{break}
-\newtheorem{theorem}{Theorem}
-\newtheorem{corollary}{Corollary}
-\newtheorem{lemma}{Lemma}
-
-\theoremstyle{definition}
-\newtheorem{definition}{Definition}
-\newtheorem{conjecture}{Conjecture}
-
-% this one is for use within a proof environment
-\theoremstyle{remark}
-\newtheorem*{case}{Case}
-\newtheorem*{subcase}{Sub-case}
-
-% sort macros
-\usepackage[dvipsnames]{xcolor}
+% Sort macros
+% \usepackage[dvipsnames]{xcolor}
 \newcommand{\tm}[1]{\ensuremath{{\color[HTML]{E15CFF}#1}}}
 \newcommand{\ty}[1]{\ensuremath{{\color[HTML]{6e4cef}#1}}}
 \newcommand{\cs}[1]{\ensuremath{{\color[HTML]{009180}#1}}}
 \newcommand{\tmty}[2]{\ensuremath{\tm{#1}:\ty{#2}}}
 
-% greyed out
-\newcommand{\deprecatedstyle}{%
-  \renewcommand{\tm}[1]{\ensuremath{{\color[HTML]{C0C0C0}##1}}}%
-  \renewcommand{\ty}[1]{\ensuremath{{\color[HTML]{C0C0C0}##1}}}%
-  \renewcommand{\cs}[1]{\ensuremath{{\color[HTML]{C0C0C0}##1}}}%
-  \color[HTML]{C0C0C0}}
-\newcommand{\deprecate}[1]{{\deprecatedstyle#1}}
-
-% definitions
+% Definitions
 \newcommand{\sep}{\;\mid\;}
 
-% environments and hyper-environments
+% Environments and hyper-environments
 \newcommand{\emptyenv}{\cdot}
 
-% common operations
+% Common operations
 \newcommand{\subst}[4][]{\ifstrempty{#1}{\ensuremath{#2\{#3/#4\}}}{\ensuremath{#2(\{#3/#4\}\cup#1)}}}
 \newcommand{\plug}[2]{\ensuremath{#1[#2]}}
+\newcommand{\trans}[1]{\ensuremath{\zeta{#1}}}
 \DeclareMathOperator{\fv}{fv}
 \DeclareMathOperator{\dom}{dom}
 \DeclareMathOperator{\cod}{cod}
 
-% use for namespaces
+% Namespaces
 \usepackage{namespc}
 
-% namespace declaration
-% open globally with \usingnamespace{llam}, locally with \llam{}
-\namespace*{llam}{
+% Namespace for lvars
+% Open globally with \usingnamespace{lvar}, locally with \lvar{}
+\namespace*{lvar}{
   % types
-  \newcommand{\tyunit}[0]{\ensuremath{\ty{\mathbf{1}}}}
-  \newcommand{\tyvoid}[0]{\ensuremath{\ty{\mathbf{0}}}}
-  \newcommand{\typrod}[2]{\ensuremath{{#1}\mathbin{\ty{\times}}{#2}}}
-  \newcommand{\tysum}[2]{\ensuremath{{#1}\mathbin{\ty{+}}{#2}}}
-  \newcommand{\tylolli}[2]{\ensuremath{{#1}\mathbin{\ty{\multimap}}{#2}}}
-  \newcommand{\tyfun}[2]{\ensuremath{{#1}\mathbin{\ty{\rightarrow}}{#2}}}
-  \newcommand{\tyD}[1]{\ensuremath{\ty{\mathcal{D}^{#1}}}}
-  \newcommand{\tyL}[1]{\ensuremath{\ty{\mathcal{L}_{\mathcal{D}}^{#1}}}}
-  \newcommand{\tyJ}[0]{\ensuremath{\ty{\mathcal{J}}}}
+  \providecommand{\tyunit}[0]{\ensuremath{\ty{\mathbf{1}}}}
+  \providecommand{\tyvoid}[0]{\ensuremath{\ty{\mathbf{0}}}}
+  \providecommand{\typrod}[2]{\ensuremath{{#1}\mathbin{\ty{\times}}{#2}}}
+  \providecommand{\tysum}[2]{\ensuremath{{#1}\mathbin{\ty{+}}{#2}}}
+  \providecommand{\tylolli}[2]{\ensuremath{{#1}\mathbin{\ty{\multimap}}{#2}}}
+  \providecommand{\tyfun}[2]{\ensuremath{{#1}\mathbin{\ty{\rightarrow}}{#2}}}
+  \providecommand{\tyD}[1]{\ensuremath{\ty{\mathcal{D}^{#1}}}}
+  \providecommand{\tyL}[1]{\ensuremath{\ty{\mathcal{L}_{\mathcal{D}}^{#1}}}}
+  \providecommand{\tyJ}[0]{\ensuremath{\ty{\mathcal{J}}}}
   % terms
-  \newcommand{\tmJ}[0]{\ensuremath{\tm{\mathcal{J}}}}
-  \newcommand{\andthen}[2]{\ensuremath{#1;#2}}
-  \newcommand{\letbind}[3]{\ensuremath{\mathbf{let}\;#1\mathbin{=}#2\;\mathbf{in}\;#3}}
-  \newcommand{\pair}[2]{\ensuremath{(#1,#2)}}
-  \newcommand{\letpair}[4]{\ensuremath{\letbind{\pair{#1}{#2}}{#3}{#4}}}
-  \newcommand{\labinl}[0]{\ensuremath{\mathbf{inl}}}
-  \newcommand{\labinr}[0]{\ensuremath{\mathbf{inr}}}
-  \newcommand{\inl}[1]{\ensuremath{\labinl\;#1}}
-  \newcommand{\inr}[1]{\ensuremath{\labinr\;#1}}
-  \newcommand{\casesum}[5]{\ensuremath{\mathbf{case}\;#1\;\left\{\inl{#2}\mapsto{#3};\;\inr{#4}\mapsto{#5}\right\}}}
-  \newcommand{\unit}[0]{\ensuremath{()}}
-  \newcommand{\letunit}[2]{\ensuremath{\letbind{\unit}{#1}{#2}}}
-  \newcommand{\absurd}[1]{\ensuremath{\mathbf{absurd}\;#1}}
-  \newcommand{\lvarnew}[0]{\ensuremath{\mathbf{new}}}
-  \newcommand{\lvarput}[0]{\ensuremath{\mathbf{put}}}
-  \newcommand{\lvarget}[0]{\ensuremath{\mathbf{get}}}
-  \newcommand{\lvarfreeze}[0]{\ensuremath{\mathbf{freeze}}}
-  \newcommand{\lvarrun}[0]{\ensuremath{\mathbf{runLVar}}}
-  \newcommand{\lvarerror}[0]{\ensuremath{\mathbf{error}}}
-  \newcommand{\sts}[2]{\ensuremath{\langle {#1},\;{#2} \rangle}}
-  \newcommand{\config}[2]{\ensuremath{\langle {#1}\;\vert\;{#2} \rangle}}
-  \newcommand{\confige}[2]{\ensuremath{\langle E\lbrack {#1} \rbrack \; \vert\;{#2} \rangle}}
-  \newcommand{\configl}[2]{\ensuremath{\langle {#1} \; ; \;{#2} \rangle}}
+  \providecommand{\tmJ}[0]{\ensuremath{\tm{\mathcal{J}}}}
+  \providecommand{\andthen}[2]{\ensuremath{#1;#2}}
+  \providecommand{\letbind}[3]{\ensuremath{\mathbf{let}\;#1\mathbin{=}#2\;\mathbf{in}\;#3}}
+  \providecommand{\pair}[2]{\ensuremath{(#1,#2)}}
+  \providecommand{\letpair}[4]{\ensuremath{\letbind{\pair{#1}{#2}}{#3}{#4}}}
+  \providecommand{\labinl}[0]{\ensuremath{\mathbf{inl}}}
+  \providecommand{\labinr}[0]{\ensuremath{\mathbf{inr}}}
+  \providecommand{\inl}[1]{\ensuremath{\labinl\;#1}}
+  \providecommand{\inr}[1]{\ensuremath{\labinr\;#1}}
+  \providecommand{\casesum}[5]{\ensuremath{\mathbf{case}\;#1\;\left\{\inl{#2}\mapsto{#3};\;\inr{#4}\mapsto{#5}\right\}}}
+  \providecommand{\unit}[0]{\ensuremath{()}}
+  \providecommand{\letunit}[2]{\ensuremath{\letbind{\unit}{#1}{#2}}}
+  \providecommand{\absurd}[1]{\ensuremath{\mathbf{absurd}\;#1}}
+  \providecommand{\lvarnew}[0]{\ensuremath{\mathbf{new}}}
+  \providecommand{\lvarput}[0]{\ensuremath{\mathbf{put}}}
+  \providecommand{\lvarget}[0]{\ensuremath{\mathbf{get}}}
+  \providecommand{\lvarfreeze}[0]{\ensuremath{\mathbf{freeze}}}
+  \providecommand{\lvarrun}[0]{\ensuremath{\mathbf{withLVar}}}
+  \providecommand{\lvarerror}[0]{\ensuremath{\mathbf{error}}}
+  \providecommand{\sts}[2]{\ensuremath{\langle {#1},\;{#2} \rangle}}
+  \providecommand{\config}[2]{\ensuremath{\langle {#1}\;\vert\;{#2} \rangle}}
+  \providecommand{\confige}[2]{\ensuremath{\langle E\lbrack {#1} \rbrack \; \vert\;{#2} \rangle}}
+  \providecommand{\configl}[2]{\ensuremath{\langle {#1} \; ; \;{#2} \rangle}}
   % evaluation contexts
-  \newcommand{\hole}[0]{\ensuremath{\square}}
+  \providecommand{\hole}[0]{\ensuremath{\square}}
   % typing judgements
-  \newcommand{\seq}[3]{\ensuremath{#1\vdash\tmty{#2}{#3}}}
+  \providecommand{\seq}[3]{\ensuremath{#1\vdash\tmty{#2}{#3}}}
   % reduction relations
-  \newcommand{\red}[0]{\ensuremath{\longrightarrow}}
-  \newcommand{\rede}[0]{\ensuremath{\longrightarrow_{E}}}
+  \providecommand{\red}[0]{\ensuremath{\longrightarrow}}
+  \providecommand{\rede}[0]{\ensuremath{\longrightarrow_{E}}}
 }{}
-\newcommand{\llam}[1]{\namespace*{llam}{}{#1}}
+\newcommand{\lvar}[1]{\namespace*{lvar}{}{#1}}
 
-% load cleverref
+% References
 \usepackage{varioref}
 \usepackage{hyperref}
 \usepackage{cleveref}
-
-% load todonotes
-\usepackage{todonotes}
 
 \begin{document}
 \renewcommand{\onlyinsubfile}[1]{}
 \renewcommand{\notinsubfile}[1]{#1}
 
+%% Author information
+%% Contents and number of authors suppressed with 'anonymous'.
+%% Each author should be introduced by \author, followed by
+%% \authornote (optional), \orcid (optional), \affiliation, and
+%% \email.
+%% An author may have multiple affiliations and/or emails; repeat the
+%% appropriate command.
+%% Many elements are not rendered, but should be provided for metadata
+%% extraction tools.
+
+
+%% Title information
+\title[Short Title]{Full Title}         %% [Short Title] is optional;
+                                        %% when present, will be used in
+                                        %% header instead of Full Title.
+\titlenote{with title note}             %% \titlenote is optional;
+                                        %% can be repeated if necessary;
+                                        %% contents suppressed with 'anonymous'
+\subtitle{Subtitle}                     %% \subtitle is optional
+\subtitlenote{with subtitle note}       %% \subtitlenote is optional;
+                                        %% can be repeated if necessary;
+                                        %% contents suppressed with 'anonymous'
+
+%% Author information
+%% Contents and number of authors suppressed with 'anonymous'.
+%% Each author should be introduced by \author, followed by
+%% \authornote (optional), \orcid (optional), \affiliation, and
+%% \email.
+%% An author may have multiple affiliations and/or emails; repeat the
+%% appropriate command.
+%% Many elements are not rendered, but should be provided for metadata
+%% extraction tools.
+
+\author{April Gon\c{c}alves}
+\affiliation{
+  \institution{Roskilde University}
+  %\city{Roskilde}
+  \country{Denmark}
+}
+\email{april@cyberglot.me}
+
+\author{Wen Kokke}
+\affiliation{
+  %\department{School of Informatics}
+  \institution{University of Edinburgh}
+  %\streetaddress{10 Crichton Street}
+  %\city{Edinburgh}
+  %\postcode{EH8 9AB}
+  \country{Scotland}
+}
+\email{wen.kokke@ed.ac.uk}
+\affiliation{
+  %\department{School of Mathematical and Computer Sciences}
+  \institution{Heriot-Watt University}
+  %\streetaddress{First Gait}
+  %\city{Edinburgh}
+  %\postcode{EH14 4AS}
+  \country{Scotland}
+}
+\email{k.kokke@hw.ac.uk}
+
+%% Abstract
+%% Note: \begin{abstract}...\end{abstract} environment must come
+%% before \maketitle command
+\begin{abstract}
+Text of abstract \ldots.
+\end{abstract}
+
+%% 2012 ACM Computing Classification System (CSS) concepts
+%% Generate at 'http://dl.acm.org/ccs/ccs.cfm'.
+\begin{CCSXML}
+\end{CCSXML}
+
+%% Keywords
+%% comma separated list
+\keywords{keyword1, keyword2, keyword3}
+
+%% \maketitle
+%% Note: \maketitle command must come after title commands, author
+%% commands, abstract environment, Computing Classification System
+%% environment and commands, and keywords command.
+\maketitle
+
 \subfile{lvar}
 
-\printbibliography
+%% Bibliography
+\bibliography{main}
 
 \end{document}
