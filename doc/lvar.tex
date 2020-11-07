@@ -116,14 +116,14 @@ We use syntactic sugar to make terms more readable: we write $\tm{\andthen{M}{N}
 \end{array}
 \]
 
-We write $\tm{B}\sqcupB\tm{B'}$ for the maximum on status bits, which is the expected maximum operation for $\{0,1\}$. We write $\tm{s}\sqcups\tm{s'}$ for the pointwise maximum on states and $\tm{S}\sqcupS\tm{S'}$ for the pointwise maximum on stores. The latter is only defined if the structure of $\tm{S}$ and $\tm{S'}$ is identical up to domain values:
+We write $\tm{B}\sqcupB\tm{B'}$ for the maximum on status bits, which is Boolean disjunction. We write $\tm{s}\sqcups\tm{s'}$ for the pointwise maximum on states and $\tm{S}\sqcupS\tm{S'}$ for the pointwise maximum on stores. The latter is only defined if the structure of $\tm{S}$ and $\tm{S'}$ is identical up to domain values:
 \[
 \setlength{\arraycolsep}{2pt}
 \begin{array}{lclcl}
-  \tm{0} & \sqcupB & \tm{0} & = & \tm{0} \\
-  \tm{0} & \sqcupB & \tm{1} & = & \tm{1} \\
-  \tm{1} & \sqcupB & \tm{0} & = & \tm{1} \\
-  \tm{1} & \sqcupB & \tm{1} & = & \tm{1}
+  \tm{\false} & \sqcupB & \tm{\false} & = & \tm{\false} \\
+  \tm{\false} & \sqcupB & \tm{\true}  & = & \tm{\true}  \\
+  \tm{\true}  & \sqcupB & \tm{\false} & = & \tm{\true}  \\
+  \tm{\true}  & \sqcupB & \tm{\true}  & = & \tm{\true}
 \end{array}
 \quad
 \begin{array}{lclcl}
@@ -204,9 +204,9 @@ See~\cref{fig:typing}.
   For any well-typed $\tm{C}$:
   \begin{itemize}
   \item 
-    if $\tm{C}\red\tm{C'}$, then $\tm{\trans{C}}\red\tm{\trans{C'}}$;
+    if $\tm{C}\red\tm{C'}$, then $\tm{\trans{C}}\lred\tm{\trans{C'}}$;
   \item
-    if $\tm{C}\rede\tm{C'}$, then $\tm{\trans{C}}\rede\tm{\trans{C'}}$.
+    if $\tm{C}\rede\tm{C'}$, then $\tm{\trans{C}}\lrede\tm{\trans{C'}}$.
   \end{itemize}
 \end{theorem}
 
