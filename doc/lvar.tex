@@ -5,7 +5,7 @@
 \usingnamespace{lvar}
 
 \subsection{Syntax}%
-\typedlambdalvar is defined over an abstract domain $\mathcal{D}$ which forms a lattice. We write $\bot$ and $\top$ for the minimum and maximum elements, $\sqsubseteq$ for its partial order, and $\sqcup$ for the \emph{maximum}.
+\typedlambdalvar is defined over an abstract domain $\mathcal{D}$ which forms a lattice. We write $\botD$ and $\topD$ for the minimum and maximum elements, $\sqsubseteqD$ for its partial order, and $\sqcupD$ for the maximum.
 
 \paragraph*{Types}
 \[
@@ -27,30 +27,30 @@ We write $\ty{T}\sqcup\ty{U}$ for the type with the maximum domain bound from ei
 \[
   \setlength{\arraycolsep}{2pt}
   \begin{array}{lclcl}
-    \ty{\tyunit} & \sqcup & \ty{\tyunit}
+    \ty{\tyunit} & \sqcupT & \ty{\tyunit}
     & = & \ty{\tyunit}
     \\
-    \ty{\typrod{T}{U}} & \sqcup & \ty{\typrod{T'}{U'}}
-    & = & \typrod{(\ty{T}\sqcup\ty{T'})}{(\ty{U}\sqcup\ty{U'})}
+    \ty{\typrod{T}{U}} & \sqcupT & \ty{\typrod{T'}{U'}}
+    & = & \typrod{(\ty{T}\sqcupT\ty{T'})}{(\ty{U}\sqcupT\ty{U'})}
     \\
-    \ty{\tyfun{T}{U}} & \sqcup & \ty{\tyfun{T'}{U'}}
-    & = & \tyfun{(\ty{T}\sqcup\ty{T'})}{(\ty{U}\sqcup\ty{U'})}
+    \ty{\tyfun{T}{U}} & \sqcupT & \ty{\tyfun{T'}{U'}}
+    & = & \tyfun{(\ty{T}\sqcupT\ty{T'})}{(\ty{U}\sqcupT\ty{U'})}
     \\
-    \tyJ & \sqcup & \tyJ
+    \tyJ & \sqcupT & \tyJ
     & = & \tyJ
     \\
-    \tyD{d} & \sqcup & \tyD{d'}
-    & = & \tyD{{d}\sqcup{d'}}
+    \tyD{d} & \sqcupT & \tyD{d'}
+    & = & \tyD{{d}\sqcupT{d'}}
     \\
-    \tyL{d} & \sqcup & \tyL{d'}
-    & = & \tyL{{d}\sqcup{d'}}
+    \tyL{d} & \sqcupT & \tyL{d'}
+    & = & \tyL{{d}\sqcupT{d'}}
     \\
     \\
-    \ty{\emptyenv} & \sqcup & \ty{\emptyenv}
+    \ty{\emptyenv} & \sqcupG & \ty{\emptyenv}
     & = & \ty{\emptyenv}
     \\
-    \ty{\Gamma},\tmty{x}{T} & \sqcup & \ty{\Gamma'},\tmty{x}{U}
-    & = & \ty{\Gamma}\sqcup\ty{\Gamma'},\tm{x}:{\ty{T}\sqcup\ty{U}}
+    \ty{\Gamma},\tmty{x}{T} & \sqcupG & \ty{\Gamma'},\tmty{x}{U}
+    & = & \ty{\Gamma}\sqcupG\ty{\Gamma'},\tm{x}:{\ty{T}\sqcupG\ty{U}}
   \end{array}
 \]
 
@@ -83,7 +83,7 @@ We write $\ty{T}\sqcup\ty{U}$ for the type with the maximum domain bound from ei
 Thresholds are \emph{singletons}, \ie they occur on both the term- and the type-level, and the type of a threshold $\tmJ$ is that same threshold $\tyJ$. 
 
 A~threshold $\mathcal{J}$ is a subset of $\mathcal{D}$ where all elements are pair-wise incompatible, \ie for all $d,d'\in\mathcal{D}$, if ${d}\neq{d'}$ then ${d}\sqcup{d'}={\top}$.
-A~domain value $d$ is below a threshold $\mathcal{J}$, written ${d}\sqsubseteq\mathcal{J}$, if there exists a ${d'}\in\mathcal{J}$ such that ${d}\sqsubseteq{d'}$.
+A~domain value $d$ is below a threshold $\mathcal{J}$, written ${d}\sqsubseteqJ\mathcal{J}$, if there exists a ${d'}\in\mathcal{J}$ such that ${d}\sqsubseteqD{d'}$.
 
 \paragraph*{Syntactic sugar}
 We use syntactic sugar to make terms more readable: we write $\tm{\andthen{M}{N}}$ in place of $\tm{\letunit{M}{N}}$, $\tm{\letbind{x}{M}{N}}$ in place of $\tm{(\lambda x.N)\;M}$, and pattern matching functions $\tm{\lambda\unit.M}$ in place of $\tm{\lambda z.\letunit{z}{M}}$ and $\tm{\lambda\pair{x}{y}.M}$ in place of $\tm{\lambda z.\letpair{x}{y}{z}{M}}$. Finally, we use $\tm{\lvarrun}$ in place of the idiom $\tm{\lambda x.\letbind{l}{\lvarnew}{\letunit{x\;l}{\lvarfreeze\;l}}}$.
@@ -107,7 +107,25 @@ We use syntactic sugar to make terms more readable: we write $\tm{\andthen{M}{N}
 \end{array}
 \]
 
-We write $\tm{B}$
+We write $\tm{B}\sqcupB\tm{B'}$ for the maximum on status bits, which is the expected maximum operation for $\{0,1\}$. We write $\tm{s}\sqcups\tm{s'}$ for the pointwise maximum on states and $\tm{S}\sqcupS\tm{S'}$ for the pointwise maximum on stores. The latter is only defined if the structure of $\tm{S}$ and $\tm{S'}$ is identical up to domain values:
+\[
+\setlength{\arraycolsep}{2pt}
+\begin{array}{lclcl}
+  \tm{0} & \sqcupB & \tm{0} & = & \tm{0} \\
+  \tm{0} & \sqcupB & \tm{1} & = & \tm{1} \\
+  \tm{1} & \sqcupB & \tm{0} & = & \tm{1} \\
+  \tm{1} & \sqcupB & \tm{1} & = & \tm{1}
+\end{array}
+\quad
+\begin{array}{lclcl}
+  \tm{\langle B, d \rangle} & \sqcups & \tm{\langle B', d' \rangle}
+  & = & \tm{\langle B \sqcupB B', d \sqcupD d' \rangle}
+  \\
+  \\
+  \tm{\emptyenv}      & \sqcupS & \tm{\emptyenv}        & = & \tm{\emptyenv} \\
+  \tm{S, l \mapsto s} & \sqcupS & \tm{S', l \mapsto s'} & = & \tm{S \sqcupS S', l \mapsto s \sqcups s'}
+\end{array}
+\]
 
 \paragraph*{Values and evaluation contexts}
 \[
@@ -146,18 +164,6 @@ See~\cref{fig:typing}.
 \section{Metatheory of \typedlambdalvar calculus}
 
 \subsection{Translation to \lambdalvar  from \typedlambdalvar}
-
-\definition[Ordering of stores]{
-  We define a binary operator $\sqcup_S~: D_S \times D_S \rightarrow D_S$ as follows:
-  \begin{mathpar}
-  \begin{array}{lcll}
-    (0, d)   \sqcup_S  (0, d')   & = & (0, d \sqcup d')  \\
-    (1, d)   \sqcup_S  (1, d')   & = & (1, d')  \\
-    (0, d)   \sqcup_S  (1, d')   & = & (1, d')  \\
-    (1, d)   \sqcup_S  (0, d')   & = & (1, d')  \\
-  \end{array}\\
-\end{mathpar}
-}
 
 \todo{%
   The translation function $\trans{\cdot}$ should have a tight operational correspondence, \ie terms in \typedlambdalvar should reduce in the same number of steps when translated to \lambdalvar, and should not add or remove synchronisation.}
