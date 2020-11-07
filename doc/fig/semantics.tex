@@ -2,6 +2,25 @@
   \noindent
   \begin{minipage}{.6\textwidth}
   \begin{mathpar}
+    \begin{array}{lrll}
+      \tm{V}, \tm{W}
+      & \coloneqq & \tm{l}
+        \sep        \tm{J}
+        \sep        \tm{s}
+        \sep        \tm{\lambda x.M}
+        \sep        \tm{\unit}
+        \sep        \tm{\pair{V}{W}}
+      \\
+      \tm{E}
+      & \coloneqq & \tm{\hole}
+        \sep        \tm{V\; E}
+        \sep        \tm{E\; V}
+        \sep        \tm{(V, E)}
+        \sep        \tm{(E, V)} \\
+      & \sep      & \tm{\letunit{E}{M}}
+        \sep        \tm{\letpair{x}{y}{E}{M}}
+    \end{array}
+
     \begin{array}{llrl}
       \LabTirName{E-Lam}     & \tm{\config{(\lambda x.M)\;V}{S}}
                              & \red & \tm{\config{\subst{M}{V}{x}}{S}}

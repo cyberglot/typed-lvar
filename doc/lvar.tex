@@ -8,21 +8,25 @@
 \typedlambdalvar is defined over an abstract domain $\mathcal{D}$ which forms a lattice. We write $\botD$ and $\topD$ for the minimum and maximum elements, $\sqsubseteqD$ for its partial order, and $\sqcupD$ for the maximum.
 
 \paragraph*{Types}
+Types ($\ty{T}$, $\ty{U}$) and typing environments ($\ty{\Gamma}$) are defined by the following grammar:
 \[
 \begin{array}{lrll}
   \ty{T}, \ty{U}
   & \coloneqq & \ty{\tyunit}        & \text{units} \\
   & \sep      & \ty{\typrod{T}{U}}  & \text{pairs} \\
   & \sep      & \ty{\tyfun{T}{U}}   & \text{functions}\\
-  & \sep      & \ty{\tyJ}           & \text{thresholds} \\
   & \sep      & \ty{\tyD{d}}        & \text{domain values }{\sqsubseteq d}\\
-  & \sep      & \ty{\tyL{d}}        & \text{location with values }{\sqsubseteq d}
+  & \sep      & \ty{\tyL{d}}        & \text{location with values }{\sqsubseteq d}\\
+  & \sep      & \ty{\tyJ}           & \text{thresholds}
   \\
   \\
   \ty{\Gamma}
-  & \coloneqq & \multicolumn{2}{l}{\ty{\emptyenv} \sep \ty{\ty{\Gamma},\tmty{x}{T}}}
+  & \coloneqq & \multicolumn{2}{l}{\ty{\emptyenv}
+    \sep        \ty{\ty{\Gamma},\tmty{x}{T}}}
 \end{array}
 \]
+Types $\ty{\tyunit}$, $\ty{\typrod{T}{U}}$, and $\ty{\tyfun{T}{U}}$ are the standard unit, pair, and function types. The types $\tyD{d}$, $\tyL{d}$, and $\tyJ$ are specific are best understood in conjunction with their term forms.
+
 We write $\ty{T}\sqcup\ty{U}$ for the type with the maximum domain bound from either $\ty{T}$ or $\ty{U}$ at each subtype $\tyD{d}$ and $\tyL{d}$. The operation is only defined if the structure of $\ty{T}$ and $\ty{U}$ is identical \emph{up to domain bounds}. Similarly for $\ty{\Gamma}\sqcup\ty{\Gamma'}$:
 \[
   \setlength{\arraycolsep}{2pt}
@@ -40,29 +44,31 @@ We write $\ty{T}\sqcup\ty{U}$ for the type with the maximum domain bound from ei
     & = & \tyJ
     \\
     \tyD{d} & \sqcupT & \tyD{d'}
-    & = & \tyD{{d}\sqcupT{d'}}
+    & = & \tyD{{d}\sqcupD{d'}}
     \\
     \tyL{d} & \sqcupT & \tyL{d'}
-    & = & \tyL{{d}\sqcupT{d'}}
+    & = & \tyL{{d}\sqcupD{d'}}
     \\
     \\
     \ty{\emptyenv} & \sqcupG & \ty{\emptyenv}
     & = & \ty{\emptyenv}
     \\
     \ty{\Gamma},\tmty{x}{T} & \sqcupG & \ty{\Gamma'},\tmty{x}{U}
-    & = & \ty{\Gamma}\sqcupG\ty{\Gamma'},\tm{x}:{\ty{T}\sqcupG\ty{U}}
+    & = & \ty{\Gamma}\sqcupG\ty{\Gamma'},\tm{x}:{\ty{T}\sqcupT\ty{U}}
   \end{array}
 \]
 
+The type $\tyD{d}$ types domain values with the upper bound $d$. The type $\tyL{d}$ types locations which store values of type $\tyD{d}$.
+
 \paragraph*{Terms}
+Terms ($\tm{L}$, $\tm{M}$, $\tm{N}$) are defined by the following grammar:
 \[
   \begin{array}{lrll}
-  \tm{L}, \tm{M}, \tm{N}
+  \tm{e}, \tm{M}, \tm{N}
   & \coloneqq & \tm{x}
     \sep        \tm{\lambda x.M}
     \sep        \tm{M\;N}                     & \text{functions} \\
   & \sep      & \tm{K}                        
-    \sep        \tm{l}
     \sep        \tmJ
     \sep        \tm{d}                        & \text{constants} \\
   & \sep      & \tm{\unit}                    
@@ -78,9 +84,12 @@ We write $\ty{T}\sqcup\ty{U}$ for the type with the maximum domain bound from ei
     \sep        \tm{\lvarput}
 \end{array}
 \]
+Let $\tm{x}$, $\tm{y}$, and $\tm{z}$ range over variable names. The term language is the standard $\lambda$-calculus with products and units, extended with the constructs for LVars~\citep{kuper15}: \emph{domain values} $\tm{d}$, \emph{thresholds} $\tmJ$, and \emph{constants} $\tm{K}$. For clarity, we use $\tm{l}$ to denote variables which refer to locations. 
+
+The term language is the standard linear $\lambda$-calculus with products, sums, and their units, extended with constants $\tm{K}$ for the communication primitives. 
 
 \paragraph*{Thresholds}
-Thresholds are \emph{singletons}, \ie they occur on both the term- and the type-level, and the type of a threshold $\tmJ$ is that same threshold $\tyJ$. 
+Thresholds occur on both the type- and term-level. Each threshold type $\tyJ$ has only one inhabitant, which is the same threshold $\tmJ$ on the term-level.
 
 A~threshold $\mathcal{J}$ is a subset of $\mathcal{D}$ where all elements are pair-wise incompatible, \ie for all $d,d'\in\mathcal{D}$, if ${d}\neq{d'}$ then ${d}\sqcup{d'}={\top}$.
 A~domain value $d$ is below a threshold $\mathcal{J}$, written ${d}\sqsubseteqJ\mathcal{J}$, if there exists a ${d'}\in\mathcal{J}$ such that ${d}\sqsubseteqD{d'}$.
@@ -124,28 +133,6 @@ We write $\tm{B}\sqcupB\tm{B'}$ for the maximum on status bits, which is the exp
   \\
   \tm{\emptyenv}      & \sqcupS & \tm{\emptyenv}        & = & \tm{\emptyenv} \\
   \tm{S, l \mapsto s} & \sqcupS & \tm{S', l \mapsto s'} & = & \tm{S \sqcupS S', l \mapsto s \sqcups s'}
-\end{array}
-\]
-
-\paragraph*{Values and evaluation contexts}
-\[
-\begin{array}{lrll}
-  \tm{V}, \tm{W}
-  & \coloneqq & \tm{l}
-    \sep        \tm{J}
-    \sep        \tm{s}
-    \sep        \tm{\lambda x.M}
-    \sep        \tm{\unit}
-    \sep        \tm{\pair{V}{W}}
-  \\
-  \tm{E}
-  & \coloneqq & \tm{\hole}
-    \sep        \tm{V\; E}
-    \sep        \tm{E\; V}
-    \sep        \tm{(V, E)}
-    \sep        \tm{(E, V)} \\
-  & \sep      & \tm{\letunit{E}{M}}
-    \sep        \tm{\letpair{x}{y}{E}{M}}
 \end{array}
 \]
 
@@ -212,6 +199,27 @@ See~\cref{fig:typing}.
     & = & \configl{S[l \mapsto (d,\tt{true})]}{e}
   \end{array}
 \end{mathpar}
+
+\begin{theorem}[Simulation]
+  For any well-typed $\tm{C}$:
+  \begin{itemize}
+  \item 
+    if $\tm{C}\red\tm{C'}$, then $\tm{\trans{C}}\red\tm{\trans{C'}}$;
+  \item
+    if $\tm{C}\rede\tm{C'}$, then $\tm{\trans{C}}\rede\tm{\trans{C'}}$.
+  \end{itemize}
+\end{theorem}
+
+\begin{theorem}[Reflection]
+  For any well-typed $\tm{C}$:
+  \begin{itemize}
+  \item
+    if $\tm{\trans{C}}\lred\tm{\sigma'}$, then $\tm{C}\red\tm{C'}$ and $\tm{\trans{C'}}=\tm{\sigma'}$ for some $\tm{C'}$;
+  \item
+    if $\tm{\trans{C}}\lrede\tm{\sigma'}$, then $\tm{C}\rede\tm{C'}$ and $\tm{\trans{C'}}=\tm{\sigma'}$ for some $\tm{C'}$.
+  \end{itemize}
+\end{theorem}
+
 
 \begin{lemma}[Translation, \typedlambdalvar  $\rightsquigarrow$ \lambdalvar]
   For any translation $\zeta$,

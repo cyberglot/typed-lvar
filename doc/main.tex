@@ -72,7 +72,7 @@
 % Common operations
 \newcommand{\subst}[4][]{\ifstrempty{#1}{\ensuremath{#2\{#3/#4\}}}{\ensuremath{#2(\{#3/#4\}\cup#1)}}}
 \newcommand{\plug}[2]{\ensuremath{#1[#2]}}
-\newcommand{\trans}[1]{\ensuremath{\zeta{#1}}}
+\newcommand{\trans}[1]{\ensuremath{{\color{black}\zeta}{#1}}}
 \DeclareMathOperator{\fv}{fv}
 \DeclareMathOperator{\dom}{dom}
 \DeclareMathOperator{\cod}{cod}
@@ -124,6 +124,8 @@
   % reduction relations
   \providecommand{\red}[0]{\ensuremath{\longrightarrow}}
   \providecommand{\rede}[0]{\ensuremath{\longrightarrow_{E}}}
+  \providecommand{\lred}[0]{\ensuremath{\hookrightarrow}}
+  \providecommand{\lrede}[0]{\ensuremath{\mapsto}}
   % bottom and top
   \providecommand{\topD}{{\top_{\scriptscriptstyle\mathcal{D}}}}
   \providecommand{\botD}{{\bot_{\scriptscriptstyle\mathcal{D}}}}
