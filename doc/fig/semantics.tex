@@ -4,10 +4,11 @@
   \begin{mathpar}
     \begin{array}{lrll}
       \tm{V}, \tm{W}
-      & \coloneqq & \tm{l}
-        \sep        \tm{J}
-        \sep        \tm{s}
-        \sep        \tm{\lambda x.M}
+      & \coloneqq & \tm{\lambda x.M}
+        \sep        \tm{l}
+        \sep        \tm{d}
+        \sep        \tmJ
+        \sep        \tm{K}
         \sep        \tm{\unit}
         \sep        \tm{\pair{V}{W}}
       \\
@@ -35,7 +36,7 @@
                              & \red
                              & \tm{\config{l}{S, l \mapsto\st{\botD}{\false}}}
       \\
-      \LabTirName{E-Freeze}  & \tm{\config{\lvarfreeze}{S, l \mapsto\st{d}{frz}}}
+      \LabTirName{E-Freeze}  & \tm{\config{\lvarfreeze}{S, l \mapsto\st{d}{\frz}}}
                              & \red
                              & \tm{\config{d}{S, l \mapsto\st{d}{\true}}}
       \\
@@ -43,9 +44,9 @@
                              & \red
                              & \tm{\config{()}{S, l \mapsto\st{d'}{\false}}}
       \\
-      \LabTirName{E-Get}     & \tm{\config{\lvarget\;l\;J}{S, l \mapsto\st{d}{frz}}}
+      \LabTirName{E-Get}     & \tm{\config{\lvarget\;l\;J}{S, l \mapsto\st{d}{\frz}}}
                              & \red
-                             & \tm{\config{d'}{S, l \mapsto\st{d}{frz}}}
+                             & \tm{\config{d'}{S, l \mapsto\st{d}{\frz}}}
     \end{array}
   \end{mathpar}
   \end{minipage}%

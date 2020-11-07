@@ -1,5 +1,5 @@
 \begin{figure*}
-  \centering
+  \paragraph{Term typing}
   \begin{mathpar}
     \inferrule*[lab=T-Var]{
       \tmty{x}{T} \in \ty{\Gamma}
@@ -61,12 +61,29 @@
       \\
       \ty{d}\sqsubseteq\ty{d'}
     }{\seq{\ty{\Gamma}\sqcup\ty{\Gamma'}}{\lvarput\;M\;N}{1}}
+  \end{mathpar}
 
-    \\
+  \paragraph{Configuration typing}
+  \begin{mathpar}
+    \inferrule*[lab=T-Conf]{
+      \seq{\ty{\Gamma}}{M}{T}
+      \\
+      \seqS{\ty{\Gamma'}}{S}
+    }{\seqC{\ty{\Gamma}\sqcupG\ty{\Gamma'}}{\config{M}{S}}{T}}
 
     \inferrule*[lab=T-Store-Emp]{
-    }{
-    }
+    }{\seqS{\ty{\Gamma}}{\emptystore}}
+
+    \inferrule*[lab=T-Store-Ext]{
+      \seqS{\ty{\Gamma}}{S}
+      \\
+      \seqs{\ty{\Gamma}}{p}{\tyL{d}}
+      \\
+      \tmty{l}{\tyL{d}}\in\ty{\Gamma}
+    }{\seqS{\ty{\Gamma}}{S, l \mapsto p}}
+
+    \inferrule*[lab=T-State]{
+    }{\seqs{\ty{\Gamma}}{\st{d}{\frz}}{\tyL{d}}}
   \end{mathpar}
   \caption{Typing rules for \typedlambdalvar.}
   \label{fig:typing}

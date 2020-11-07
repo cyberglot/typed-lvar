@@ -68,6 +68,7 @@
 
 % Environments and hyper-environments
 \newcommand{\emptyenv}{\cdot}
+\newcommand{\emptystore}{\cdot}
 
 % Common operations
 \newcommand{\subst}[4][]{\ifstrempty{#1}{\ensuremath{#2\{#3/#4\}}}{\ensuremath{#2(\{#3/#4\}\cup#1)}}}
@@ -122,6 +123,9 @@
   \providecommand{\hole}[0]{\ensuremath{\square}}
   % typing judgements
   \providecommand{\seq}[3]{\ensuremath{#1\vdash\tmty{#2}{#3}}}
+  \providecommand{\seqS}[2]{\ensuremath{#1\vdash_{\scriptscriptstyle{S}}\tm{#2}}}
+  \providecommand{\seqs}[3]{\ensuremath{#1\vdash_{\scriptscriptstyle{p}}\tmty{#2}{#3}}}
+  \providecommand{\seqC}[3]{\ensuremath{#1\vdash_{\scriptscriptstyle{C}}\tmty{#2}{#3}}}
   % reduction relations
   \providecommand{\red}[0]{\ensuremath{\longrightarrow}}
   \providecommand{\rede}[0]{\ensuremath{\longrightarrow_{E}}}

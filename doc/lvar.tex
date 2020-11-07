@@ -110,12 +110,12 @@ We use syntactic sugar to make terms more readable: we write $\tm{\andthen{M}{N}
     \sep        \tm{\false}
                                     & \text{status bits}
   \\
-  \tm{s}
+  \tm{p}
   & \coloneqq & \tm{\langle \frz, d \rangle} & \text{states}
   \\
   \tm{S}
-  & \coloneqq & \tm{\emptyenv}
-    \sep        \tm{S, l \mapsto s} & \text{stores}
+  & \coloneqq & \tm{\emptystore}
+    \sep        \tm{S, l \mapsto p} & \text{stores}
   \\
   \tm{C}
   & \coloneqq & \tm{\config{M}{S}} & \text{configurations}
@@ -139,7 +139,7 @@ We write $\tm{s}\sqcups\tm{s'}$ for the pointwise maximum on states and $\tm{S}\
   \tm{\st{d}{\frz}} & \sqcups & \tm{\st{d'}{\frz'}}
   & = & \tm{\st{d \sqcupD d'}{\frz \sqcupB \frz'}} \\
   \tm{\emptyenv}      & \sqcupS & \tm{\emptyenv}        & = & \tm{\emptyenv} \\
-  \tm{S, l \mapsto s} & \sqcupS & \tm{S', l \mapsto s'} & = & \tm{S \sqcupS S', l \mapsto s \sqcups s'}
+  \tm{S, l \mapsto p} & \sqcupS & \tm{S', l \mapsto p'} & = & \tm{S \sqcupS S', l \mapsto p \sqcups p'}
 \end{array}
 \]
 
