@@ -7,6 +7,36 @@
 \subsection{Syntax}%
 \typedlambdalvar is defined over an abstract domain $\mathcal{D}$ which forms a lattice. We write $\botD$ and $\topD$ for the minimum and maximum elements, $\sqsubseteqD$ for its partial order, and $\sqcupD$ for the maximum.
 
+\paragraph*{Terms}
+Terms ($\tm{L}$, $\tm{M}$, $\tm{N}$) are defined by the following grammar:
+\[
+  \begin{array}{lrll}
+  \tm{L}, \tm{M}, \tm{N}
+  & \coloneqq & \tm{x}
+    \sep        \tm{\lambda x.M}
+    \sep        \tm{M\;N}                     & \text{functions} \\
+  & \sep      & \tm{l}                        
+    \sep        \tm{d}
+    \sep        \tmJ
+    \sep        \tm{K}                        & \text{constants} \\
+  & \sep      & \tm{\unit}                    
+    \sep        \tm{\letunit{M}{N}}           & \text{units} \\
+  & \sep      & \tm{\pair{M}{N}}              
+    \sep        \tm{\letpair{x}{y}{M}{N}}     & \text{pairs}
+  \\
+  \\
+  \tm{K}
+  & \coloneqq & \tm{\lvarnew}
+    \sep        \tm{\lvarfreeze}
+    \sep        \tm{\lvarget}
+    \sep        \tm{\lvarput}
+\end{array}
+\]
+Let $\tm{x}$, $\tm{y}$, and $\tm{z}$ range over variable names. The term language is the standard $\lambda$-calculus with products and units, extended with LVars~\citep{kuper15}. Let $\tm{l}$ range over location names. Let $\tm{d}$ range over \emph{domain values} from the domain $\mathcal{D}$. Finally, let $\tmJ$ range over \emph{thresholds}.
+
+A~threshold $\mathcal{J}$ is a subset of $\mathcal{D}$ where all elements are pair-wise incompatible, \ie for all $d,d'\in\mathcal{D}$, if ${d}\neq{d'}$ then ${d}\sqcup{d'}={\top}$.
+A~domain value $d$ is below a threshold $\mathcal{J}$, written ${d}\sqsubseteqJ\mathcal{J}$, if there exists a ${d'}\in\mathcal{J}$ such that ${d}\sqsubseteqD{d'}$.
+
 \paragraph*{Types}
 Types ($\ty{T}$, $\ty{U}$) and typing environments ($\ty{\Gamma}$) are defined by the following grammar:
 \[
@@ -21,11 +51,18 @@ Types ($\ty{T}$, $\ty{U}$) and typing environments ($\ty{\Gamma}$) are defined b
   \\
   \\
   \ty{\Gamma}
-  & \coloneqq & \multicolumn{2}{l}{\ty{\emptyenv}
-    \sep        \ty{\ty{\Gamma},\tmty{x}{T}}}
+  & \coloneqq & \ty{\emptyenv}
+    \sep        \ty{\ty{\Gamma},\tmty{x}{T}}
+                                    & \text{typing environments}
 \end{array}
 \]
-Types $\ty{\tyunit}$, $\ty{\typrod{T}{U}}$, and $\ty{\tyfun{T}{U}}$ are the standard unit, pair, and function types. The types $\tyD{d}$, $\tyL{d}$, and $\tyJ$ are specific are best understood in conjunction with their term forms.
+Types $\ty{\tyunit}$, $\ty{\typrod{T}{U}}$, and $\ty{\tyfun{T}{U}}$ are the standard unit, pair, and function types.
+
+\todo{Explain the types $\tyD{d}$ and $\tyL{d}$.}
+
+Thresholds occur on both the type- and term-level. Each threshold type $\tyJ$ has only one inhabitant, which is the same threshold $\tmJ$ on the term-level.
+
+
 
 We write $\ty{T}\sqcup\ty{U}$ for the type with the maximum domain bound from either $\ty{T}$ or $\ty{U}$ at each subtype $\tyD{d}$ and $\tyL{d}$. The operation is only defined if the structure of $\ty{T}$ and $\ty{U}$ is identical \emph{up to domain bounds}. Similarly for $\ty{\Gamma}\sqcup\ty{\Gamma'}$:
 \[
@@ -60,39 +97,7 @@ We write $\ty{T}\sqcup\ty{U}$ for the type with the maximum domain bound from ei
 
 The type $\tyD{d}$ types domain values with the upper bound $d$. The type $\tyL{d}$ types locations which store values of type $\tyD{d}$.
 
-\paragraph*{Terms}
-Terms ($\tm{L}$, $\tm{M}$, $\tm{N}$) are defined by the following grammar:
-\[
-  \begin{array}{lrll}
-  \tm{L}, \tm{M}, \tm{N}
-  & \coloneqq & \tm{x}
-    \sep        \tm{\lambda x.M}
-    \sep        \tm{M\;N}                     & \text{functions} \\
-  & \sep      & \tm{K}                        
-    \sep        \tmJ
-    \sep        \tm{d}                        & \text{constants} \\
-  & \sep      & \tm{\unit}                    
-    \sep        \tm{\letunit{M}{N}}           & \text{units} \\
-  & \sep      & \tm{\pair{M}{N}}              
-    \sep        \tm{\letpair{x}{y}{M}{N}}     & \text{pairs}
-  \\
-  \\
-  \tm{K}
-  & \coloneqq & \tm{\lvarnew}
-    \sep        \tm{\lvarfreeze}
-    \sep        \tm{\lvarget}
-    \sep        \tm{\lvarput}
-\end{array}
-\]
-Let $\tm{x}$, $\tm{y}$, and $\tm{z}$ range over variable names. The term language is the standard $\lambda$-calculus with products and units, extended with the constructs for LVars~\citep{kuper15}: \emph{domain values} $\tm{d}$, \emph{thresholds} $\tmJ$, and \emph{constants} $\tm{K}$. For clarity, we use $\tm{l}$ to denote variables which refer to locations. 
-
-The term language is the standard linear $\lambda$-calculus with products, sums, and their units, extended with constants $\tm{K}$ for the communication primitives. 
-
 \paragraph*{Thresholds}
-Thresholds occur on both the type- and term-level. Each threshold type $\tyJ$ has only one inhabitant, which is the same threshold $\tmJ$ on the term-level.
-
-A~threshold $\mathcal{J}$ is a subset of $\mathcal{D}$ where all elements are pair-wise incompatible, \ie for all $d,d'\in\mathcal{D}$, if ${d}\neq{d'}$ then ${d}\sqcup{d'}={\top}$.
-A~domain value $d$ is below a threshold $\mathcal{J}$, written ${d}\sqsubseteqJ\mathcal{J}$, if there exists a ${d'}\in\mathcal{J}$ such that ${d}\sqsubseteqD{d'}$.
 
 \paragraph*{Syntactic sugar}
 We use syntactic sugar to make terms more readable: we write $\tm{\andthen{M}{N}}$ in place of $\tm{\letunit{M}{N}}$, $\tm{\letbind{x}{M}{N}}$ in place of $\tm{(\lambda x.N)\;M}$, and pattern matching functions $\tm{\lambda\unit.M}$ in place of $\tm{\lambda z.\letunit{z}{M}}$ and $\tm{\lambda\pair{x}{y}.M}$ in place of $\tm{\lambda z.\letpair{x}{y}{z}{M}}$. Finally, we use $\tm{\lvarrun}$ in place of the idiom $\tm{\lambda x.\letbind{l}{\lvarnew}{\letunit{x\;l}{\lvarfreeze\;l}}}$.
@@ -100,12 +105,13 @@ We use syntactic sugar to make terms more readable: we write $\tm{\andthen{M}{N}
 \paragraph*{Configurations}
 \[
 \begin{array}{lrll}
-  \tm{B}
+  \tm{\frz}
   & \coloneqq & \tm{\true}
-    \sep        \tm{\false} & \text{status bits}
+    \sep        \tm{\false}
+                                    & \text{status bits}
   \\
   \tm{s}
-  & \coloneqq & \tm{\langle B, d \rangle}
+  & \coloneqq & \tm{\langle \frz, d \rangle} & \text{states}
   \\
   \tm{S}
   & \coloneqq & \tm{\emptyenv}
@@ -116,21 +122,22 @@ We use syntactic sugar to make terms more readable: we write $\tm{\andthen{M}{N}
 \end{array}
 \]
 
-We write $\tm{B}\sqcupB\tm{B'}$ for the maximum on status bits, which is Boolean disjunction. We write $\tm{s}\sqcups\tm{s'}$ for the pointwise maximum on states and $\tm{S}\sqcupS\tm{S'}$ for the pointwise maximum on stores. The latter is only defined if the structure of $\tm{S}$ and $\tm{S'}$ is identical up to domain values:
+We write $\tm{\frz}\sqcupB\tm{\frz'}$ for the maximum on status bits, which is standard Boolean disjunction.
+% \[
+% \setlength{\arraycolsep}{2pt}
+% \begin{array}{lclcl}
+%   \tm{\false} & \sqcupB & \tm{\false} & = & \tm{\false} \\
+%   \tm{\false} & \sqcupB & \tm{\true}  & = & \tm{\true}  \\
+%   \tm{\true}  & \sqcupB & \tm{\false} & = & \tm{\true}  \\
+%   \tm{\true}  & \sqcupB & \tm{\true}  & = & \tm{\true}
+% \end{array}
+% \]
+We write $\tm{s}\sqcups\tm{s'}$ for the pointwise maximum on states and $\tm{S}\sqcupS\tm{S'}$ for the pointwise maximum on stores. The latter is only defined if the structure of $\tm{S}$ and $\tm{S'}$ is identical up to domain values:
 \[
 \setlength{\arraycolsep}{2pt}
 \begin{array}{lclcl}
-  \tm{\false} & \sqcupB & \tm{\false} & = & \tm{\false} \\
-  \tm{\false} & \sqcupB & \tm{\true}  & = & \tm{\true}  \\
-  \tm{\true}  & \sqcupB & \tm{\false} & = & \tm{\true}  \\
-  \tm{\true}  & \sqcupB & \tm{\true}  & = & \tm{\true}
-\end{array}
-\quad
-\begin{array}{lclcl}
-  \tm{\langle B, d \rangle} & \sqcups & \tm{\langle B', d' \rangle}
-  & = & \tm{\langle B \sqcupB B', d \sqcupD d' \rangle}
-  \\
-  \\
+  \tm{\st{d}{\frz}} & \sqcups & \tm{\st{d'}{\frz'}}
+  & = & \tm{\st{d \sqcupD d'}{\frz \sqcupB \frz'}} \\
   \tm{\emptyenv}      & \sqcupS & \tm{\emptyenv}        & = & \tm{\emptyenv} \\
   \tm{S, l \mapsto s} & \sqcupS & \tm{S', l \mapsto s'} & = & \tm{S \sqcupS S', l \mapsto s \sqcups s'}
 \end{array}

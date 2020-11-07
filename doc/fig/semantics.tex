@@ -33,19 +33,19 @@
       \\
       \LabTirName{E-New}     & \tm{\config{\lvarnew}{S}}
                              & \red
-                             & \tm{\config{l}{S, l \mapsto\state{0}{\botD}}}
+                             & \tm{\config{l}{S, l \mapsto\st{\botD}{\false}}}
       \\
-      \LabTirName{E-Freeze}  & \tm{\config{\lvarfreeze}{S, l \mapsto\state{b}{d}}}
+      \LabTirName{E-Freeze}  & \tm{\config{\lvarfreeze}{S, l \mapsto\st{d}{frz}}}
                              & \red
-                             & \tm{\config{d}{S, l \mapsto\state{1}{d}}}
+                             & \tm{\config{d}{S, l \mapsto\st{d}{\true}}}
       \\
-      \LabTirName{E-Put}     & \tm{\config{\lvarput\;l\;d'}{S, l \mapsto\state{\false}{d}}}
+      \LabTirName{E-Put}     & \tm{\config{\lvarput\;l\;d'}{S, l \mapsto\st{d}{\false}}}
                              & \red
-                             & \tm{\config{()}{S, l \mapsto\state{\false}{d'}}}
+                             & \tm{\config{()}{S, l \mapsto\st{d'}{\false}}}
       \\
-      \LabTirName{E-Get}     & \tm{\config{\lvarget\;l\;J}{S, l \mapsto\state{b}{d}}}
+      \LabTirName{E-Get}     & \tm{\config{\lvarget\;l\;J}{S, l \mapsto\st{d}{frz}}}
                              & \red
-                             & \tm{\config{d'}{S, l \mapsto\state{b}{d}}}
+                             & \tm{\config{d'}{S, l \mapsto\st{d}{frz}}}
     \end{array}
   \end{mathpar}
   \end{minipage}%

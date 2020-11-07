@@ -91,7 +91,7 @@
   \providecommand{\tylolli}[2]{\ensuremath{{#1}\mathbin{\ty{\multimap}}{#2}}}
   \providecommand{\tyfun}[2]{\ensuremath{{#1}\mathbin{\ty{\rightarrow}}{#2}}}
   \providecommand{\tyD}[1]{\ensuremath{\ty{\mathcal{D}^{#1}}}}
-  \providecommand{\tyL}[1]{\ensuremath{\ty{\mathcal{L}_{\mathcal{D}}^{#1}}}}
+  \providecommand{\tyL}[2][]{\ensuremath{\ty{\mathcal{L}_{#1}^{#2}}}}
   \providecommand{\tyJ}[0]{\ensuremath{\ty{\mathcal{J}}}}
   % terms
   \providecommand{\tmJ}[0]{\ensuremath{\tm{\mathcal{J}}}}
@@ -113,9 +113,10 @@
   \providecommand{\lvarfreeze}[0]{\ensuremath{\mathbf{freeze}}}
   \providecommand{\lvarrun}[0]{\ensuremath{\mathbf{withLVar}}}
   \providecommand{\lvarerror}[0]{\ensuremath{\mathbf{error}}}
+  \providecommand{\frz}[0]{\ensuremath{\textit{frz}}}
   \providecommand{\true}[0]{\ensuremath{\mathbf{true}}}
   \providecommand{\false}[0]{\ensuremath{\mathbf{false}}}
-  \providecommand{\state}[2]{\ensuremath{\langle {#1}, {#2} \rangle}}
+  \providecommand{\st}[2]{\ensuremath{\langle {#1}, {#2} \rangle}}
   \providecommand{\config}[2]{\ensuremath{\langle {#1}; {#2} \rangle}}
   % evaluation contexts
   \providecommand{\hole}[0]{\ensuremath{\square}}
@@ -130,12 +131,12 @@
   \providecommand{\topD}{{\top_{\scriptscriptstyle\mathcal{D}}}}
   \providecommand{\botD}{{\bot_{\scriptscriptstyle\mathcal{D}}}}
   % join operators
-  \providecommand{\sqcupD}{\mathbin{{\color{black}\sqcup_{\scriptscriptstyle\mathcal{D}}}}}
-  \providecommand{\sqcupT}{\mathbin{{\color{black}\sqcup_{\scriptscriptstyle{T}}}}}
-  \providecommand{\sqcupG}{\mathbin{{\color{black}\sqcup_{\scriptscriptstyle\Gamma}}}}
-  \providecommand{\sqcupB}{\mathbin{{\color{black}\sqcup_{\scriptscriptstyle{B}}}}}
-  \providecommand{\sqcups}{\mathbin{{\color{black}\sqcup_{\scriptscriptstyle{s}}}}}
-  \providecommand{\sqcupS}{\mathbin{{\color{black}\sqcup_{\scriptscriptstyle{S}}}}}
+  \providecommand{\sqcupD}{\,{{\color{black}\sqcup_{\scriptscriptstyle\mathcal{D}}}}\,}
+  \providecommand{\sqcupT}{\,{{\color{black}\sqcup_{\scriptscriptstyle{T}}}}\,}
+  \providecommand{\sqcupG}{\,{{\color{black}\sqcup_{\scriptscriptstyle\Gamma}}}\,}
+  \providecommand{\sqcupB}{\,{{\color{black}\sqcup_{\scriptscriptstyle\frz}}}\,}
+  \providecommand{\sqcups}{\,{{\color{black}\sqcup_{\scriptscriptstyle{s}}}}\,}
+  \providecommand{\sqcupS}{\,{{\color{black}\sqcup_{\scriptscriptstyle{S}}}}\,}
   % partial orders
   \providecommand{\sqsubseteqD}{\mathbin{{\color{black}\sqsubseteq_{\scriptscriptstyle\mathcal{D}}}}}
   \providecommand{\sqsubseteqJ}{\mathbin{{\color{black}\sqsubseteq_{\scriptscriptstyle\mathcal{J}}}}}
