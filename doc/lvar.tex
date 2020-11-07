@@ -46,7 +46,7 @@ Types ($\ty{T}$, $\ty{U}$) and typing environments ($\ty{\Gamma}$) are defined b
   & \sep      & \ty{\typrod{T}{U}}  & \text{pairs} \\
   & \sep      & \ty{\tyfun{T}{U}}   & \text{functions}\\
   & \sep      & \ty{\tyD{d}}        & \text{domain values }{\sqsubseteq d}\\
-  & \sep      & \ty{\tyL{d}}        & \text{location with values }{\sqsubseteq d}\\
+  & \sep      & \ty{\tyL{\frz}{d}}  & \text{location with values }{\sqsubseteq d}\\
   & \sep      & \ty{\tyJ}           & \text{thresholds}
   \\
   \\
@@ -57,50 +57,18 @@ Types ($\ty{T}$, $\ty{U}$) and typing environments ($\ty{\Gamma}$) are defined b
 \end{array}
 \]
 Types $\ty{\tyunit}$, $\ty{\typrod{T}{U}}$, and $\ty{\tyfun{T}{U}}$ are the standard unit, pair, and function types.
-
-\todo{Explain the types $\tyD{d}$ and $\tyL{d}$.}
-
+The type $\tyD{d}$ types domain values with the upper bound $d$.
+The type $\tyL{\frz}{d}$ types locations which store values of type $\tyD{d}$.
 Thresholds occur on both the type- and term-level. Each threshold type $\tyJ$ has only one inhabitant, which is the same threshold $\tmJ$ on the term-level.
 
+We extend $\sqcupD$ and $\sqsubseteqD$ to types and environments, see~\cref{fig:lattice}.
+The operation $\sqcupT$ takes two types or typing environments with identical structure \emph{up to domain bounds}, and returns the type with the pointwise maximum of each domain bound. Notably, \emph{status bits are unaffected by $\sqcupT$}.
+The relation $\sqsubseteqT$ takes two types or typing environments with identical structure up to domain bounds \emph{and status bits}, and checks if each domain bound or status bit in the first argument is smaller than the corresponding domain bound or status bit in the second argument.
 
-
-We write $\ty{T}\sqcup\ty{U}$ for the type with the maximum domain bound from either $\ty{T}$ or $\ty{U}$ at each subtype $\tyD{d}$ and $\tyL{d}$. The operation is only defined if the structure of $\ty{T}$ and $\ty{U}$ is identical \emph{up to domain bounds}. Similarly for $\ty{\Gamma}\sqcup\ty{\Gamma'}$:
-\[
-  \setlength{\arraycolsep}{2pt}
-  \begin{array}{lclcl}
-    \ty{\tyunit} & \sqcupT & \ty{\tyunit}
-    & = & \ty{\tyunit}
-    \\
-    \ty{\typrod{T}{U}} & \sqcupT & \ty{\typrod{T'}{U'}}
-    & = & \typrod{(\ty{T}\sqcupT\ty{T'})}{(\ty{U}\sqcupT\ty{U'})}
-    \\
-    \ty{\tyfun{T}{U}} & \sqcupT & \ty{\tyfun{T'}{U'}}
-    & = & \tyfun{(\ty{T}\sqcupT\ty{T'})}{(\ty{U}\sqcupT\ty{U'})}
-    \\
-    \tyJ & \sqcupT & \tyJ
-    & = & \tyJ
-    \\
-    \tyD{d} & \sqcupT & \tyD{d'}
-    & = & \tyD{{d}\sqcupD{d'}}
-    \\
-    \tyL{d} & \sqcupT & \tyL{d'}
-    & = & \tyL{{d}\sqcupD{d'}}
-    \\
-    \\
-    \ty{\emptyenv} & \sqcupG & \ty{\emptyenv}
-    & = & \ty{\emptyenv}
-    \\
-    \ty{\Gamma},\tmty{x}{T} & \sqcupG & \ty{\Gamma'},\tmty{x}{U}
-    & = & \ty{\Gamma}\sqcupG\ty{\Gamma'},\tm{x}:{\ty{T}\sqcupT\ty{U}}
-  \end{array}
-\]
-
-The type $\tyD{d}$ types domain values with the upper bound $d$. The type $\tyL{d}$ types locations which store values of type $\tyD{d}$.
-
-\paragraph*{Thresholds}
+\input{fig/lattice}
 
 \paragraph*{Syntactic sugar}
-We use syntactic sugar to make terms more readable: we write $\tm{\andthen{M}{N}}$ in place of $\tm{\letunit{M}{N}}$, $\tm{\letbind{x}{M}{N}}$ in place of $\tm{(\lambda x.N)\;M}$, and pattern matching functions $\tm{\lambda\unit.M}$ in place of $\tm{\lambda z.\letunit{z}{M}}$ and $\tm{\lambda\pair{x}{y}.M}$ in place of $\tm{\lambda z.\letpair{x}{y}{z}{M}}$. Finally, we use $\tm{\lvarrun}$ in place of the idiom $\tm{\lambda x.\letbind{l}{\lvarnew}{\letunit{x\;l}{\lvarfreeze\;l}}}$.
+We use syntactic sugar to make terms more readable: we write $\tm{\andthen{M}{N}}$ in place of $\tm{\letunit{M}{N}}$, $\tm{\letbind{x}{M}{N}}$ in place of $\tm{(\lambda x.N)\;M}$, and pattern matching functions $\tm{\lambda\unit.M}$ in place of $\tm{\lambda z.\letunit{z}{M}}$ and $\tm{\lambda\pair{x}{y}.M}$ in place of $\tm{\lambda z.\letpair{x}{y}{z}{M}}$.
 
 \paragraph*{Configurations}
 \[
@@ -123,15 +91,6 @@ We use syntactic sugar to make terms more readable: we write $\tm{\andthen{M}{N}
 \]
 
 We write $\tm{\frz}\sqcupB\tm{\frz'}$ for the maximum on status bits, which is standard Boolean disjunction.
-% \[
-% \setlength{\arraycolsep}{2pt}
-% \begin{array}{lclcl}
-%   \tm{\false} & \sqcupB & \tm{\false} & = & \tm{\false} \\
-%   \tm{\false} & \sqcupB & \tm{\true}  & = & \tm{\true}  \\
-%   \tm{\true}  & \sqcupB & \tm{\false} & = & \tm{\true}  \\
-%   \tm{\true}  & \sqcupB & \tm{\true}  & = & \tm{\true}
-% \end{array}
-% \]
 We write $\tm{s}\sqcups\tm{s'}$ for the pointwise maximum on states and $\tm{S}\sqcupS\tm{S'}$ for the pointwise maximum on stores. The latter is only defined if the structure of $\tm{S}$ and $\tm{S'}$ is identical up to domain values:
 \[
 \setlength{\arraycolsep}{2pt}
@@ -145,6 +104,27 @@ We write $\tm{s}\sqcups\tm{s'}$ for the pointwise maximum on states and $\tm{S}\
 
 \subsection{Operational semantics}
 \label{sec:lvar-semantics}
+\begin{mathpar}
+  \begin{array}{lrll}
+    \tm{V}, \tm{W}
+    & \coloneqq & \tm{\lambda x.M}
+      \sep        \tm{l}
+      \sep        \tm{d}
+      \sep        \tmJ
+      \sep        \tm{K}
+      \sep        \tm{\unit}
+      \sep        \tm{\pair{V}{W}}
+    \\
+    \tm{E}
+    & \coloneqq & \tm{\hole}
+      \sep        \tm{M\; E}
+      \sep        \tm{E\; M}
+      \sep        \tm{(M, E)}
+      \sep        \tm{(E, M)} \\
+    & \sep      & \tm{\letunit{E}{M}}
+      \sep        \tm{\letpair{x}{y}{E}{M}}
+  \end{array}
+\end{mathpar}
 \input{fig/semantics}
 See~\cref{fig:semantics}.
 

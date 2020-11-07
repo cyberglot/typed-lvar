@@ -1,0 +1,60 @@
+\begin{figure*}
+  \begin{mathpar}
+    \setlength{\arraycolsep}{2pt}
+    \begin{array}{lclcl}
+      \ty{\tyunit} & \sqcupT & \ty{\tyunit}
+      & = & \ty{\tyunit}
+      \\
+      \ty{\typrod{T}{U}} & \sqcupT & \ty{\typrod{T'}{U'}}
+      & = & \typrod{(\ty{T}\sqcupT\ty{T'})}{(\ty{U}\sqcupT\ty{U'})}
+      \\
+      \ty{\tyfun{T}{U}} & \sqcupT & \ty{\tyfun{T'}{U'}}
+      & = & \tyfun{(\ty{T}\sqcupT\ty{T'})}{(\ty{U}\sqcupT\ty{U'})}
+      \\
+      \tyJ & \sqcupT & \tyJ
+      & = & \tyJ
+      \\
+      \tyD{d} & \sqcupT & \tyD{d'}
+      & = & \tyD{{d}\sqcupD{d'}}
+      \\
+      \tyL{\frz}{d} & \sqcupT & \tyL{\frz}{d'}
+      & = & \tyL{\frz}{{d}\sqcupD{d'}}
+      \\
+      \\
+      \ty{\emptyenv} & \sqcupG & \ty{\emptyenv}
+      & = & \ty{\emptyenv}
+      \\
+      \ty{\Gamma},\tmty{x}{T} & \sqcupG & \ty{\Gamma'},\tmty{x}{U}
+      & = & \ty{\Gamma}\sqcupG\ty{\Gamma'},\tm{x}:{\ty{T}\sqcupT\ty{U}}
+    \end{array}
+  
+    \begin{array}{lclcl}
+      \ty{\tyunit} & \sqsubseteqT & \ty{\tyunit}
+      \\
+      \ty{\typrod{T}{U}} & \sqsubseteqT & \ty{\typrod{T'}{U'}}
+      & \text{if} & {\ty{T}\sqsubseteqT\ty{T'}}\text{ and }{\ty{U}\sqsubseteqT\ty{U'}}
+      \\
+      \ty{\tyfun{T}{U}} & \sqsubseteqT & \ty{\tyfun{T'}{U'}}
+      & \text{if} & {\ty{T}\sqsubseteqT\ty{T'}}\text{ and }{\ty{U}\sqsubseteqT\ty{U'}}
+      \\
+      \tyJ & \sqsubseteqT & \tyJ
+      \\
+      \tyD{d} & \sqsubseteqT & \tyD{d'}
+      & \text{if} & \ty{d}\sqsubseteqD\ty{d'}
+      \\
+      \tyL{\frz}{d} & \sqsubseteqT & \tyL{\frz'}{d'}
+      & \text{if} & {\ty{\frz}\sqsubseteqB\ty{\frz'}}\text{ and }{\ty{d}\sqsubseteqD\ty{d'}}
+      \\
+      \\
+      \ty{\emptyenv} & \sqsubseteqG & \ty{\emptyenv}
+      \\
+      \ty{\Gamma},\tmty{x}{T} & \sqsubseteqG & \ty{\Gamma'},\tmty{x}{U}
+      & \text{if} & \ty{\Gamma}\sqsubseteqG\ty{\Gamma'}\text{ and }\ty{T}\sqsubseteqT\ty{U}
+    \end{array}
+  \end{mathpar}
+  \todo{%
+    Actually, should we go under function types in $\sqsubseteqT$?
+    Should we change order?}
+  \caption{Extension of lattice operations to types and typing environments.}
+  \label{fig:lattice}
+\end{figure*}

@@ -1,82 +1,45 @@
 \begin{figure*}
   \noindent
-  \begin{minipage}{.6\textwidth}
-  \begin{mathpar}
-    \begin{array}{lrll}
-      \tm{V}, \tm{W}
-      & \coloneqq & \tm{\lambda x.M}
-        \sep        \tm{l}
-        \sep        \tm{d}
-        \sep        \tmJ
-        \sep        \tm{K}
-        \sep        \tm{\unit}
-        \sep        \tm{\pair{V}{W}}
-      \\
-      \tm{E}
-      & \coloneqq & \tm{\hole}
-        \sep        \tm{V\; E}
-        \sep        \tm{E\; V}
-        \sep        \tm{(V, E)}
-        \sep        \tm{(E, V)} \\
-      & \sep      & \tm{\letunit{E}{M}}
-        \sep        \tm{\letpair{x}{y}{E}{M}}
-    \end{array}
-
-    \begin{array}{llrl}
-      \LabTirName{E-Lam}     & \tm{\config{(\lambda x.M)\;V}{S}}
-                             & \red & \tm{\config{\subst{M}{V}{x}}{S}}
-      \\
-      \LabTirName{E-Unit}    & \tm{\config{\letunit{\unit}{M}}{S}}
-                             & \red & \tm{\config{M}{S}}
-      \\
-      \LabTirName{E-Pair}    & \tm{\config{\letpair{x}{y}{\pair{V}{W}}{M}}{S}}
-                             & \red & \tm{\config{\subst{\subst{M}{V}{x}}{W}{y}}{S}}
-      \\
-      \LabTirName{E-New}     & \tm{\config{\lvarnew}{S}}
-                             & \red
-                             & \tm{\config{l}{S, l \mapsto\st{\botD}{\false}}}
-      \\
-      \LabTirName{E-Freeze}  & \tm{\config{\lvarfreeze}{S, l \mapsto\st{d}{\frz}}}
-                             & \red
-                             & \tm{\config{d}{S, l \mapsto\st{d}{\true}}}
-      \\
-      \LabTirName{E-Put}     & \tm{\config{\lvarput\;l\;d'}{S, l \mapsto\st{d}{\false}}}
-                             & \red
-                             & \tm{\config{()}{S, l \mapsto\st{d'}{\false}}}
-      \\
-      \LabTirName{E-Get}     & \tm{\config{\lvarget\;l\;J}{S, l \mapsto\st{d}{\frz}}}
-                             & \red
-                             & \tm{\config{d'}{S, l \mapsto\st{d}{\frz}}}
-    \end{array}
-  \end{mathpar}
+  \begin{minipage}[t]{.6\textwidth}
+    \fbox{$\tm{C}\red\tm{C'}$}\hfill
+    \begin{mathpar}
+      \begin{array}{llrl}
+        \LabTirName{E-Lam}     & \tm{\config{(\lambda x.M)\;V}{S}}
+                               & \red & \tm{\config{\subst{M}{V}{x}}{S}}
+        \\
+        \LabTirName{E-Unit}    & \tm{\config{\letunit{\unit}{M}}{S}}
+                               & \red & \tm{\config{M}{S}}
+        \\
+        \LabTirName{E-Pair}    & \tm{\config{\letpair{x}{y}{\pair{V}{W}}{M}}{S}}
+                               & \red & \tm{\config{\subst{\subst{M}{V}{x}}{W}{y}}{S}}
+        \\
+        \LabTirName{E-New}     & \tm{\config{\lvarnew}{S}}
+                               & \red
+                               & \tm{\config{l}{S, l \mapsto\st{\botD}{\false}}}
+        \\
+        \LabTirName{E-Freeze}  & \tm{\config{\lvarfreeze}{S, l \mapsto\st{d}{\frz}}}
+                               & \red
+                               & \tm{\config{d}{S, l \mapsto\st{d}{\true}}}
+        \\
+        \LabTirName{E-Put}     & \tm{\config{\lvarput\;l\;d'}{S, l \mapsto\st{d}{\false}}}
+                               & \red
+                               & \tm{\config{()}{S, l \mapsto\st{d'}{\false}}}
+        \\
+        \LabTirName{E-Get}     & \tm{\config{\lvarget\;l\;J}{S, l \mapsto\st{d}{\frz}}}
+                               & \red
+                               & \tm{\config{d'}{S, l \mapsto\st{d}{\frz}}}
+      \end{array}
+    \end{mathpar}
   \end{minipage}%
-  \begin{minipage}{.4\textwidth}
-  \begin{mathpar}
-    \inferrule*[lab=E-Par-App]{
-      \tm{\config{M}{S}} \red \tm{\config{M'}{S'}}
-      \\
-      \tm{\config{N}{S}} \red  \tm{\config{N'}{S''}}
-    }{\tm{\config{M\;N}{S}}
-      \red
-      \tm{\config{M'\;N'}{S' \sqcup S''}}
-    }
-    \\ 
-    \inferrule*[lab=E-Par-Pair]{
-      \tm{\config{M}{S}} \red \tm{\config{M'}{S'}}
-      \\
-      \tm{\config{N}{S}} \red  \tm{\config{N'}{S''}}
-    }{\tm{\config{\pair{M}{N}}{S}}
-      \red
-      \tm{\config{\pair{M'}{N'}}{S' \sqcup S''}}
-    }
-    \\
-    \inferrule*[lab=E-Lift]{
-      \tm{\config{M}{S}} \red \tm{\config{N}{S'}}
-    }{\tm{\config{\plug{E}{M}}{S}}
-      \rede
-      \tm{\config{\plug{E}{N}}{S'}}
-    }
-  \end{mathpar}
+  \begin{minipage}[t]{.4\textwidth}
+    \fbox{$\tm{C}\rede\tm{C'}$}\hfill
+    \begin{mathpar}
+      \inferrule*[lab=E-Lift]{
+        \tm{\config{M}{S}} \red \tm{\config{N}{S'}}
+      }{\tm{\config{\plug{E}{M}}{S}}
+        \rede
+        \tm{\config{\plug{E}{N}}{S'}}}
+    \end{mathpar}
   \end{minipage}
   \caption{Operational semantics for \typedlambdalvar.}
   \label{fig:semantics}

@@ -92,7 +92,7 @@
   \providecommand{\tylolli}[2]{\ensuremath{{#1}\mathbin{\ty{\multimap}}{#2}}}
   \providecommand{\tyfun}[2]{\ensuremath{{#1}\mathbin{\ty{\rightarrow}}{#2}}}
   \providecommand{\tyD}[1]{\ensuremath{\ty{\mathcal{D}^{#1}}}}
-  \providecommand{\tyL}[2][]{\ensuremath{\ty{\mathcal{L}_{#1}^{#2}}}}
+  \providecommand{\tyL}[2]{\ensuremath{\ty{\mathcal{L}_{#1}^{#2}}}}
   \providecommand{\tyJ}[0]{\ensuremath{\ty{\mathcal{J}}}}
   % terms
   \providecommand{\tmJ}[0]{\ensuremath{\tm{\mathcal{J}}}}
@@ -127,23 +127,28 @@
   \providecommand{\seqs}[3]{\ensuremath{#1\vdash_{\scriptscriptstyle{p}}\tmty{#2}{#3}}}
   \providecommand{\seqC}[3]{\ensuremath{#1\vdash_{\scriptscriptstyle{C}}\tmty{#2}{#3}}}
   % reduction relations
-  \providecommand{\red}[0]{\ensuremath{\longrightarrow}}
-  \providecommand{\rede}[0]{\ensuremath{\longrightarrow_{E}}}
+  \providecommand{\red}[0]{\ensuremath{\hookrightarrow}}
+  \providecommand{\rede}[0]{\ensuremath{\mapsto}}
   \providecommand{\lred}[0]{\ensuremath{\hookrightarrow}}
   \providecommand{\lrede}[0]{\ensuremath{\mapsto}}
   % bottom and top
-  \providecommand{\topD}{{\top_{\scriptscriptstyle\mathcal{D}}}}
-  \providecommand{\botD}{{\bot_{\scriptscriptstyle\mathcal{D}}}}
+  \providecommand{\topD}{{\top}}
+  \providecommand{\botD}{{\bot}}
   % join operators
-  \providecommand{\sqcupD}{\,{{\color{black}\sqcup_{\scriptscriptstyle\mathcal{D}}}}\,}
-  \providecommand{\sqcupT}{\,{{\color{black}\sqcup_{\scriptscriptstyle{T}}}}\,}
-  \providecommand{\sqcupG}{\,{{\color{black}\sqcup_{\scriptscriptstyle\Gamma}}}\,}
-  \providecommand{\sqcupB}{\,{{\color{black}\sqcup_{\scriptscriptstyle\frz}}}\,}
-  \providecommand{\sqcups}{\,{{\color{black}\sqcup_{\scriptscriptstyle{s}}}}\,}
-  \providecommand{\sqcupS}{\,{{\color{black}\sqcup_{\scriptscriptstyle{S}}}}\,}
+  \providecommand{\sqcupD}{\mathbin{{\color{black}\sqcup}}}
+  \providecommand{\sqcupT}{\mathbin{{\color{black}\sqcup}}}
+  \providecommand{\sqcupG}{\mathbin{{\color{black}\sqcup}}}
+  \providecommand{\sqcupB}{\mathbin{{\color{black}\sqcup}}}
+  \providecommand{\sqcups}{\mathbin{{\color{black}\sqcup}}}
+  \providecommand{\sqcupS}{\mathbin{{\color{black}\sqcup}}}
   % partial orders
-  \providecommand{\sqsubseteqD}{\mathbin{{\color{black}\sqsubseteq_{\scriptscriptstyle\mathcal{D}}}}}
-  \providecommand{\sqsubseteqJ}{\mathbin{{\color{black}\sqsubseteq_{\scriptscriptstyle\mathcal{J}}}}}
+  \providecommand{\sqsubseteqJ}{\mathbin{{\color{black}\sqsubseteq}}}
+  \providecommand{\sqsubseteqD}{\mathbin{{\color{black}\sqsubseteq}}}
+  \providecommand{\sqsubseteqT}{\mathbin{{\color{black}\sqsubseteq}}}
+  \providecommand{\sqsubseteqG}{\mathbin{{\color{black}\sqsubseteq}}}
+  \providecommand{\sqsubseteqB}{\mathbin{{\color{black}\sqsubseteq}}}
+  \providecommand{\sqsubseteqs}{\mathbin{{\color{black}\sqsubseteq}}}
+  \providecommand{\sqsubseteqS}{\mathbin{{\color{black}\sqsubseteq}}}
 }{}
 \newcommand{\lvar}[1]{\namespace*{lvar}{}{#1}}
 
@@ -168,16 +173,8 @@
 
 
 %% Title information
-\title[Short Title]{Full Title}         %% [Short Title] is optional;
-                                        %% when present, will be used in
-                                        %% header instead of Full Title.
-\titlenote{with title note}             %% \titlenote is optional;
-                                        %% can be repeated if necessary;
-                                        %% contents suppressed with 'anonymous'
-\subtitle{Subtitle}                     %% \subtitle is optional
-\subtitlenote{with subtitle note}       %% \subtitlenote is optional;
-                                        %% can be repeated if necessary;
-                                        %% contents suppressed with 'anonymous'
+\title{Typed LVar}
+\subtitle{Deterministic Parallelism with Mutable Shared State}
 
 %% Author information
 %% Contents and number of authors suppressed with 'anonymous'.

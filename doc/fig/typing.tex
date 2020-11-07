@@ -1,90 +1,101 @@
 \begin{figure*}
-  \paragraph{Term typing}
-  \begin{mathpar}
-    \inferrule*[lab=T-Var]{
-      \tmty{x}{T} \in \ty{\Gamma}
-    }{\seq{\ty{\Gamma}}{x}{T}}
-  
-    \inferrule*[lab=T-Lam]{
-      \seq{\ty{\Gamma},\tmty{x}{T}}{M}{U}
-    }{\seq{\ty{\Gamma}}{\lambda x.M}{\tyfun{T}{U}}}
-  
-    \inferrule*[lab=T-App]{
-      \seq{\ty{\Gamma}}{M}{\tyfun{T}{U}}
-      \\
-      \seq{\ty{\Gamma'}}{N}{T}
-    }{\seq{\ty{\Gamma}\sqcup\ty{\Gamma'}}{M\;N}{U}}
-  
-    \inferrule*[lab=T-Unit]{
-    }{\seq{\ty{\Gamma}}{\unit}{\tyunit}}
-  
-    \inferrule*[lab=T-LetUnit]{
-      \seq{\ty{\Gamma}}{M}{\tyunit}
-      \\
-      \seq{\ty{\Gamma'}}{N}{T}
-    }{\seq{\ty{\Gamma}\sqcup\ty{\Gamma'}}{\letunit{M}{N}}{T}}
-  
-    \inferrule*[lab=T-Pair]{
-      \seq{\ty{\Gamma}}{M}{T}
-      \\
-      \seq{\ty{\Gamma'}}{N}{U}
-    }{\seq{\ty{\Gamma}\sqcup\ty{\Gamma'}}{\pair{M}{N}}{\typrod{T}{U}}}
-  
-    \inferrule*[lab=T-LetPair]{
-      \seq{\ty{\Gamma}}{M}{\typrod{T}{T'}}
-      \\
-      \seq{\ty{\Gamma'},\tmty{x}{T},\tmty{y}{T'}}{N}{U}
-    }{\seq{\ty{\Gamma}\sqcup\ty{\Gamma'}}{\letpair{x}{y}{M}{N}}{U}}
-  
-    \inferrule*[lab=T-Threshold]{
-    }{\seq{\ty{\Gamma}}{\tmJ}{\tyJ}}
-  
-    \inferrule*[lab=T-New]{
-    }{\seq{\ty{\Gamma}}{\lvarnew}{\tyL{\bot}}}
-  
-    \inferrule*[lab=T-Freeze]{
-      \seq{\ty{\Gamma}}{M}{\tyL{d}}
-    }{\seq{\ty{\Gamma}}{\lvarfreeze\;M}{\tyD{d}}}
-  
-    \inferrule*[lab=T-Get]{
-      \seq{\ty{\Gamma}}{M}{\tyL{d}}
-      \\
-      \seq{\ty{\Gamma'}}{N}{\tyJ}
-      \\
-      \ty{d}\sqsupseteq\tyJ
-    }{\seq{\ty{\Gamma}\sqcup\ty{\Gamma'}}{\lvarget\;M\;N}{\tyD{d}}}
-  
-    \inferrule*[lab=T-Put]{
-      \seq{\ty{\Gamma}}{M}{\tyL{d}}
-      \\
-      \seq{\ty{\Gamma'}}{N}{\tyD{d'}}
-      \\
-      \ty{d}\sqsubseteq\ty{d'}
-    }{\seq{\ty{\Gamma}\sqcup\ty{\Gamma'}}{\lvarput\;M\;N}{1}}
-  \end{mathpar}
-
-  \paragraph{Configuration typing}
-  \begin{mathpar}
-    \inferrule*[lab=T-Conf]{
-      \seq{\ty{\Gamma}}{M}{T}
-      \\
-      \seqS{\ty{\Gamma'}}{S}
-    }{\seqC{\ty{\Gamma}\sqcupG\ty{\Gamma'}}{\config{M}{S}}{T}}
-
-    \inferrule*[lab=T-Store-Emp]{
-    }{\seqS{\ty{\Gamma}}{\emptystore}}
-
-    \inferrule*[lab=T-Store-Ext]{
-      \seqS{\ty{\Gamma}}{S}
-      \\
-      \seqs{\ty{\Gamma}}{p}{\tyL{d}}
-      \\
-      \tmty{l}{\tyL{d}}\in\ty{\Gamma}
-    }{\seqS{\ty{\Gamma}}{S, l \mapsto p}}
-
-    \inferrule*[lab=T-State]{
-    }{\seqs{\ty{\Gamma}}{\st{d}{\frz}}{\tyL{d}}}
-  \end{mathpar}
+  \begin{minipage}[t]{1.0\textwidth}
+    \fbox{$\seq{\ty{\Gamma}}{M}{T}$}\hfill
+    \\
+    \begin{mathpar}
+      \inferrule*[lab=T-Var]{
+        \tmty{x}{T} \in \ty{\Gamma}
+      }{\seq{\ty{\Gamma}}{x}{T}}
+    
+      \inferrule*[lab=T-Lam]{
+        \seq{\ty{\Gamma},\tmty{x}{T}}{M}{U}
+      }{\seq{\ty{\Gamma}}{\lambda x.M}{\tyfun{T}{U}}}
+    
+      \inferrule*[lab=T-App]{
+        \seq{\ty{\Gamma}}{M}{\tyfun{T}{U}}
+        \\
+        \seq{\ty{\Gamma'}}{N}{T}
+      }{\seq{\ty{\Gamma}\sqcupG\ty{\Gamma'}}{M\;N}{U}}
+    
+      \inferrule*[lab=T-Unit]{
+      }{\seq{\ty{\Gamma}}{\unit}{\tyunit}}
+    
+      \inferrule*[lab=T-LetUnit]{
+        \seq{\ty{\Gamma}}{M}{\tyunit}
+        \\
+        \seq{\ty{\Gamma'}}{N}{T}
+        \\
+        \ty{\Gamma}\sqsubseteqG\ty{\Gamma'}
+      }{\seq{\ty{\Gamma'}}{\letunit{M}{N}}{T}}
+    
+      \inferrule*[lab=T-Pair]{
+        \seq{\ty{\Gamma}}{M}{T}
+        \\
+        \seq{\ty{\Gamma'}}{N}{U}
+      }{\seq{\ty{\Gamma}\sqcupG\ty{\Gamma'}}{\pair{M}{N}}{\typrod{T}{U}}}
+    
+      \inferrule*[lab=T-LetPair]{
+        \seq{\ty{\Gamma}}{M}{\typrod{T}{T'}}
+        \\
+        \seq{\ty{\Gamma'},\tmty{x}{T},\tmty{y}{T'}}{N}{U}
+        \\
+        \ty{\Gamma}\sqsubseteqG\ty{\Gamma'}
+      }{\seq{\ty{\Gamma'}}{\letpair{x}{y}{M}{N}}{U}}
+    
+      \inferrule*[lab=T-Threshold]{
+      }{\seq{\ty{\Gamma}}{\tmJ}{\tyJ}}
+    
+      \inferrule*[lab=T-New]{
+      }{\seq{\ty{\Gamma}}{\lvarnew}{\tyL{\false}{\bot}}}
+    
+      \inferrule*[lab=T-Freeze]{
+        \seq{\ty{\Gamma}}{M}{\tyL{\true}{d}}
+      }{\seq{\ty{\Gamma}}{\lvarfreeze\;M}{\tyD{d}}}
+    
+      \inferrule*[lab=T-Get]{
+        \seq{\ty{\Gamma}}{M}{\tyL{\frz}{d}}
+        \\
+        \seq{\ty{\Gamma'}}{N}{\tyJ}
+        \\
+        \ty{d}\sqsupseteq\tyJ
+      }{\seq{\ty{\Gamma}\sqcupG\ty{\Gamma'}}{\lvarget\;M\;N}{\tyD{d}}}
+    
+      \inferrule*[lab=T-Put]{
+        \seq{\ty{\Gamma}}{M}{\tyL{\false}{d}}
+        \\
+        \seq{\ty{\Gamma'}}{N}{\tyD{d'}}
+        \\
+        \ty{d}\sqsubseteq\ty{d'}
+      }{\seq{\ty{\Gamma}\sqcupG\ty{\Gamma'}}{\lvarput\;M\;N}{1}}
+    \end{mathpar}
+  \end{minipage}
+  \bigskip
+  \\
+  \begin{minipage}[t]{0.45\textwidth}
+    \fbox{$\seqC{\ty{\Gamma}}{C}{T}$}\hfill
+    \\
+    \begin{mathpar}
+      \inferrule*[lab=T-Conf]{
+        \seq{\ty{\Gamma}}{M}{T}
+        \\
+        \seqS{\ty{\Gamma'}}{S}
+      }{\seqC{\ty{\Gamma}\sqcupG\ty{\Gamma'}}{\config{M}{S}}{T}}
+    \end{mathpar}
+  \end{minipage}%
+  \begin{minipage}[t]{0.55\textwidth}
+    \fbox{$\seqS{\ty{\Gamma}}{S}$}\hfill
+    \\
+    \begin{mathpar}
+      \inferrule*[lab=T-Store-Emp]{
+      }{\seqS{\ty{\Gamma}}{\emptystore}}
+      
+      \inferrule*[lab=T-Store-Ext]{
+        \seqS{\ty{\Gamma}}{S}
+        \\
+        \tmty{l}{\tyL{\frz}{d}}\in\ty{\Gamma}
+      }{\seqS{\ty{\Gamma}}{S, l \mapsto\st{d}{\frz}}}
+    \end{mathpar}
+  \end{minipage}
   \caption{Typing rules for \typedlambdalvar.}
   \label{fig:typing}
 \end{figure*}
