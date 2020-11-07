@@ -33,19 +33,19 @@
       \\
       \LabTirName{E-New}     & \tm{\config{\lvarnew}{S}}
                              & \red
-                             & \tm{\config{l}{S, l \mapsto (0, \bot)}}
+                             & \tm{\config{l}{S, l \mapsto\state{0}{\botD}}}
       \\
-      \LabTirName{E-Freeze}  & \tm{\config{\lvarfreeze}{S, l \mapsto (b, d)}}
+      \LabTirName{E-Freeze}  & \tm{\config{\lvarfreeze}{S, l \mapsto\state{b}{d}}}
                              & \red
-                             & \tm{\config{d}{S, l \mapsto (1, d)}}
+                             & \tm{\config{d}{S, l \mapsto\state{1}{d}}}
       \\
-      \LabTirName{E-Put}     & \tm{\config{\lvarput\;l\;d'}{S, l \mapsto \sts{0}{d}}}
+      \LabTirName{E-Put}     & \tm{\config{\lvarput\;l\;d'}{S, l \mapsto\state{\false}{d}}}
                              & \red
-                             & \tm{\config{()}{S, l \mapsto \sts{0}{d'}}}
+                             & \tm{\config{()}{S, l \mapsto\state{\false}{d'}}}
       \\
-      \LabTirName{E-Get}     & \tm{\config{\lvarget\;l\;J}{S, l \mapsto \sts{b}{d}}}
+      \LabTirName{E-Get}     & \tm{\config{\lvarget\;l\;J}{S, l \mapsto\state{b}{d}}}
                              & \red
-                             & \tm{\config{d'}{S, l \mapsto \sts{b}{d}}}
+                             & \tm{\config{d'}{S, l \mapsto\state{b}{d}}}
     \end{array}
   \end{mathpar}
   \end{minipage}%
@@ -71,9 +71,9 @@
     \\
     \inferrule*[lab=E-Lift]{
       \tm{\config{M}{S}} \red \tm{\config{N}{S'}}
-    }{\tm{\confige{M}{S}}
+    }{\tm{\config{\plug{E}{M}}{S}}
       \rede
-      \tm{\confige{N}{S'}}
+      \tm{\config{\plug{E}{N}}{S'}}
     }
   \end{mathpar}
   \end{minipage}
