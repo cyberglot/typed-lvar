@@ -91,7 +91,7 @@ We use syntactic sugar to make terms more readable: we write $\tm{\andthen{M}{N}
 \]
 
 We write $\tm{\frz}\sqcupB\tm{\frz'}$ for the maximum on status bits, which is standard Boolean disjunction.
-We write $\tm{s}\sqcups\tm{s'}$ for the pointwise maximum on states and $\tm{S}\sqcupS\tm{S'}$ for the pointwise maximum on stores. The latter is only defined if the structure of $\tm{S}$ and $\tm{S'}$ is identical up to domain values:
+We write $\tm{s}\sqcups\tm{s'}$ for the pointwise maximum on states and $\tm{S}\sqcupS\tm{S'}$ for the pointwise maximum on stores. The latter is only defined if the structure of $\tm{S}$ and $\tm{S'}$ is identical \emph{up to location names}:
 \[
 \setlength{\arraycolsep}{2pt}
 \begin{array}{lclcl}
@@ -137,7 +137,15 @@ See~\cref{fig:typing}.
 
 \section{Metatheory of \typedlambdalvar calculus}
 
-\subsection{Translation to \lambdalvar  from \typedlambdalvar}
+\subsection{Subject reduction}
+
+\begin{theorem}[Subject reduction, $\red$]
+  \hfill\\
+  If $\seq{\ty{\Gamma}}{C}{T}$ and $\tm{C}\red\tm{C'}$, then $\seq{\ty{\Gamma}}{C}{T}$.
+\end{theorem}
+\input{fig/subject-reduction-red}
+
+\subsection{Operational correspondence with \lambdalvar}
 
 \todo{%
   The translation function $\trans{\cdot}$ should have a tight operational correspondence, \ie terms in \typedlambdalvar should reduce in the same number of steps when translated to \lambdalvar, and should not add or remove synchronisation.}

@@ -1,0 +1,52 @@
+\begin{proof}
+  By induction on the structure of $\tm{C}\red\tm{C'}$.
+  \begin{case}{\LabTirName{E-Lam}}
+    \[
+      \tm{\config{(\lambda x.M)\;V}{S}}
+      \red
+      \tm{\config{\subst{M}{V}{x}}{S}}
+    \]
+  \end{case}
+  \begin{case}{\LabTirName{E-Unit}}
+    \[
+      \tm{\config{\letunit{\unit}{M}}{S}}
+      \red
+      \tm{\config{M}{S}}
+    \]
+  \end{case}
+  \begin{case}{\LabTirName{E-Pair}}    
+    \[
+      \tm{\config{\letpair{x}{y}{\pair{V}{W}}{M}}{S}}
+      \red 
+      \tm{\config{\subst{\subst{M}{V}{x}}{W}{y}}{S}}
+    \]
+  \end{case}
+  \begin{case}{\LabTirName{E-New}}     
+    \[
+      \tm{\config{\lvarnew}{S}}
+      \red
+      \tm{\config{l}{S, l \mapsto\st{\botD}{\false}}}
+    \]
+  \end{case}
+  \begin{case}{\LabTirName{E-Freeze}}  
+    \[
+      \tm{\config{\lvarfreeze}{S, l \mapsto\st{d}{\frz}}}
+      \red
+      \tm{\config{d}{S, l \mapsto\st{d}{\true}}}
+    \]
+  \end{case}
+  \begin{case}{\LabTirName{E-Put}}     
+    \[
+      \tm{\config{\lvarput\;l\;d'}{S, l \mapsto\st{d}{\false}}}
+      \red
+      \tm{\config{()}{S, l \mapsto\st{d'}{\false}}}
+    \]
+  \end{case}
+  \begin{case}{\LabTirName{E-Get}}     
+    \[
+      \tm{\config{\lvarget\;l\;J}{S, l \mapsto\st{d}{\frz}}}
+      \red
+      \tm{\config{d'}{S, l \mapsto\st{d}{\frz}}}
+    \]
+  \end{case}
+\end{proof}

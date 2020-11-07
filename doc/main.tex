@@ -42,8 +42,8 @@
 \usepackage{mathpartir}
 
 % Theorem environments
-\newenvironment{case}[1]{\textbf{Case}~(#1).}{}
-\newenvironment{subcase}[1]{\textbf{Subcase}~(#1).}{}
+\newenvironment{case}[1]{\trivlist \item\relax\textbf{Case}~(#1).}{\endtrivlist}
+\newenvironment{subcase}[1]{\trivlist \item\relax\textbf{Subcase}~(#1).}{\endtrivlist}
 
 % Landscape pages using \begin{landscape}\end{landscape}
 \usepackage{pdflscape}
