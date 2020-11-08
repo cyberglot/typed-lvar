@@ -68,7 +68,6 @@
 
 % Environments and hyper-environments
 \newcommand{\emptyenv}{\cdot}
-\newcommand{\emptystore}{\cdot}
 
 % Common operations
 \newcommand{\subst}[4][]{\ifstrempty{#1}{\ensuremath{#2\{#3/#4\}}}{\ensuremath{#2(\{#3/#4\}\cup#1)}}}
@@ -118,7 +117,7 @@
   \providecommand{\true}[0]{\ensuremath{\mathbf{true}}}
   \providecommand{\false}[0]{\ensuremath{\mathbf{false}}}
   \providecommand{\st}[2]{\ensuremath{\langle {#1}, {#2} \rangle}}
-  \providecommand{\config}[2]{\ensuremath{\langle {#1}; {#2} \rangle}}
+  \providecommand{\config}[2]{\ensuremath{\langle {#2}; {#1} \rangle}}
   % evaluation contexts
   \providecommand{\hole}[0]{\ensuremath{\square}}
   % typing judgements
@@ -131,6 +130,10 @@
   \providecommand{\rede}[0]{\ensuremath{\mapsto}}
   \providecommand{\lred}[0]{\ensuremath{\hookrightarrow}}
   \providecommand{\lrede}[0]{\ensuremath{\mapsto}}
+  % stores
+  \providecommand{\storeemp}{\cdot}
+  \providecommand{\storeext}[3]{{#1},{#2}\mapsto{#3}}
+  \providecommand{\storeupd}[3]{{#1}[{#2}\mapsto{#3}]}
   % bottom and top
   \providecommand{\topD}{{\top}}
   \providecommand{\botD}{{\bot}}

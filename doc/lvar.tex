@@ -82,8 +82,8 @@ We use syntactic sugar to make terms more readable: we write $\tm{\andthen{M}{N}
   & \coloneqq & \tm{\langle \frz, d \rangle} & \text{states}
   \\
   \tm{S}
-  & \coloneqq & \tm{\emptystore}
-    \sep        \tm{S, l \mapsto p} & \text{stores}
+  & \coloneqq & \tm{\storeemp}
+    \sep        \tm{\storeext{S}{l}{p}} & \text{stores}
   \\
   \tm{C}
   & \coloneqq & \tm{\config{M}{S}} & \text{configurations}
@@ -97,8 +97,8 @@ We write $\tm{s}\sqcups\tm{s'}$ for the pointwise maximum on states and $\tm{S}\
 \begin{array}{lclcl}
   \tm{\st{d}{\frz}} & \sqcups & \tm{\st{d'}{\frz'}}
   & = & \tm{\st{d \sqcupD d'}{\frz \sqcupB \frz'}} \\
-  \tm{\emptyenv}      & \sqcupS & \tm{\emptyenv}        & = & \tm{\emptyenv} \\
-  \tm{S, l \mapsto p} & \sqcupS & \tm{S', l \mapsto p'} & = & \tm{S \sqcupS S', l \mapsto p \sqcups p'}
+  \tm{\storeemp}          & \sqcupS & \tm{\storeemp}            & = & \tm{\storeemp} \\
+  \tm{\storeext{S}{l}{p}} & \sqcupS & \tm{\storeext{S'}{l}{p'}} & = & \tm{\storeext{S \sqcupS S'}{l}{p \sqcups p'}}
 \end{array}
 \]
 
@@ -187,11 +187,11 @@ See~\cref{fig:typing}.
     \tm{\trans{\config{\letpair{x}{y}{M}{N}}{S}}}
     & = & \config{S}{e\;(\lambda x.\lambda y. e')}
     \\
-    \tm{\trans{\config{M}{S, l \mapsto (0, d)}}}
-    & = & \config{S[l \mapsto (d,\tt{false})]}{e}
+    \tm{\trans{\config{M}{\storeext{S}{l}{(0, d)}}}}
+    & = & \config{\storeext{S}{l}{\st{d}{\false}}}{e}
     \\
     \tm{\trans{\config{M}{S, l \mapsto (1, d)}}}
-    & = & \config{S[l \mapsto (d,\tt{true})]}{e}
+    & = & \config{\storeext{S}{l}{\st{d}{\true}}}{e}
   \end{array}
 \end{mathpar}
 
@@ -219,9 +219,9 @@ See~\cref{fig:typing}.
 \begin{lemma}[Translation, \typedlambdalvar  $\rightsquigarrow$ \lambdalvar]
   For any translation $\zeta$,
   \begin{itemize}
-    \item if $C \red C'$ and $\sigma \hookrightarrow \sigma'$ and $\zeta(C) =
+    \item if $C \red C'$ and $\sigma\red\sigma'$ and $\zeta(C) =
       \sigma$ , then $\zeta(C') = \sigma'$;
-    \item if $C \rede C'$ and $\sigma \mapsto \sigma'$ and $\zeta(C) =
+    \item if $C \rede C'$ and $\sigma\rede\sigma'$ and $\zeta(C) =
       \sigma$ , then $\zeta(C') = \sigma'$.
   \end{itemize}
 \end{lemma}

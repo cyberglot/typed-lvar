@@ -13,10 +13,6 @@
         \LabTirName{E-Pair}    & \tm{\config{\letpair{x}{y}{\pair{V}{W}}{M}}{S}}
                                & \red & \tm{\config{\subst{\subst{M}{V}{x}}{W}{y}}{S}}
         \\
-        \LabTirName{E-New}     & \tm{\config{\lvarnew}{S}}
-                               & \red
-                               & \tm{\config{l}{S, l \mapsto\st{\botD}{\false}}}
-        \\
         \LabTirName{E-Freeze}  & \tm{\config{\lvarfreeze}{S, l \mapsto\st{d}{\frz}}}
                                & \red
                                & \tm{\config{d}{S, l \mapsto\st{d}{\true}}}
@@ -29,6 +25,22 @@
                                & \red
                                & \tm{\config{d'}{S, l \mapsto\st{d}{\frz}}}
       \end{array}
+      \\
+      \inferrule*[lab=E-New]{
+        \tm{l}\not\in\dom(\tm{S})
+      }{\tm{\config{\lvarnew}{S}}
+        \red
+        \tm{\config{l}{S, l \mapsto\st{\botD}{\false}}}}
+      
+      \inferrule*[lab=E-Freeze]{
+        \tm{S(l)} = \tm{\st{d}{\frz}}
+      }{\tm{\config{\lvarfreeze}{S}}
+        \red
+        \tm{\config{d}{\storeupd{S}{l}{\st{d}{\true}}}}}
+
+      \inferrule*[lab=E-Put]{
+        \tm{S(l)} = \tm{p}
+      }{}
     \end{mathpar}
   \end{minipage}%
   \begin{minipage}[t]{.4\textwidth}
