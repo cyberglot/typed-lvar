@@ -57,7 +57,11 @@
         \\
         \seq{\ty{\Gamma'}}{N}{\tyJ}
         \\
-        \ty{d}\sqsupseteq\tyJ
+        \incomp({\tyJ})
+        \\
+        \ty{d'}\in\tyJ
+        \\
+        \ty{d'}\sqsubseteqD\ty{d}
       }{\seq{\ty{\Gamma}\sqcupG\ty{\Gamma'}}{\lvarget\;M\;N}{\tyD{d}}}
     
       \inferrule*[lab=T-Put]{

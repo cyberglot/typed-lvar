@@ -32,13 +32,10 @@ Terms ($\tm{L}$, $\tm{M}$, $\tm{N}$) are defined by the following grammar:
     \sep        \tm{\lvarput}
 \end{array}
 \]
-Let $\tm{x}$, $\tm{y}$, and $\tm{z}$ range over variable names. The term language is the standard $\lambda$-calculus with products and units, extended with LVars~\citep{kuper15}. Let $\tm{l}$ range over location names. Let $\tm{d}$ range over \emph{domain values} from the domain $\mathcal{D}$. Finally, let $\tmJ$ range over \emph{thresholds}.
-
-A~threshold $\mathcal{J}$ is a subset of $\mathcal{D}$ where all elements are pair-wise incompatible, \ie for all $d,d'\in\mathcal{D}$, if ${d}\neq{d'}$ then ${d}\sqcup{d'}={\top}$.
-A~domain value $d$ is below a threshold $\mathcal{J}$, written ${d}\sqsubseteqJ\mathcal{J}$, if there exists a ${d'}\in\mathcal{J}$ such that ${d}\sqsubseteqD{d'}$.
+Let $\tm{x}$, $\tm{y}$, and $\tm{z}$ range over variable names. The term language is the standard $\lambda$-calculus with products and units, extended with LVars~\citep{kuper15}. Let $\tm{l}$ range over location names. Let $\tm{d}$ range over \emph{domain values} from the domain $\mathcal{D}$. Finally, let $\tmJ$ range over \emph{thresholds}. A~threshold $\tmJ$ is a subset of $\mathcal{D}$. A~threshold is pair-wise incompatible, written $\incomp(\tmJ)$, if for all $\tm{d},\tm{d'}\in\mathcal{D}$, if $\tm{d}\neq\tm{d'}$ then $\tm{d}\sqcup\tm{d'}=\tm{\topD}$.
 
 \paragraph*{Types}
-Types ($\ty{T}$, $\ty{U}$) and typing environments ($\ty{\Gamma}$) are defined by the following grammar:
+Types ($\ty{T}$, $\ty{U}$), status bits ($\ty{\frz}$), and typing environments ($\ty{\Gamma}$) are defined by the following grammar:
 \[
 \begin{array}{lrll}
   \ty{T}, \ty{U}
@@ -49,6 +46,10 @@ Types ($\ty{T}$, $\ty{U}$) and typing environments ($\ty{\Gamma}$) are defined b
   & \sep      & \ty{\tyL{\frz}{d}}  & \text{location with values }{\sqsubseteq d}\\
   & \sep      & \ty{\tyJ}           & \text{thresholds}
   \\
+  \ty{\frz}
+  & \coloneqq & \ty{\true}
+    \sep        \ty{\false}
+                                    & \text{status bits}
   \\
   \ty{\Gamma}
   & \coloneqq & \ty{\emptyenv}
@@ -62,7 +63,7 @@ The type $\tyL{\frz}{d}$ types locations which store values of type $\tyD{d}$.
 Thresholds occur on both the type- and term-level. Each threshold type $\tyJ$ has only one inhabitant, which is the same threshold $\tmJ$ on the term-level.
 
 We extend $\sqcupD$ and $\sqsubseteqD$ to types and environments, see~\cref{fig:lattice}.
-The operation $\sqcupT$ takes two types or typing environments with identical structure \emph{up to domain bounds}, and returns the type with the pointwise maximum of each domain bound. Notably, \emph{status bits are unaffected by $\sqcupT$}.
+The operation $\sqcupT$ takes two types or typing environments with identical structure \emph{up to domain bounds}, and returns the type or typing environment with the pointwise maximum of each domain bound. Notably, \emph{status bits are unaffected by $\sqcupT$}.
 The relation $\sqsubseteqT$ takes two types or typing environments with identical structure up to domain bounds \emph{and status bits}, and checks if each domain bound or status bit in the first argument is smaller than the corresponding domain bound or status bit in the second argument.
 
 \input{fig/lattice}
@@ -71,36 +72,23 @@ The relation $\sqsubseteqT$ takes two types or typing environments with identica
 We use syntactic sugar to make terms more readable: we write $\tm{\andthen{M}{N}}$ in place of $\tm{\letunit{M}{N}}$, $\tm{\letbind{x}{M}{N}}$ in place of $\tm{(\lambda x.N)\;M}$, and pattern matching functions $\tm{\lambda\unit.M}$ in place of $\tm{\lambda z.\letunit{z}{M}}$ and $\tm{\lambda\pair{x}{y}.M}$ in place of $\tm{\lambda z.\letpair{x}{y}{z}{M}}$.
 
 \paragraph*{Configurations}
+Configurations ($\tm{C}$), stores ($\tm{S}$), and states ($\tm{p}$) are defined by the following grammar:
 \[
 \begin{array}{lrll}
-  \tm{\frz}
-  & \coloneqq & \tm{\true}
-    \sep        \tm{\false}
-                                    & \text{status bits}
-  \\
-  \tm{p}
-  & \coloneqq & \tm{\langle \frz, d \rangle} & \text{states}
+  \tm{C}
+  & \coloneqq & \tm{\config{M}{S}} & \text{configurations}
   \\
   \tm{S}
   & \coloneqq & \tm{\storeemp}
     \sep        \tm{\storeext{S}{l}{p}} & \text{stores}
   \\
-  \tm{C}
-  & \coloneqq & \tm{\config{M}{S}} & \text{configurations}
+  \tm{p}
+  & \coloneqq & \tm{\langle \frz, d \rangle} & \text{states}
 \end{array}
 \]
+A~configuration $\tm{\config{M}{S}}$ consists of a term $\tm{M}$ and a store $\tm{S}$. A~store is a partial function from locations $\tm{l}$ to states $\tm{p}$. A~state consists of a domain value $\tm{d}$ and a status bit $\tm{\frz}$. The status bit records if that particular location has been frozen. We write $\tm{\storeext{S}{l}{p}}$ for the \emph{extension} of a store $\tm{S}$ with state $\tm{p}$ at a \emph{fresh} location $\tm{l}$. We write $\tm{\storeupd{S}{l}{p}}$ for the \emph{update} of a store with state $\tm{p}$ at an \emph{existing} location $\tm{l}$.
 
-We write $\tm{\frz}\sqcupB\tm{\frz'}$ for the maximum on status bits, which is standard Boolean disjunction.
-We write $\tm{s}\sqcups\tm{s'}$ for the pointwise maximum on states and $\tm{S}\sqcupS\tm{S'}$ for the pointwise maximum on stores. The latter is only defined if the structure of $\tm{S}$ and $\tm{S'}$ is identical \emph{up to location names}:
-\[
-\setlength{\arraycolsep}{2pt}
-\begin{array}{lclcl}
-  \tm{\st{d}{\frz}} & \sqcups & \tm{\st{d'}{\frz'}}
-  & = & \tm{\st{d \sqcupD d'}{\frz \sqcupB \frz'}} \\
-  \tm{\storeemp}          & \sqcupS & \tm{\storeemp}            & = & \tm{\storeemp} \\
-  \tm{\storeext{S}{l}{p}} & \sqcupS & \tm{\storeext{S'}{l}{p'}} & = & \tm{\storeext{S \sqcupS S'}{l}{p \sqcups p'}}
-\end{array}
-\]
+We write $\tm{\frz}\sqcupB\tm{\frz'}$ for the maximum on status bits, which is standard Boolean disjunction, and $\tm{\frz}\sqsubseteqB\tm{\frz'}$ for the \emph{total} order on status bits, which is standard Boolean implication.
 
 \subsection{Operational semantics}
 \label{sec:lvar-semantics}
@@ -125,8 +113,12 @@ We write $\tm{s}\sqcups\tm{s'}$ for the pointwise maximum on states and $\tm{S}\
       \sep        \tm{\letpair{x}{y}{E}{M}}
   \end{array}
 \end{mathpar}
+
 \input{fig/semantics}
 See~\cref{fig:semantics}.
+
+\input{fig/lindsey}
+See~\cref{fig:lindsey}.
 
 Recall that the evaluation contexts for pairs are $\tm{(V, E)}$ and $\tm{(E, V)}$. Consequently, we can only apply \LabTirName{E-Lift} if either of the components of the pair has already reduced to a value. If both components can still reduce, we are forced to apply \LabTirName{E-Par-Pair}, which reduces both sides in parallel. Similarly for function applications.
 
@@ -199,9 +191,9 @@ See~\cref{fig:typing}.
   For any well-typed $\tm{C}$:
   \begin{itemize}
   \item 
-    if $\tm{C}\red\tm{C'}$, then $\tm{\trans{C}}\lred\tm{\trans{C'}}$;
+    if $\tm{C}\red\tm{C'}$, then $\tm{\trans{C}}\red\tm{\trans{C'}}$;
   \item
-    if $\tm{C}\rede\tm{C'}$, then $\tm{\trans{C}}\lrede\tm{\trans{C'}}$.
+    if $\tm{C}\rede\tm{C'}$, then $\tm{\trans{C}}\rede\tm{\trans{C'}}$.
   \end{itemize}
 \end{theorem}
 
@@ -209,12 +201,11 @@ See~\cref{fig:typing}.
   For any well-typed $\tm{C}$:
   \begin{itemize}
   \item
-    if $\tm{\trans{C}}\lred\tm{\sigma'}$, then $\tm{C}\red\tm{C'}$ and $\tm{\trans{C'}}=\tm{\sigma'}$ for some $\tm{C'}$;
+    if $\tm{\trans{C}}\red\tm{\sigma'}$, then $\tm{C}\red\tm{C'}$ and $\tm{\trans{C'}}=\tm{\sigma'}$ for some $\tm{C'}$;
   \item
-    if $\tm{\trans{C}}\lrede\tm{\sigma'}$, then $\tm{C}\rede\tm{C'}$ and $\tm{\trans{C'}}=\tm{\sigma'}$ for some $\tm{C'}$.
+    if $\tm{\trans{C}}\rede\tm{\sigma'}$, then $\tm{C}\rede\tm{C'}$ and $\tm{\trans{C'}}=\tm{\sigma'}$ for some $\tm{C'}$.
   \end{itemize}
 \end{theorem}
-
 
 \begin{lemma}[Translation, \typedlambdalvar  $\rightsquigarrow$ \lambdalvar]
   For any translation $\zeta$,

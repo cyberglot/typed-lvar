@@ -1,7 +1,8 @@
 \begin{figure*}
   \noindent
-  \begin{minipage}[t]{.6\textwidth}
+  \begin{minipage}[t]{.75\textwidth}
     \fbox{$\tm{C}\red\tm{C'}$}\hfill
+    \\
     \begin{mathpar}
       \begin{array}{llrl}
         \LabTirName{E-Lam}     & \tm{\config{(\lambda x.M)\;V}{S}}
@@ -12,18 +13,6 @@
         \\
         \LabTirName{E-Pair}    & \tm{\config{\letpair{x}{y}{\pair{V}{W}}{M}}{S}}
                                & \red & \tm{\config{\subst{\subst{M}{V}{x}}{W}{y}}{S}}
-        \\
-        \LabTirName{E-Freeze}  & \tm{\config{\lvarfreeze}{S, l \mapsto\st{d}{\frz}}}
-                               & \red
-                               & \tm{\config{d}{S, l \mapsto\st{d}{\true}}}
-        \\
-        \LabTirName{E-Put}     & \tm{\config{\lvarput\;l\;d'}{S, l \mapsto\st{d}{\false}}}
-                               & \red
-                               & \tm{\config{()}{S, l \mapsto\st{d'}{\false}}}
-        \\
-        \LabTirName{E-Get}     & \tm{\config{\lvarget\;l\;J}{S, l \mapsto\st{d}{\frz}}}
-                               & \red
-                               & \tm{\config{d'}{S, l \mapsto\st{d}{\frz}}}
       \end{array}
       \\
       \inferrule*[lab=E-New]{
@@ -31,20 +20,37 @@
       }{\tm{\config{\lvarnew}{S}}
         \red
         \tm{\config{l}{S, l \mapsto\st{\botD}{\false}}}}
-      
+
+      \inferrule*[lab=E-Get]{
+        \tm{S(l)} = \tm{\st{d}{\frz}}
+        \\
+        \incomp({\tmJ})
+        \\
+        \tm{d'}\in\tmJ
+        \\
+        \tm{d'}\sqsubseteqD\tm{d}
+      }{\tm{\config{\lvarget\;l\;\tmJ}{S}}
+        \red
+        \tm{\config{d'}{S}}}
+
+      \inferrule*[lab=E-Put]{
+        \tm{S(l)} = \tm{\st{d}{\false}}
+        \\
+        \tm{{d}\sqcupD{d'}} \neq \tm{\topD}
+      }{\tm{\config{\lvarput\;l\;d'}{S}}
+        \red
+        \tm{\config{()}{\storeupd{S}{l}{\st{d'}{\false}}}}}
+            
       \inferrule*[lab=E-Freeze]{
         \tm{S(l)} = \tm{\st{d}{\frz}}
       }{\tm{\config{\lvarfreeze}{S}}
         \red
         \tm{\config{d}{\storeupd{S}{l}{\st{d}{\true}}}}}
-
-      \inferrule*[lab=E-Put]{
-        \tm{S(l)} = \tm{p}
-      }{}
     \end{mathpar}
   \end{minipage}%
-  \begin{minipage}[t]{.4\textwidth}
+  \begin{minipage}[t]{.25\textwidth}
     \fbox{$\tm{C}\rede\tm{C'}$}\hfill
+    \\
     \begin{mathpar}
       \inferrule*[lab=E-Lift]{
         \tm{\config{M}{S}} \red \tm{\config{N}{S'}}

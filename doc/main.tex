@@ -76,6 +76,7 @@
 \DeclareMathOperator{\fv}{fv}
 \DeclareMathOperator{\dom}{dom}
 \DeclareMathOperator{\cod}{cod}
+\DeclareMathOperator{\incomp}{incomp}
 
 % Namespaces
 \usepackage{namespc}
@@ -118,6 +119,7 @@
   \providecommand{\false}[0]{\ensuremath{\mathbf{false}}}
   \providecommand{\st}[2]{\ensuremath{\langle {#1}, {#2} \rangle}}
   \providecommand{\config}[2]{\ensuremath{\langle {#2}; {#1} \rangle}}
+  \providecommand{\error}[0]{\ensuremath{\mathbf{error}}}
   % evaluation contexts
   \providecommand{\hole}[0]{\ensuremath{\square}}
   % typing judgements
@@ -128,8 +130,6 @@
   % reduction relations
   \providecommand{\red}[0]{\ensuremath{\hookrightarrow}}
   \providecommand{\rede}[0]{\ensuremath{\mapsto}}
-  \providecommand{\lred}[0]{\ensuremath{\hookrightarrow}}
-  \providecommand{\lrede}[0]{\ensuremath{\mapsto}}
   % stores
   \providecommand{\storeemp}{\cdot}
   \providecommand{\storeext}[3]{{#1},{#2}\mapsto{#3}}
@@ -142,15 +142,14 @@
   \providecommand{\sqcupT}{\mathbin{{\color{black}\sqcup}}}
   \providecommand{\sqcupG}{\mathbin{{\color{black}\sqcup}}}
   \providecommand{\sqcupB}{\mathbin{{\color{black}\sqcup}}}
-  \providecommand{\sqcups}{\mathbin{{\color{black}\sqcup}}}
+  \providecommand{\sqcupp}{\mathbin{{\color{black}\sqcup}}}
   \providecommand{\sqcupS}{\mathbin{{\color{black}\sqcup}}}
   % partial orders
-  \providecommand{\sqsubseteqJ}{\mathbin{{\color{black}\sqsubseteq}}}
   \providecommand{\sqsubseteqD}{\mathbin{{\color{black}\sqsubseteq}}}
   \providecommand{\sqsubseteqT}{\mathbin{{\color{black}\sqsubseteq}}}
   \providecommand{\sqsubseteqG}{\mathbin{{\color{black}\sqsubseteq}}}
   \providecommand{\sqsubseteqB}{\mathbin{{\color{black}\sqsubseteq}}}
-  \providecommand{\sqsubseteqs}{\mathbin{{\color{black}\sqsubseteq}}}
+  \providecommand{\sqsubseteqp}{\mathbin{{\color{black}\sqsubseteq}}}
   \providecommand{\sqsubseteqS}{\mathbin{{\color{black}\sqsubseteq}}}
 }{}
 \newcommand{\lvar}[1]{\namespace*{lvar}{}{#1}}
