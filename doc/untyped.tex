@@ -1,0 +1,64 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+\section{\lambdalvar}
+\usingnamespace{lvar}
+
+\todo{What is \lambdalvar?}
+\todo{Why is it morally a subset of $\lambda_{\text{LVish}}$, and why does this subset maintain the same strong properties as $\lambda_{\text{LVish}}$}
+
+\input{fig/lindsey}
+See~\cref{fig:lindsey}.
+
+\paragraph{Operational correspondence}
+\begin{theorem}[Simulation]
+  For any well-typed $\tm{C}$:
+  \begin{itemize}
+  \item 
+    if $\tm{C}\red\tm{C'}$, then $\tm{\trans{C}}\red\tm{\trans{C'}}$;
+  \item
+    if $\tm{C}\rede\tm{C'}$, then $\tm{\trans{C}}\rede\tm{\trans{C'}}$.
+  \end{itemize}
+\end{theorem}
+\begin{proof}
+  \todo{\typedlambdalvar is a subset of \lambdalvar, and every
+    reduction rule in \typedlambdalvar is a reduction rule in \lambdalvar.}
+\end{proof}
+
+\begin{theorem}[Reflection]
+  For any well-typed $\tm{C}$ in \typedlambdalvar:
+  \begin{itemize}
+  \item
+    if $\tm{\trans{C}}\red\tm{D'}$,
+    then $\tm{C}\red\tm{C'}$ and $\tm{\trans{C'}}=\tm{\sigma'}$ for some $\tm{C'}$;
+  \item
+    if $\tm{\trans{C}}\rede\tm{\sigma'}$,
+    then $\tm{C}\rede\tm{C'}$ and $\tm{\trans{C'}}=\tm{\sigma'}$ for some $\tm{C'}$.
+  \end{itemize}
+\end{theorem}
+\begin{proof}
+  \todo{Boils down to proving that if the translated term can perform an error
+    reductions, then the source term wasn't well-typed.}
+\end{proof}
+
+\paragraph{Generalised Independence}
+\begin{theorem}[Generalised Independence]
+\end{theorem}
+\begin{corollary}[Generalised Independence]
+\end{corollary}
+
+\paragraph{Determinism}
+\begin{lemma}[Strong Confluence, $\red$]
+\end{lemma}
+\begin{lemma}[Quasi-Confluence, $\rede$]
+\end{lemma}
+\begin{theorem}[Quasi-Determinism, $\rede$]
+\end{theorem}
+\begin{corollary}[Determinism, $\rede$]
+\end{corollary}
+
+\end{document}
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

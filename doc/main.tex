@@ -35,7 +35,7 @@
 
 % Useful for defining commands to use in text mode
 \usepackage{xspace}
-\newcommand{\lambdalvar}[0]{\ensuremath{\lambda_{\text{lvar}}}\xspace}
+\newcommand{\lambdalvar}[0]{\ensuremath{\text{Untyped }\lambda_{\text{lvar}}}\xspace}
 \newcommand{\typedlambdalvar}[0]{\ensuremath{\text{Typed }\lambda_{\text{lvar}}}\xspace}
 
 % Inference rules
@@ -72,7 +72,7 @@
 % Common operations
 \newcommand{\subst}[4][]{\ifstrempty{#1}{\ensuremath{#2\{#3/#4\}}}{\ensuremath{#2(\{#3/#4\}\cup#1)}}}
 \newcommand{\plug}[2]{\ensuremath{#1[#2]}}
-\newcommand{\trans}[1]{\ensuremath{{\color{black}\zeta}{#1}}}
+\DeclarePairedDelimiter{\trans}{\lfloor}{\rfloor}
 \DeclareMathOperator{\fv}{fv}
 \DeclareMathOperator{\dom}{dom}
 \DeclareMathOperator{\cod}{cod}
@@ -238,7 +238,9 @@ Text of abstract \ldots.
 %% environment and commands, and keywords command.
 \maketitle
 
-\subfile{lvar}
+\subfile{introduction}
+\subfile{typed}
+\subfile{untyped}
 
 %% Bibliography
 \bibliography{main}
