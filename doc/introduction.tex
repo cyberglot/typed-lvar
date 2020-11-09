@@ -10,6 +10,61 @@
 \todo{Why is typing LVars important?}
 \todo{What are our contributions?}
 
+\paragraph{Old text from 2016}
+Parallel programming presents itself as a challenge; it usually
+requires a deterministic execution, \ie the programmer expects to observe an equivalent
+outcome from her program in the parallel and in the sequential setting.
+Historically, parallel programming has been done leveraging concurrent
+programming and shared mutable state.
+
+In an attempt to bridge both approaches, LVars have been proposed.
+LVars are shared monotonic data structures for
+guaranteed-deterministic parallel programming \cite{kuper15}. The underlying idea
+of LVars is that values under an order relation enable computations to be interleaved as will:
+information is partially ordered and can only grow
+within the structure, but never shrink. Earlier works
+on LVars have introduced two complementary calculi: $\lambda_{\text{LVar}}$ and
+$\lambda_{\text{LVish}}$. The $\lambda_{\text{LVar}}$ calculus comprises only the
+basic LVar operations' semantics and cannot encode negative information. As a
+result, algorithms that require \textit{absent} information in order to proceed cannot
+be encoded. On the other hand, the $\lambda_{\text{LVish}}$ calculus is a more
+algorithmic-expressive version of the
+$\lambda_{\text{LVar}}$ calculus featuring data structure freezing and event
+handlers.
+
+\paragraph{Text from the other day}
+Pure functional programs can be trivially parallelised (meaning, executed in parallel) while maintaining determinism. It can be achieved by evaluating every argument within a function call:
+
+to3tuple x y z = (x, y, z)
+f = proj1 (to3tuple, id)
+a = veryExpensiveComputation
+b = anotherVeryExpensiveComputation
+c = 6 + 1
+
+f a b c ---> f, a, b and c are evaluated in parallel
+
+The main problem with effectful computations is that they cannot be modeled as a commutative structure. As a general rule, all effectful computations must follow a sequential framework that precludes parallel evaluation. But why should we care about parallelisable effects ? The sole purpose of parallel programming is to make code run faster, and usually sequential languages make use of concurrent primitives to achieve it, however, only parallel evaluation and parallel state are required. Parallel state is required to synchronise different computations without making all interactions with state sequential. LVars provide the necessary framework for parallel state. In a simplistic view, LVars require all updates to be monotonic according to a (join, semi) lattice and reads to follow a pre-defined threshold set of values. With that, LVars guarantee all parallel state computations are deterministic.
+
+\paragraph{Long worked out example}
+In this section, we introduce the concepts behind lattice-based by example, at a higher
+level. Let us start by defining a lattice to work as the singleton set,
+where
+\begin{itemize}
+\item $\bot$ is defined as the empty set $\varnothing$;
+\item and the partial order relation is the subset relation $\subseteq$.
+\end{itemize}
+
+We have defined a store that is created empty and can only be
+written to once. In other words, we have built an IVar using the semantics of
+LVars. In the code below, we define a computation {\tt foo} of type $\{ Nat \} \> ! \>
+(\Delta \cup \textit{par})$ that creates an LVar, puts $\{ 6 \}$ to it and gets
+it (with the threshold set of $\{ \varnothing \}$) and returns it; lastly, the
+handler {\tt runPar} performs the computation {\tt foo} and returns $\{ 6 \}$.
+
+Yet differently from traditional IVars, LVar-based IVars can be put to multiple
+times if a new value $v_2$ is ``before'' the current value $v_1$, meaning that $v_1
+\> \subseteq \> v_2$ yields $v_1$.
+
 \end{document}
 
 %%% Local Variables:
