@@ -50,6 +50,14 @@
 % Landscape pages using \begin{landscape}\end{landscape}
 \usepackage{pdflscape}
 
+% 'em colours
+\usepackage{xcolor}
+\usepackage{latexcolor}
+
+% Code
+\usepackage{listings}
+\usepackage{lsthaskell}
+
 % Gotta have a todo command
 \usepackage{todonotes}
 \usepackage{regexpatch}
@@ -59,7 +67,6 @@
 \newcommand{\remember}[2][]{\todo[color=pink!40,#1]{#2}}
 
 % Sort macros
-% \usepackage[dvipsnames]{xcolor}
 \newcommand{\tm}[1]{\ensuremath{{\color[HTML]{E15CFF}#1}}}
 \newcommand{\ty}[1]{\ensuremath{{\color[HTML]{6e4cef}#1}}}
 \newcommand{\cs}[1]{\ensuremath{{\color[HTML]{009180}#1}}}
