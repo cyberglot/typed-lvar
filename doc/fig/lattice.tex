@@ -2,58 +2,58 @@
   \begin{mathpar}
     \setlength{\arraycolsep}{2pt}
     \begin{array}{lclcl}
-      \ty{\tyunit} & \sqcupT & \ty{\tyunit}
+      \ty{\tyunit} & \sqcup & \ty{\tyunit}
       & = & \ty{\tyunit}
       \\
-      \ty{\typrod{T}{U}} & \sqcupT & \ty{\typrod{T'}{U'}}
-      & = & \typrod{(\ty{T}\sqcupT\ty{T'})}{(\ty{U}\sqcupT\ty{U'})}
+      \ty{\typrod{T}{U}} & \sqcup & \ty{\typrod{T'}{U'}}
+      & = & \typrod{(\ty{T}\sqcup\ty{T'})}{(\ty{U}\sqcup\ty{U'})}
       \\
-      \ty{\tyfun{T}{U}} & \sqcupT & \ty{\tyfun{T'}{U'}}
-      & = & \tyfun{(\ty{T}\sqcupT\ty{T'})}{(\ty{U}\sqcupT\ty{U'})}
+      \ty{\tyfun{T}{U}} & \sqcup & \ty{\tyfun{T'}{U'}}
+      & = & \tyfun{(\ty{T}\sqcup\ty{T'})}{(\ty{U}\sqcup\ty{U'})}
       \\
-      \tyJ & \sqcupT & \tyJ
+      \tyJ & \sqcup & \tyJ
       & = & \tyJ
       \\
-      \tyD{d} & \sqcupT & \tyD{d'}
-      & = & \tyD{{d}\sqcupD{d'}}
+      \tyD{d} & \sqcup & \tyD{d'}
+      & = & \tyD{{d}\sqcup{d'}}
       \\
-      \tyL{\frz}{d} & \sqcupT & \tyL{\frz}{d'}
-      & = & \tyL{\frz}{{d}\sqcupD{d'}}
+      \tyL{\frz}{d} & \sqcup & \tyL{\frz}{d'}
+      & = & \tyL{\frz}{{d}\sqcup{d'}}
       \\
       \\
-      \ty{\emptyenv} & \sqcupG & \ty{\emptyenv}
+      \ty{\emptyenv} & \sqcup & \ty{\emptyenv}
       & = & \ty{\emptyenv}
       \\
-      \ty{\Gamma},\tmty{x}{T} & \sqcupG & \ty{\Gamma'},\tmty{x}{U}
-      & = & \ty{\Gamma}\sqcupG\ty{\Gamma'},\tm{x}:{\ty{T}\sqcupT\ty{U}}
+      \ty{\Gamma},\tmty{x}{T} & \sqcup & \ty{\Gamma'},\tmty{x}{U}
+      & = & \ty{\Gamma}\sqcup\ty{\Gamma'},\tm{x}:{\ty{T}\sqcup\ty{U}}
     \end{array}
   
     \begin{array}{lclcl}
-      \ty{\tyunit} & \sqsubseteqT & \ty{\tyunit}
+      \ty{\tyunit} & \sqsubseteq & \ty{\tyunit}
       \\
-      \ty{\typrod{T}{U}} & \sqsubseteqT & \ty{\typrod{T'}{U'}}
-      & \text{if} & {\ty{T}\sqsubseteqT\ty{T'}}\text{ and }{\ty{U}\sqsubseteqT\ty{U'}}
+      \ty{\typrod{T}{U}} & \sqsubseteq & \ty{\typrod{T'}{U'}}
+      & \text{if} & {\ty{T}\sqsubseteq\ty{T'}}\text{ and }{\ty{U}\sqsubseteq\ty{U'}}
       \\
-      \ty{\tyfun{T}{U}} & \sqsubseteqT & \ty{\tyfun{T'}{U'}}
-      & \text{if} & {\ty{T}\sqsubseteqT\ty{T'}}\text{ and }{\ty{U}\sqsubseteqT\ty{U'}}
+      \ty{\tyfun{T}{U}} & \sqsubseteq & \ty{\tyfun{T'}{U'}}
+      & \text{if} & {\ty{T}\sqsubseteq\ty{T'}}\text{ and }{\ty{U}\sqsubseteq\ty{U'}}
       \\
-      \tyJ & \sqsubseteqT & \tyJ
+      \tyJ & \sqsubseteq & \tyJ
       \\
-      \tyD{d} & \sqsubseteqT & \tyD{d'}
-      & \text{if} & \ty{d}\sqsubseteqD\ty{d'}
+      \tyD{d} & \sqsubseteq & \tyD{d'}
+      & \text{if} & \ty{d}\sqsubseteq\ty{d'}
       \\
-      \tyL{\frz}{d} & \sqsubseteqT & \tyL{\frz'}{d'}
-      & \text{if} & {\ty{\frz}\sqsubseteqB\ty{\frz'}}\text{ and }{\ty{d}\sqsubseteqD\ty{d'}}
+      \tyL{\frz}{d} & \sqsubseteq & \tyL{\frz'}{d'}
+      & \text{if} & {\ty{\frz}\sqsubseteq\ty{\frz'}}\text{ and }{\ty{d}\sqsubseteq\ty{d'}}
       \\
       \\
-      \ty{\emptyenv} & \sqsubseteqG & \ty{\emptyenv}
+      \ty{\emptyenv} & \sqsubseteq & \ty{\emptyenv}
       \\
-      \ty{\Gamma},\tmty{x}{T} & \sqsubseteqG & \ty{\Gamma'},\tmty{x}{U}
-      & \text{if} & \ty{\Gamma}\sqsubseteqG\ty{\Gamma'}\text{ and }\ty{T}\sqsubseteqT\ty{U}
+      \ty{\Gamma},\tmty{x}{T} & \sqsubseteq & \ty{\Gamma'},\tmty{x}{U}
+      & \text{if} & \ty{\Gamma}\sqsubseteq\ty{\Gamma'}\text{ and }\ty{T}\sqsubseteq\ty{U}
     \end{array}
   \end{mathpar}
   \todo{%
-    Actually, should we go under function types in $\sqsubseteqT$?
+    Actually, should we go under function types in $\sqsubseteq$?
     Should we change order?}
   \caption{Extension of lattice operations to types and typing environments.}
   \label{fig:lattice}

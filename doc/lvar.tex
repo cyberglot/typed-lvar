@@ -7,7 +7,7 @@
 \subsection{The \lambdalvar calculus}
 \todo{What is \lambdalvar?}
 
-\lambdalvar is defined over an abstract domain $\mathcal{D}$ which forms a lattice. We write $\botD$ and $\topD$ for the minimum and maximum elements, $\sqsubseteqD$ for its partial order, and $\sqcupD$ for the maximum.
+\lambdalvar is defined over an abstract domain $\mathcal{D}$ which forms a lattice. We write $\bot$ and $\top$ for the minimum and maximum elements, $\sqsubseteq$ for its partial order, and $\sqcup$ for the maximum.
 
 \paragraph*{Terms}
 Terms ($\tm{L}$, $\tm{M}$, $\tm{N}$) are defined by the following grammar:
@@ -34,7 +34,7 @@ Terms ($\tm{L}$, $\tm{M}$, $\tm{N}$) are defined by the following grammar:
     \sep        \tm{\lvarput}
 \end{array}
 \]
-Let $\tm{x}$, $\tm{y}$, and $\tm{z}$ range over variable names. The term language is the standard $\lambda$-calculus with products and units, extended with LVars~\citep{kuper15}. Let $\tm{l}$ range over location names. Let $\tm{d}$ range over \emph{domain values} from the domain $\mathcal{D}$. Finally, let $\tmJ$ range over \emph{thresholds}. A~threshold $\tmJ$ is a subset of $\mathcal{D}$. A~threshold is pair-wise incompatible, written $\incomp(\tmJ)$, if for all $\tm{d},\tm{d'}\in\mathcal{D}$, if $\tm{d}\neq\tm{d'}$ then $\tm{d}\sqcup\tm{d'}=\tm{\topD}$.
+Let $\tm{x}$, $\tm{y}$, and $\tm{z}$ range over variable names. The term language is the standard $\lambda$-calculus with products and units, extended with LVars~\citep{kuper15}. Let $\tm{l}$ range over location names. Let $\tm{d}$ range over \emph{domain values} from the domain $\mathcal{D}$. Finally, let $\tmJ$ range over \emph{thresholds}. A~threshold $\tmJ$ is a subset of $\mathcal{D}$. A~threshold is pair-wise incompatible, written $\incomp(\tmJ)$, if for all $\tm{d},\tm{d'}\in\mathcal{D}$, if $\tm{d}\neq\tm{d'}$ then $\tm{d}\sqcup\tm{d'}=\tm{\top}$.
 
 \paragraph*{Configurations}
 Configurations ($\tm{C}$), stores ($\tm{S}$), states ($\tm{p}$), and status bits ($\tm{\frz}$) are defined by the following grammar:
@@ -58,7 +58,7 @@ Configurations ($\tm{C}$), stores ($\tm{S}$), states ($\tm{p}$), and status bits
 \]
 A~configuration $\tm{\config{M}{S}}$ consists of a term $\tm{M}$ and a store $\tm{S}$. A~store is a partial function from locations $\tm{l}$ to states $\tm{p}$. A~state consists of a domain value $\tm{d}$ and a status bit $\tm{\frz}$. The status bit records if that particular location has been frozen. We write $\tm{\storeext{S}{l}{p}}$ for the \emph{extension} of a store $\tm{S}$ with state $\tm{p}$ at a \emph{fresh} location $\tm{l}$. We write $\tm{\storeupd{S}{l}{p}}$ for the \emph{update} of a store with state $\tm{p}$ at an \emph{existing} location $\tm{l}$.
 
-We write $\tm{\frz}\sqcupB\tm{\frz'}$ for the maximum on status bits, which is standard Boolean disjunction, and $\tm{\frz}\sqsubseteqB\tm{\frz'}$ for the \emph{total} order on status bits, which is standard Boolean implication.
+We write $\tm{\frz}\sqcup\tm{\frz'}$ for the maximum on status bits, which is standard Boolean disjunction, and $\tm{\frz}\sqsubseteq\tm{\frz'}$ for the \emph{total} order on status bits, which is standard Boolean implication.
 
 \paragraph*{Syntactic sugar}
 We use syntactic sugar to make terms more readable: we write $\tm{\andthen{M}{N}}$ in place of $\tm{\letunit{M}{N}}$, $\tm{\letbind{x}{M}{N}}$ in place of $\tm{(\lambda x.N)\;M}$, and pattern matching functions $\tm{\lambda\unit.M}$ in place of $\tm{\lambda z.\letunit{z}{M}}$ and $\tm{\lambda\pair{x}{y}.M}$ in place of $\tm{\lambda z.\letpair{x}{y}{z}{M}}$.

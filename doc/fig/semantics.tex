@@ -17,11 +17,11 @@
       \tm{l}\not\in\dom(\tm{S})
     }{\tm{\config{\lvarnew}{S}}
       \redc
-      \tm{\config{l}{\storeext{S}{l}{\st{\botD}{\false}}}}}
+      \tm{\config{l}{\storeext{S}{l}{\st{\bot}{\false}}}}}
     
     \inferrule*[lab=E-Freeze]{
       \tm{S(l)} = \tm{\st{d}{\frz}}
-    }{\tm{\config{\lvarfreeze}{S}}
+    }{\tm{\config{\lvarfreeze\;l}{S}}
       \redc
       \tm{\config{d}{\storeupd{S}{l}{\st{d}{\true}}}}}
 
@@ -32,7 +32,7 @@
       \\
       \tm{d'}\in\tmJ
       \\
-      \tm{d'}\sqsubseteqD\tm{d}
+      \tm{d'}\sqsubseteq\tm{d}
     }{\tm{\config{\lvarget\;l\;\tmJ}{S}}
       \redc
       \tm{\config{d'}{S}}}
@@ -40,15 +40,15 @@
     \inferrule*[lab=E-Put]{
       \tm{S(l)} = \tm{\st{d}{\false}}
       \\
-      \tm{{d}\sqcupD{d'}} \neq \tm{\topD}
+      \tm{{d}\sqcup{d'}} \neq \tm{\top}
     }{\tm{\config{\lvarput\;l\;d'}{S}}
       \redc
-      \tm{\config{()}{\storeupd{S}{l}{\st{d'}{\false}}}}}
+      \tm{\config{\unit}{\storeupd{S}{l}{\st{d'}{\false}}}}}
     
     \inferrule*[lab=E-Put-Err-Incomp]{
       \tm{S(l)} = \tm{\st{d}{\false}}
       \\
-      \tm{{d}\sqcupD{d'}} = \tm{\topD}
+      \tm{{d}\sqcup{d'}} = \tm{\top}
     }{\tm{\config{\lvarput\;l\;d'}{S}}
       \redc
       \tm{\error}}
