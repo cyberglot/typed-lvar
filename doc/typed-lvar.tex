@@ -1,91 +1,15 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
 
-\section{\typedlambdalvar}
+\section{Typed LVars: deterministic parallelism}
 \usingnamespace{lvar}
 
-\typedlambdalvar is defined over an abstract domain $\mathcal{D}$ which forms a lattice. We write $\botD$ and $\topD$ for the minimum and maximum elements, $\sqsubseteqD$ for its partial order, and $\sqcupD$ for the maximum.
+\subsection{The \typedlambdalvar calculus}
 
-\paragraph*{Terms}
-Terms ($\tm{L}$, $\tm{M}$, $\tm{N}$) are defined by the following grammar:
-\[
-  \begin{array}{lrll}
-  \tm{L}, \tm{M}, \tm{N}
-  & \coloneqq & \tm{x}
-    \sep        \tm{\lambda x.M}
-    \sep        \tm{M\;N}                     & \text{functions} \\
-  & \sep      & \tm{l}                        
-    \sep        \tm{d}
-    \sep        \tmJ
-    \sep        \tm{K}                        & \text{constants} \\
-  & \sep      & \tm{\unit}                    
-    \sep        \tm{\letunit{M}{N}}           & \text{units} \\
-  & \sep      & \tm{\pair{M}{N}}              
-    \sep        \tm{\letpair{x}{y}{M}{N}}     & \text{pairs}
-  \\
-  \\
-  \tm{K}
-  & \coloneqq & \tm{\lvarnew}
-    \sep        \tm{\lvarfreeze}
-    \sep        \tm{\lvarget}
-    \sep        \tm{\lvarput}
-\end{array}
-\]
-Let $\tm{x}$, $\tm{y}$, and $\tm{z}$ range over variable names. The term language is the standard $\lambda$-calculus with products and units, extended with LVars~\citep{kuper15}. Let $\tm{l}$ range over location names. Let $\tm{d}$ range over \emph{domain values} from the domain $\mathcal{D}$. Finally, let $\tmJ$ range over \emph{thresholds}. A~threshold $\tmJ$ is a subset of $\mathcal{D}$. A~threshold is pair-wise incompatible, written $\incomp(\tmJ)$, if for all $\tm{d},\tm{d'}\in\mathcal{D}$, if $\tm{d}\neq\tm{d'}$ then $\tm{d}\sqcup\tm{d'}=\tm{\topD}$.
-
-\paragraph*{Configurations}
-Configurations ($\tm{C}$), stores ($\tm{S}$), states ($\tm{p}$), and status bits ($\tm{\frz}$) are defined by the following grammar:
-\[
-\begin{array}{lrll}
-  \tm{C}, \tm{D}
-  & \coloneqq & \tm{\config{M}{S}} & \text{configurations}
-  \\
-  \tm{S}
-  & \coloneqq & \tm{\storeemp}
-    \sep        \tm{\storeext{S}{l}{p}} & \text{stores}
-  \\
-  \tm{p}
-  & \coloneqq & \tm{\langle \frz, d \rangle} & \text{states}
-  \\
-  \tm{\frz}
-  & \coloneqq & \tm{\true}
-    \sep        \tm{\false}
-                                    & \text{status bits}
-  \end{array}
-\]
-A~configuration $\tm{\config{M}{S}}$ consists of a term $\tm{M}$ and a store $\tm{S}$. A~store is a partial function from locations $\tm{l}$ to states $\tm{p}$. A~state consists of a domain value $\tm{d}$ and a status bit $\tm{\frz}$. The status bit records if that particular location has been frozen. We write $\tm{\storeext{S}{l}{p}}$ for the \emph{extension} of a store $\tm{S}$ with state $\tm{p}$ at a \emph{fresh} location $\tm{l}$. We write $\tm{\storeupd{S}{l}{p}}$ for the \emph{update} of a store with state $\tm{p}$ at an \emph{existing} location $\tm{l}$.
-
-We write $\tm{\frz}\sqcupB\tm{\frz'}$ for the maximum on status bits, which is standard Boolean disjunction, and $\tm{\frz}\sqsubseteqB\tm{\frz'}$ for the \emph{total} order on status bits, which is standard Boolean implication.
-
-\paragraph*{Syntactic sugar}
-We use syntactic sugar to make terms more readable: we write $\tm{\andthen{M}{N}}$ in place of $\tm{\letunit{M}{N}}$, $\tm{\letbind{x}{M}{N}}$ in place of $\tm{(\lambda x.N)\;M}$, and pattern matching functions $\tm{\lambda\unit.M}$ in place of $\tm{\lambda z.\letunit{z}{M}}$ and $\tm{\lambda\pair{x}{y}.M}$ in place of $\tm{\lambda z.\letpair{x}{y}{z}{M}}$.
-
-\paragraph{Operational semantics}
-\label{sec:lvar-semantics}
-\begin{mathpar}
-  \begin{array}{lrll}
-    \tm{V}, \tm{W}
-    & \coloneqq & \tm{\lambda x.M}
-      \sep        \tm{l}
-      \sep        \tm{d}
-      \sep        \tmJ
-      \sep        \tm{K}
-      \sep        \tm{\unit}
-      \sep        \tm{\pair{V}{W}}
-    \\
-    \tm{E}
-    & \coloneqq & \tm{\hole}
-      \sep        \tm{M\; E}
-      \sep        \tm{E\; M}
-      \sep        \tm{(M, E)}
-      \sep        \tm{(E, M)} \\
-    & \sep      & \tm{\letunit{E}{M}}
-      \sep        \tm{\letpair{x}{y}{E}{M}}
-  \end{array}
-\end{mathpar}
-
-\input{fig/semantics}
-See~\cref{fig:semantics}.
+\todo{%
+  Describe \typedlambdalvar as a typing discipline for \lambdalvar, and explain
+  that it will allow us to rid ourselves of the rules in \cref{fig:lindsey} and
+  the $\tm{\error}$ configuration.}
 
 \paragraph*{Types}
 Types ($\ty{T}$, $\ty{U}$),  and typing environments ($\ty{\Gamma}$) are defined by the following grammar:
@@ -121,23 +45,82 @@ The relation $\sqsubseteqT$ takes two types or typing environments with identica
 \input{fig/typing}
 See~\cref{fig:typing}.
 
-\paragraph{Subject reduction}
+\subsection{Metatheory}
+
 \begin{lemma}[Subject reduction, $\red$]
+  \label{lem:subject-reduction}
   \hfill\\
   If $\seq{\ty{\Gamma}}{C}{T}$ and $\tm{C}\red\tm{C'}$, then $\seq{\ty{\Gamma}}{C}{T}$.
 \end{lemma}
 \input{fig/subject-reduction-red}
 
 \begin{theorem}[Subject reduction, $\rede$]
+  \label{thm:subject-reduction}
   \hfill\\
   If $\seq{\ty{\Gamma}}{C}{T}$ and $\tm{C}\red\tm{C'}$, then $\seq{\ty{\Gamma}}{C}{T}$.
 \end{theorem}
 
-\paragraph{Progress}
-\begin{theorem}[Progress, $\red$]
+\todo{%
+  I'm not sure whether proving error-freedom separately is a good idea. If we
+  \emph{keep} the error configuration and the error reductions in the typed
+  calculus, then we'd have to prove this, and we could use this as a motivation
+  for removing them. However, if we remove them to begin with, then we'd
+  essentially have to prove the same thing while proving progress, since the
+  terms that would originally have errored now become stuck.}
+\begin{lemma}[Error-freedom, $\red$]
+  \label{lem:error-free}
+  If $\seq{\ty{\Gamma}}{C}{T}$, then $\tm{C}\centernot\red\tm{\error}$.
+\end{lemma}
+\begin{proof}
+  By inversion on the structure of $\tm{C}\red\tm{\error}$.
+  \todo{%
+    The core of what was reflection:\\
+    Examine all possible reduction rules which could lead to $\tm{\error}$, and
+    show that if those rules were to be applied, $\tm{C}$ would be ill-typed.}
+\end{proof}
+\begin{theorem}[Error-freedom, $\rede$]
+  \hfill\\
+  \label{thm:error-free}
+  If $\seq{\ty{\Gamma}}{C}{T}$, then $\tm{C}\centernot\rede\tm{\error}$.
 \end{theorem}
+\begin{proof}
+  By inversion on the structure of $\tm{C}\rede\tm{\error}$.
+  \todo{%
+    Essentially, you wanna discard the evaluation context, and invoke the
+    previous lemma on the resulting reduction.}
+\end{proof}
+
 \begin{theorem}[Progress, $\rede$]
+  \label{thm:progress}
+  If $\seq{\ty{\Gamma}}{C}{T}$, then:
+  \begin{itemize}
+  \item $\tm{C}\rede\tm{C'}$ for some $\tm{C'}$; or
+  \item $\tm{C}=\tm{\config{V}{S}}$ for some $\tm{V}$ and $\tm{S}$.
+  \end{itemize}
 \end{theorem}
+\begin{proof}
+  By induction on the structure of $\seq{\ty{\Gamma}}{C}{T}$.
+  \todo{%
+    Examine each possible typing rule which could result in $\tm{C}$ being
+    well-typed, and show that for each of them, either $\tm{C}$ can reduce, or
+    it is a value.}
+  \todo{%
+    I~think it's easier to prove this \emph{directly} on $\rede$, since
+    otherwise you'd have to give a statement of progress with a third case,
+    which is that $\tm{C}$ is of the form $\tm{\config{\plug{E}{M}}{S}}$, where
+    $\tm{\config{M}{S}}$ can reduce.}
+  \todo{%
+    This proof \emph{contains} the core of what used to be reflection, since we
+    remove the error configuration and hence any term which would originally
+    error would now be stuck, violating progress.}
+\end{proof}
+
+\begin{corollary}[Generalised Independence]
+\end{corollary}
+
+\begin{corollary}[Determinism, $\rede$]
+\end{corollary}
+
 
 \end{document}
 
