@@ -39,9 +39,33 @@ The type $\tyD{d}$ types domain values with the upper bound $d$.
 The type $\tyL{\frz}{d}$ types locations which store values of type $\tyD{d}$.
 Thresholds occur on both the type- and term-level. Each threshold type $\tyJ$ has only one inhabitant, which is the same threshold $\tmJ$ on the term-level.
 
-We extend $\sqcup$ and $\sqsubseteq$ to types and environments, see~\cref{fig:lattice}.
-The operation $\sqcup$ takes two types or typing environments with identical structure \emph{up to domain bounds}, and returns the type or typing environment with the pointwise maximum of each domain bound. Notably, \emph{status bits are unaffected by $\sqcup$}.
-The relation $\sqsubseteq$ takes two types or typing environments with identical structure up to domain bounds \emph{and status bits}, and checks if each domain bound or status bit in the first argument is smaller than the corresponding domain bound or status bit in the second argument.
+We extend $\sqcup$ and $\sqsubseteq$ to store typing environments.
+The operation $\sqcup$ takes two store typing environments with identical structure \emph{up to domain bounds}, and returns the store typing environment with the pointwise maximum of each domain bound. Notably, \emph{status bits are unaffected by $\sqcup$}.
+The relation $\sqsubseteq$ takes two store typing environments with identical structure up to domain bounds \emph{and status bits}, and checks if each domain bound or status bit in the first argument is smaller than the corresponding domain bound or status bit in the second argument.
+\begin{mathpar}
+  \setlength{\arraycolsep}{2pt}
+  \begin{array}{lclcl}
+    \ty{\emptyenv}
+    & \sqcup & \ty{\emptyenv}
+    & = & \ty{\emptyenv}
+    \\
+    \ty{\Sigma'},\tmty{l}{\tyL{\frz}{d'}}
+    & \sqcup & \ty{\Sigma'},\tmty{l}{\tyL{\frz}{d}}
+    & = & \ty{\Sigma}\sqcup\ty{\Sigma'},\tmty{l}{\tyL{\frz}{{d}\sqcup{d'}}}
+    \\
+    \\
+    \ty{\emptyenv}
+    & \sqsubseteq & \ty{\emptyenv}
+    \\
+    \ty{\Sigma'},\tmty{l}{\tyL{\frz'}{d'}}
+    & \sqsubseteq & \ty{\Sigma},\tmty{l}{\tyL{\frz}{d}}
+    \\
+    & \text{if} & \multicolumn{3}{r}{
+                  \ty{\Sigma'}\sqsubseteq\ty{\Sigma},
+                  \ty{\frz'}\sqsubseteq\ty{\frz},\text{ and }
+                  \ty{d'}\sqsubseteq\ty{d}}
+  \end{array}
+\end{mathpar}
 
 \paragraph{Typing rules}%
 \label{sec:lvar-typing}
@@ -52,7 +76,7 @@ See~\cref{fig:typing}.
 
 \begin{lemma}[Substitution]
   \label{lem:substitution}
-  If $\seq{\ty{\Gamma},\tmty{x}{T}}{\ty{\Sigma}}{M}{U}$ and $\seq{\ty{\Gamma'}}{\ty{\Sigma'}}{V}{T}$, then $\seq{\ty{\Gamma}\sqcup\ty{\Gamma'}}{\ty{\Sigma}\sqcup\ty{\Sigma'}}{\subst{M}{V}{x}}{U}$.
+  If $\seq{\ty{\Gamma},\tmty{x}{T}}{\ty{\Sigma}}{M}{U}$ and $\seq{\ty{\Gamma}}{\ty{\Sigma'}}{V}{T}$, then $\seq{\ty{\Gamma}}{\ty{\Sigma}\sqcup\ty{\Sigma'}}{\subst{M}{V}{x}}{U}$.
 \end{lemma}
 \begin{lemma}[Subject reduction, $\redc$]
   \label{lem:subject-reduction}

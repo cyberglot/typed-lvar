@@ -79,11 +79,11 @@
       }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\config{\letpair{x}{y}{\pair{V}{W}}{M}}{S}}{U}}
 
       \inferrule*[left=\redc]{
-        \seq{\ty{\Gamma}}{\ty{\Sigma'}\sqcup\ty{\Sigma''}\sqcup\ty{\Sigma}}{\subst{\subst{M}{V}{x}}{W}{y}}{U}
+        \seq{\ty{\Gamma}}{\ty{\Sigma}}{\subst{\subst{M}{V}{x}}{W}{y}}{U}
         \\
         \seqS{\ty{\Sigma'''}}{S}
         \\
-        \ty{\Sigma'''}\sqsubseteq\ty{\Sigma}
+        \ty{\Sigma'''}\sqsubseteq\ty{\Sigma'}\sqcup\ty{\Sigma''}\sqsubseteq\ty{\Sigma}
       }{\seq
         {\ty{\Gamma}}{\ty{\Sigma}}
         {\config{\subst{\subst{M}{V}{x}}{W}{y}}{S}}{U}}
@@ -121,7 +121,6 @@
     \end{mathpar}
   \end{case}
   \begin{case}{\LabTirName{E-Freeze}}
-    $\tm{S(l)} = \tm{\st{d'}{\frz}}$
     \begin{mathpar}
       \inferrule*{
         \inferrule*{
@@ -181,8 +180,6 @@
     \end{mathpar}
   \end{case}
   \begin{case}{\LabTirName{E-Put}}
-    $\tm{S(l)} = \tm{\st{d}{\false}}$
-    $\tm{{d}\sqcup{d'}} \neq \tm{\top}$
     \begin{mathpar}
       \inferrule*{
         \inferrule*{
