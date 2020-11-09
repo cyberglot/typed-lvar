@@ -1,110 +1,107 @@
 \begin{figure*}
-  \begin{minipage}[t]{1.0\textwidth}
+  \begin{mathpar}
     \fbox{$\seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{T}$}\hfill
     \\
-    \begin{mathpar}
-      \inferrule*[lab=T-Var]{
-        \tmty{x}{T} \in \ty{\Gamma}
-      }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{x}{T}}
-    
-      \inferrule*[lab=T-Lam]{
-        \seq{\ty{\Gamma},\tmty{x}{T}}{\ty{\Sigma}}{M}{U}
-      }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lambda x.M}{\tyfun{T}{U}}}
-    
-      \inferrule*[lab=T-App]{
-        \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyfun{T}{U}}
-        \\
-        \seq{\ty{\Gamma}}{\ty{\Sigma'}}{N}{T}
-      }{\seq{\ty{\Gamma}}{\ty{\Sigma}\sqcup\ty{\Sigma'}}{M\;N}{U}}
-    
-      \inferrule*[lab=T-Unit]{
-      }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\unit}{\tyunit}}
-    
-      \inferrule*[lab=T-LetUnit]{
-        \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyunit}
-        \\
-        \seq{\ty{\Gamma}}{\ty{\Sigma}}{N}{T}
-        \\
-        \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
-      }{\seq{\ty{\Gamma}}{\ty{\Sigma'}}{\letunit{M}{N}}{T}}
-    
-      \inferrule*[lab=T-Pair]{
-        \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{T}
-        \\
-        \seq{\ty{\Gamma}}{\ty{\Sigma'}}{N}{U}
-      }{\seq{\ty{\Gamma}}{\ty{\Sigma}\sqcup\ty{\Sigma'}}{\pair{M}{N}}{\typrod{T}{U}}}
-    
-      \inferrule*[lab=T-LetPair]{
-        \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\typrod{T}{T'}}
-        \\
-        \seq{\ty{\Gamma},\tmty{x}{T},\tmty{y}{T'}}{\ty{\Sigma'}}{N}{U}
-        \\
-        \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
-      }{\seq{\ty{\Gamma}}{\ty{\Sigma'}}{\letpair{x}{y}{M}{N}}{U}}
+    \inferrule*[lab=T-Var]{
+      \tmty{x}{T} \in \ty{\Gamma}
+    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{x}{T}}
+  
+    \inferrule*[lab=T-Lam]{
+      \seq{\ty{\Gamma},\tmty{x}{T}}{\ty{\Sigma}}{M}{U}
+    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lambda x.M}{\tyfun{T}{U}}}
+  
+    \inferrule*[lab=T-App]{
+      \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyfun{T}{U}}
+      \\
+      \seq{\ty{\Gamma}}{\ty{\Sigma'}}{N}{T}
+    }{\seq{\ty{\Gamma}}{\ty{\Sigma}\sqcup\ty{\Sigma'}}{M\;N}{U}}
+  
+    \inferrule*[lab=T-Unit]{
+    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\unit}{\tyunit}}
+  
+    \inferrule*[lab=T-LetUnit]{
+      \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyunit}
+      \\
+      \seq{\ty{\Gamma}}{\ty{\Sigma}}{N}{T}
+      \\
+      \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
+    }{\seq{\ty{\Gamma}}{\ty{\Sigma'}}{\letunit{M}{N}}{T}}
+  
+    \inferrule*[lab=T-Pair]{
+      \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{T}
+      \\
+      \seq{\ty{\Gamma}}{\ty{\Sigma'}}{N}{U}
+    }{\seq{\ty{\Gamma}}{\ty{\Sigma}\sqcup\ty{\Sigma'}}{\pair{M}{N}}{\typrod{T}{U}}}
+  
+    \inferrule*[lab=T-LetPair]{
+      \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\typrod{T}{T'}}
+      \\
+      \seq{\ty{\Gamma},\tmty{x}{T},\tmty{y}{T'}}{\ty{\Sigma'}}{N}{U}
+      \\
+      \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
+    }{\seq{\ty{\Gamma}}{\ty{\Sigma'}}{\letpair{x}{y}{M}{N}}{U}}
 
-      \inferrule*[lab=T-Val]{
-        \ty{d'}\sqsubseteq\ty{d}
-      }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{d'}{\tyD{d}}}
+    \inferrule*[lab=T-Val]{
+      \ty{d'}\sqsubseteq\ty{d}
+    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{d'}{\tyD{d}}}
 
-      \inferrule*[lab=T-Loc]{
-        \tmty{l}{\tyL{d}{\frz}} \in \ty{\Sigma}
-      }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{l}{\tyL{d}{\frz}}}
-    
-      \inferrule*[lab=T-Threshold]{
-        \incomp({\tyJ})
-      }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\tmJ}{\tyJ}}
-    
-      \inferrule*[lab=T-New]{
-      }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lvarnew}{\tyL{\false}{\bot}}}
-    
-      \inferrule*[lab=T-Freeze]{
-        \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyL{\true}{d}}
-      }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lvarfreeze\;M}{\tyD{d}}}
-    
-      \inferrule*[lab=T-Get]{
-        \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyL{\frz}{d}}
-        \\
-        \seq{\ty{\Gamma}}{\ty{\Sigma'}}{N}{\tyJ}
-        \\
-        \tm{d'}\in\tyJ
-        \\
-        \tm{d'}\sqsubseteq\ty{d}
-      }{\seq{\ty{\Gamma}}{\ty{\Sigma}\sqcup\ty{\Sigma'}}{\lvarget\;M\;N}{\tyD{d}}}
-    
-      \inferrule*[lab=T-Put]{
-        \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyL{\false}{d}}
-        \\
-        \seq{\ty{\Gamma}}{\ty{\Sigma}}{N}{\tyD{d}}
-      }{\seq{\ty{\Gamma}}{\ty{\Sigma}\sqcup\ty{\Sigma'}}{\lvarput\;M\;N}{1}}
-    \end{mathpar}
-  \end{minipage}
-  \bigskip
-  \\
-  \begin{minipage}[t]{0.5\textwidth}
-    \fbox{$\seqC{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$}\hfill
-    \\
-    \begin{mathpar}
-      \inferrule*[lab=T-Conf]{
-        \seq{\ty{\Gamma}}{\ty{\Sigma'}}{M}{T}
-        \\
-        \seqS{\ty{\Sigma}}{S}
-        \\
-        \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
-      }{\seqC{\ty{\Gamma}}{\ty{\Sigma'}}{\config{M}{S}}{T}}
-    \end{mathpar}
-  \end{minipage}%
-  \begin{minipage}[t]{0.5\textwidth}
-    \fbox{$\seqS{\ty{\Gamma}}{S}$}\hfill
-    \\
-    \begin{mathpar}
-      \inferrule*[lab=T-Store-Emp]{
-      }{\seqS{\ty{\emptyenv}}{\storeemp}}
-      
-      \inferrule*[lab=T-Store-Ext]{
-        \seqS{\ty{\Sigma}}{S}
-      }{\seqS{\ty{\Sigma},\tmty{l}{\tyL{\frz}{d}}}{\storeext{S}{l}{\st{d}{\frz}}}}
-    \end{mathpar}
-  \end{minipage}
-  \caption{Typing rules for \typedlambdalvar.}
+    \inferrule*[lab=T-Loc]{
+      \tmty{l}{\tyL{d}{\frz}} \in \ty{\Sigma}
+    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{l}{\tyL{d}{\frz}}}
+  
+    \inferrule*[lab=T-Threshold]{
+      \incomp({\tyJ})
+    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\tmJ}{\tyJ}}
+  
+    \inferrule*[lab=T-New]{
+    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lvarnew}{\tyL{\false}{\bot}}}
+  
+    \inferrule*[lab=T-Freeze]{
+      \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyL{\true}{d}}
+    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lvarfreeze\;M}{\tyD{d}}}
+  
+    \inferrule*[lab=T-Get]{
+      \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyL{\frz}{d}}
+      \\
+      \seq{\ty{\Gamma}}{\ty{\Sigma'}}{N}{\tyJ}
+      \\
+      \tm{d'}\in\tyJ
+      \\
+      \tm{d'}\sqsubseteq\ty{d}
+    }{\seq{\ty{\Gamma}}{\ty{\Sigma}\sqcup\ty{\Sigma'}}{\lvarget\;M\;N}{\tyD{d}}}
+  
+    \inferrule*[lab=T-Put]{
+      \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyL{\false}{d}}
+      \\
+      \seq{\ty{\Gamma}}{\ty{\Sigma}}{N}{\tyD{d}}
+    }{\seq{\ty{\Gamma}}{\ty{\Sigma}\sqcup\ty{\Sigma'}}{\lvarput\;M\;N}{1}}
+  \end{mathpar}
+  \caption{Typing rules for \lambdalvar terms.}
   \label{fig:typing}
 \end{figure*}
+
+\begin{figure}
+  \begin{mathpar}
+    \fbox{$\seqC{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$}\hfill
+    \\
+    \inferrule*[lab=T-Conf]{
+      \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{T}
+      \\
+      \seqS{\ty{\Sigma'}}{S}
+      \\
+      \ty{\Sigma'}\sqsubseteq\ty{\Sigma}
+    }{\seqC{\ty{\Gamma}}{\ty{\Sigma}}{\config{M}{S}}{T}}
+  \end{mathpar}
+  \begin{mathpar}
+    \fbox{$\seqS{\ty{\Sigma}}{S}$}\hfill
+    \\
+    \inferrule*[lab=T-Store-Emp]{
+    }{\seqS{\ty{\emptyenv}}{\storeemp}}
+    
+    \inferrule*[lab=T-Store-Ext]{
+      \seqS{\ty{\Sigma}}{S}
+    }{\seqS{\ty{\Sigma},\tmty{l}{\tyL{\frz}{d}}}{\storeext{S}{l}{\st{d}{\frz}}}}
+  \end{mathpar}
+  \caption{Typing rules for \lambdalvar configurations and stores}
+  \label{fig:typing-configurations}
+\end{figure}
