@@ -1,63 +1,77 @@
 \begin{figure*}
-  \noindent
-  \begin{minipage}[t]{.75\textwidth}
+  \begin{mathpar}
     \fbox{$\tm{C}\redc\tm{C'}$}\hfill
     \\
-    \begin{mathpar}
-      \begin{array}{llrl}
-        \LabTirName{E-Lam}     & \tm{\config{(\lambda x.M)\;V}{S}}
-                               & \redc & \tm{\config{\subst{M}{V}{x}}{S}}
-        \\
-        \LabTirName{E-Unit}    & \tm{\config{\letunit{\unit}{M}}{S}}
-                               & \redc & \tm{\config{M}{S}}
-        \\
-        \LabTirName{E-Pair}    & \tm{\config{\letpair{x}{y}{\pair{V}{W}}{M}}{S}}
-                               & \redc & \tm{\config{\subst{\subst{M}{V}{x}}{W}{y}}{S}}
-      \end{array}
+    \begin{array}{llrl}
+      \LabTirName{E-Lam}     & \tm{\config{(\lambda x.M)\;V}{S}}
+      & \redc & \tm{\config{\subst{M}{V}{x}}{S}}
       \\
-      \inferrule*[lab=E-New]{
-        \tm{l}\not\in\dom(\tm{S})
-      }{\tm{\config{\lvarnew}{S}}
-        \redc
-        \tm{\config{l}{\storeext{S}{l}{\st{\botD}{\false}}}}}
-      \inferrule*[lab=E-Get]{
-        \tm{S(l)} = \tm{\st{d}{\frz}}
-        \\
-        \incomp({\tmJ})
-        \\
-        \tm{d'}\in\tmJ
-        \\
-        \tm{d'}\sqsubseteqD\tm{d}
-      }{\tm{\config{\lvarget\;l\;\tmJ}{S}}
-        \redc
-        \tm{\config{d'}{S}}}
-
-      \inferrule*[lab=E-Put]{
-        \tm{S(l)} = \tm{\st{d}{\false}}
-        \\
-        \tm{{d}\sqcupD{d'}} \neq \tm{\topD}
-      }{\tm{\config{\lvarput\;l\;d'}{S}}
-        \redc
-        \tm{\config{()}{\storeupd{S}{l}{\st{d'}{\false}}}}}
-            
-      \inferrule*[lab=E-Freeze]{
-        \tm{S(l)} = \tm{\st{d}{\frz}}
-      }{\tm{\config{\lvarfreeze}{S}}
-        \redc
-        \tm{\config{d}{\storeupd{S}{l}{\st{d}{\true}}}}}
-    \end{mathpar}
-  \end{minipage}%
-  \begin{minipage}[t]{.25\textwidth}
-    \fbox{$\tm{C}\rede\tm{C'}$}\hfill
+      \LabTirName{E-Unit}    & \tm{\config{\letunit{\unit}{M}}{S}}
+      & \redc & \tm{\config{M}{S}}
+      \\
+      \LabTirName{E-Pair}    & \tm{\config{\letpair{x}{y}{\pair{V}{W}}{M}}{S}}
+      & \redc & \tm{\config{\subst{\subst{M}{V}{x}}{W}{y}}{S}}
+    \end{array}
     \\
-    \begin{mathpar}
-      \inferrule*[lab=E-Lift]{
-        \tm{\config{M}{S}} \redc \tm{\config{N}{S'}}
-      }{\tm{\config{\plug{E}{M}}{S}}
-        \rede
-        \tm{\config{\plug{E}{N}}{S'}}}
-    \end{mathpar}
-  \end{minipage}
+    \inferrule*[lab=E-New]{
+      \tm{l}\not\in\dom(\tm{S})
+    }{\tm{\config{\lvarnew}{S}}
+      \redc
+      \tm{\config{l}{\storeext{S}{l}{\st{\botD}{\false}}}}}
+    
+    \inferrule*[lab=E-Freeze]{
+      \tm{S(l)} = \tm{\st{d}{\frz}}
+    }{\tm{\config{\lvarfreeze}{S}}
+      \redc
+      \tm{\config{d}{\storeupd{S}{l}{\st{d}{\true}}}}}
+
+    \inferrule*[lab=E-Get]{
+      \tm{S(l)} = \tm{\st{d}{\frz}}
+      \\
+      \incomp({\tmJ})
+      \\
+      \tm{d'}\in\tmJ
+      \\
+      \tm{d'}\sqsubseteqD\tm{d}
+    }{\tm{\config{\lvarget\;l\;\tmJ}{S}}
+      \redc
+      \tm{\config{d'}{S}}}
+    
+    \inferrule*[lab=E-Put]{
+      \tm{S(l)} = \tm{\st{d}{\false}}
+      \\
+      \tm{{d}\sqcupD{d'}} \neq \tm{\topD}
+    }{\tm{\config{\lvarput\;l\;d'}{S}}
+      \redc
+      \tm{\config{()}{\storeupd{S}{l}{\st{d'}{\false}}}}}
+    
+    \inferrule*[lab=E-Put-Err-Incomp]{
+      \tm{S(l)} = \tm{\st{d}{\false}}
+      \\
+      \tm{{d}\sqcupD{d'}} = \tm{\topD}
+    }{\tm{\config{\lvarput\;l\;d'}{S}}
+      \redc
+      \tm{\error}}
+    
+    \inferrule*[lab=E-Put-Err-Freeze]{
+      \tm{S(l)} = \tm{\st{d}{\true}}
+    }{\tm{\config{\lvarput\;l\;d'}{S}}
+      \redc
+      \tm{\error}}
+  \end{mathpar}
   \caption{Operational semantics for \typedlambdalvar.}
   \label{fig:semantics}
 \end{figure*}
+\begin{figure}
+  \begin{mathpar}
+    \fbox{$\tm{C}\rede\tm{C'}$}\hfill
+    \\
+    \inferrule*[lab=E-Lift]{
+      \tm{\config{M}{S}} \redc \tm{\config{N}{S'}}
+    }{\tm{\config{\plug{E}{M}}{S}}
+      \rede
+      \tm{\config{\plug{E}{N}}{S'}}}
+  \end{mathpar}
+  \caption{Operational semantics for \typedlambdalvar.}
+  \label{fig:semantics-nd}
+\end{figure}

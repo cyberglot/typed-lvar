@@ -8,8 +8,8 @@
 
 \todo{%
   Describe \typedlambdalvar as a typing discipline for \lambdalvar, and explain
-  that it will allow us to rid ourselves of the rules in \cref{fig:lindsey} and
-  the $\tm{\error}$ configuration.}
+  that it will allow us to rid ourselves of the error reductions and the
+  $\tm{\error}$ configuration.}
 
 \paragraph*{Types}
 Types ($\ty{T}$, $\ty{U}$),  and typing environments ($\ty{\Gamma}$) are defined by the following grammar:
@@ -27,6 +27,11 @@ Types ($\ty{T}$, $\ty{U}$),  and typing environments ($\ty{\Gamma}$) are defined
   & \coloneqq & \ty{\emptyenv}
     \sep        \ty{\ty{\Gamma},\tmty{x}{T}}
                                     & \text{typing environments}
+  \\
+  \ty{\Sigma}
+  & \coloneqq & \ty{\emptyenv}
+    \sep        \ty{\ty{\Sigma},\tmty{l}{\tyL{d}{\frz}}}
+                                    & \text{store typing environments}
 \end{array}
 \]
 Types $\ty{\tyunit}$, $\ty{\typrod{T}{U}}$, and $\ty{\tyfun{T}{U}}$ are the standard unit, pair, and function types.
@@ -49,20 +54,17 @@ See~\cref{fig:typing}.
 
 \begin{lemma}[Substitution]
   \label{lem:substitution}
-  \hfill\\
   If $\seq{\ty{\Gamma},\tmty{x}{T}}{\ty{\Sigma}}{M}{U}$ and $\seq{\ty{\Gamma'}}{\ty{\Sigma'}}{V}{T}$, then $\seq{\ty{\Gamma}\sqcupG\ty{\Gamma'}}{\ty{\Sigma}\sqcupG\ty{\Sigma'}}{\subst{M}{V}{x}}{U}$.
 \end{lemma}
 \begin{lemma}[Subject reduction, $\redc$]
   \label{lem:subject-reduction}
-  \hfill\\
-  If $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$ and $\tm{C}\redc\tm{C'}$, then $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$.
+  If $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$ and $\tm{C}\redc\tm{C'}$, then $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C'}{T}$.
 \end{lemma}
 % \input{fig/subject-reduction-red}
 
 \begin{theorem}[Subject reduction, $\rede$]
   \label{thm:subject-reduction}
-  \hfill\\
-  If $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$ and $\tm{C}\redc\tm{C'}$, then $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$.
+  If $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$ and $\tm{C}\redc\tm{C'}$, then $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C'}{T}$.
 \end{theorem}
 
 \todo{%
@@ -84,7 +86,6 @@ See~\cref{fig:typing}.
     show that if those rules were to be applied, $\tm{C}$ would be ill-typed.}
 \end{proof}
 \begin{theorem}[Error-freedom, $\rede$]
-  \hfill\\
   \label{thm:error-free}
   If $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$, then $\tm{C}\centernot\rede\tm{\error}$.
 \end{theorem}
