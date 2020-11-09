@@ -41,8 +41,8 @@
       \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
     }{\seq{\ty{\Gamma}}{\ty{\Sigma'}}{\letpair{x}{y}{M}{N}}{U}}
 
-    \inferrule*[lab=T-Val]{
-      \ty{d'}\sqsubseteq\ty{d}
+    \inferrule*[lab=T-Dom]{
+      \tm{d'}\sqsubseteq\ty{d}
     }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{d'}{\tyD{d}}}
 
     \inferrule*[lab=T-Loc]{
