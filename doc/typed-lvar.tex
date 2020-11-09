@@ -8,8 +8,8 @@
 
 \todo{%
   Describe \typedlambdalvar as a typing discipline for \lambdalvar, and explain
-  that it will allow us to rid ourselves of the rules in \cref{fig:lindsey} and
-  the $\tm{\error}$ configuration.}
+  that it will allow us to rid ourselves of the error reductions and the
+  $\tm{\error}$ configuration.}
 
 \paragraph*{Types}
 Types ($\ty{T}$, $\ty{U}$),  and typing environments ($\ty{\Gamma}$) are defined by the following grammar:
@@ -27,6 +27,11 @@ Types ($\ty{T}$, $\ty{U}$),  and typing environments ($\ty{\Gamma}$) are defined
   & \coloneqq & \ty{\emptyenv}
     \sep        \ty{\ty{\Gamma},\tmty{x}{T}}
                                     & \text{typing environments}
+  \\
+  \ty{\Sigma}
+  & \coloneqq & \ty{\emptyenv}
+    \sep        \ty{\ty{\Sigma},\tmty{l}{\tyL{d}{\frz}}}
+                                    & \text{store typing environments}
 \end{array}
 \]
 Types $\ty{\tyunit}$, $\ty{\typrod{T}{U}}$, and $\ty{\tyfun{T}{U}}$ are the standard unit, pair, and function types.
@@ -47,17 +52,19 @@ See~\cref{fig:typing}.
 
 \subsection{Metatheory}
 
-\begin{lemma}[Subject reduction, $\red$]
-  \label{lem:subject-reduction}
-  \hfill\\
-  If $\seq{\ty{\Gamma}}{C}{T}$ and $\tm{C}\red\tm{C'}$, then $\seq{\ty{\Gamma}}{C}{T}$.
+\begin{lemma}[Substitution]
+  \label{lem:substitution}
+  If $\seq{\ty{\Gamma},\tmty{x}{T}}{\ty{\Sigma}}{M}{U}$ and $\seq{\ty{\Gamma'}}{\ty{\Sigma'}}{V}{T}$, then $\seq{\ty{\Gamma}\sqcupG\ty{\Gamma'}}{\ty{\Sigma}\sqcupG\ty{\Sigma'}}{\subst{M}{V}{x}}{U}$.
 \end{lemma}
-\input{fig/subject-reduction-red}
+\begin{lemma}[Subject reduction, $\redc$]
+  \label{lem:subject-reduction}
+  If $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$ and $\tm{C}\redc\tm{C'}$, then $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C'}{T}$.
+\end{lemma}
+% \input{fig/subject-reduction-red}
 
 \begin{theorem}[Subject reduction, $\rede$]
   \label{thm:subject-reduction}
-  \hfill\\
-  If $\seq{\ty{\Gamma}}{C}{T}$ and $\tm{C}\red\tm{C'}$, then $\seq{\ty{\Gamma}}{C}{T}$.
+  If $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$ and $\tm{C}\redc\tm{C'}$, then $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C'}{T}$.
 \end{theorem}
 
 \todo{%
@@ -67,21 +74,20 @@ See~\cref{fig:typing}.
   for removing them. However, if we remove them to begin with, then we'd
   essentially have to prove the same thing while proving progress, since the
   terms that would originally have errored now become stuck.}
-\begin{lemma}[Error-freedom, $\red$]
+\begin{lemma}[Error-freedom, $\redc$]
   \label{lem:error-free}
-  If $\seq{\ty{\Gamma}}{C}{T}$, then $\tm{C}\centernot\red\tm{\error}$.
+  If $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$, then $\tm{C}\centernot\redc\tm{\error}$.
 \end{lemma}
 \begin{proof}
-  By inversion on the structure of $\tm{C}\red\tm{\error}$.
+  By inversion on the structure of $\tm{C}\redc\tm{\error}$.
   \todo{%
     The core of what was reflection:\\
     Examine all possible reduction rules which could lead to $\tm{\error}$, and
     show that if those rules were to be applied, $\tm{C}$ would be ill-typed.}
 \end{proof}
 \begin{theorem}[Error-freedom, $\rede$]
-  \hfill\\
   \label{thm:error-free}
-  If $\seq{\ty{\Gamma}}{C}{T}$, then $\tm{C}\centernot\rede\tm{\error}$.
+  If $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$, then $\tm{C}\centernot\rede\tm{\error}$.
 \end{theorem}
 \begin{proof}
   By inversion on the structure of $\tm{C}\rede\tm{\error}$.
@@ -92,14 +98,14 @@ See~\cref{fig:typing}.
 
 \begin{theorem}[Progress, $\rede$]
   \label{thm:progress}
-  If $\seq{\ty{\Gamma}}{C}{T}$, then:
+  If $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$, then:
   \begin{itemize}
   \item $\tm{C}\rede\tm{C'}$ for some $\tm{C'}$; or
   \item $\tm{C}=\tm{\config{V}{S}}$ for some $\tm{V}$ and $\tm{S}$.
   \end{itemize}
 \end{theorem}
 \begin{proof}
-  By induction on the structure of $\seq{\ty{\Gamma}}{C}{T}$.
+  By induction on the structure of $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$.
   \todo{%
     Examine each possible typing rule which could result in $\tm{C}$ being
     well-typed, and show that for each of them, either $\tm{C}$ can reduce, or

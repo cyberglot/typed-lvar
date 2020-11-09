@@ -1,20 +1,20 @@
 \begin{figure}
   \noindent
   \begin{mathpar}
-    \fbox{$\tm{C}\red\tm{C'}$}\hfill
+    \fbox{$\tm{C}\redc\tm{C'}$}\hfill
     \\
     \inferrule*[lab=E-Put-Err-Incomp]{
       \tm{S(l)} = \tm{\st{d}{\false}}
       \\
       \tm{{d}\sqcupD{d'}} = \tm{\topD}
     }{\tm{\config{\lvarput\;l\;d'}{S}}
-      \red
+      \redc
       \tm{\error}}
     \\
     \inferrule*[lab=E-Put-Err-Freeze]{
       \tm{S(l)} = \tm{\st{d}{\true}}
     }{\tm{\config{\lvarput\;l\;d'}{S}}
-      \red
+      \redc
       \tm{\error}}
   \end{mathpar}
   \caption{Extension to operational semantics for \lambdalvar.}

@@ -1,91 +1,99 @@
 \begin{figure*}
   \begin{minipage}[t]{1.0\textwidth}
-    \fbox{$\seq{\ty{\Gamma}}{M}{T}$}\hfill
+    \fbox{$\seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{T}$}\hfill
     \\
     \begin{mathpar}
       \inferrule*[lab=T-Var]{
         \tmty{x}{T} \in \ty{\Gamma}
-      }{\seq{\ty{\Gamma}}{x}{T}}
+      }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{x}{T}}
     
       \inferrule*[lab=T-Lam]{
-        \seq{\ty{\Gamma},\tmty{x}{T}}{M}{U}
-      }{\seq{\ty{\Gamma}}{\lambda x.M}{\tyfun{T}{U}}}
+        \seq{\ty{\Gamma},\tmty{x}{T}}{\ty{\Sigma}}{M}{U}
+      }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lambda x.M}{\tyfun{T}{U}}}
     
       \inferrule*[lab=T-App]{
-        \seq{\ty{\Gamma}}{M}{\tyfun{T}{U}}
+        \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyfun{T}{U}}
         \\
-        \seq{\ty{\Gamma'}}{N}{T}
-      }{\seq{\ty{\Gamma}\sqcupG\ty{\Gamma'}}{M\;N}{U}}
+        \seq{\ty{\Gamma'}}{\ty{\Sigma'}}{N}{T}
+      }{\seq{\ty{\Gamma}\sqcupG\ty{\Gamma'}}{\ty{\Sigma}\sqcupG\ty{\Sigma'}}{M\;N}{U}}
     
       \inferrule*[lab=T-Unit]{
-      }{\seq{\ty{\Gamma}}{\unit}{\tyunit}}
+      }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\unit}{\tyunit}}
     
       \inferrule*[lab=T-LetUnit]{
-        \seq{\ty{\Gamma}}{M}{\tyunit}
+        \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyunit}
         \\
-        \seq{\ty{\Gamma'}}{N}{T}
+        \seq{\ty{\Gamma'}}{\ty{\Sigma}}{N}{T}
         \\
         \ty{\Gamma}\sqsubseteqG\ty{\Gamma'}
-      }{\seq{\ty{\Gamma'}}{\letunit{M}{N}}{T}}
+        \\
+        \ty{\Sigma}\sqsubseteqG\ty{\Sigma'}
+      }{\seq{\ty{\Gamma'}}{\ty{\Sigma'}}{\letunit{M}{N}}{T}}
     
       \inferrule*[lab=T-Pair]{
-        \seq{\ty{\Gamma}}{M}{T}
+        \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{T}
         \\
-        \seq{\ty{\Gamma'}}{N}{U}
-      }{\seq{\ty{\Gamma}\sqcupG\ty{\Gamma'}}{\pair{M}{N}}{\typrod{T}{U}}}
+        \seq{\ty{\Gamma'}}{\ty{\Sigma'}}{N}{U}
+      }{\seq{\ty{\Gamma}\sqcupG\ty{\Gamma'}}{\ty{\Sigma}\sqcupG\ty{\Sigma'}}{\pair{M}{N}}{\typrod{T}{U}}}
     
       \inferrule*[lab=T-LetPair]{
-        \seq{\ty{\Gamma}}{M}{\typrod{T}{T'}}
+        \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\typrod{T}{T'}}
         \\
-        \seq{\ty{\Gamma'},\tmty{x}{T},\tmty{y}{T'}}{N}{U}
+        \seq{\ty{\Gamma'},\tmty{x}{T},\tmty{y}{T'}}{\ty{\Sigma'}}{N}{U}
         \\
         \ty{\Gamma}\sqsubseteqG\ty{\Gamma'}
-      }{\seq{\ty{\Gamma'}}{\letpair{x}{y}{M}{N}}{U}}
+        \\
+        \ty{\Sigma}\sqsubseteqG\ty{\Sigma'}
+      }{\seq{\ty{\Gamma'}}{\ty{\Sigma'}}{\letpair{x}{y}{M}{N}}{U}}
+
+      \inferrule*[lab=T-Loc]{
+        \tmty{l}{\tyL{d}{\frz}} \in \ty{\Sigma}
+      }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{l}{\tyL{d}{\frz}}}
     
       \inferrule*[lab=T-Threshold]{
-      }{\seq{\ty{\Gamma}}{\tmJ}{\tyJ}}
+      }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\tmJ}{\tyJ}}
     
       \inferrule*[lab=T-New]{
-      }{\seq{\ty{\Gamma}}{\lvarnew}{\tyL{\false}{\bot}}}
+      }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lvarnew}{\tyL{\false}{\bot}}}
     
       \inferrule*[lab=T-Freeze]{
-        \seq{\ty{\Gamma}}{M}{\tyL{\true}{d}}
-      }{\seq{\ty{\Gamma}}{\lvarfreeze\;M}{\tyD{d}}}
+        \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyL{\true}{d}}
+      }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lvarfreeze\;M}{\tyD{d}}}
     
       \inferrule*[lab=T-Get]{
-        \seq{\ty{\Gamma}}{M}{\tyL{\frz}{d}}
+        \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyL{\frz}{d}}
         \\
-        \seq{\ty{\Gamma'}}{N}{\tyJ}
+        \seq{\ty{\Gamma'}}{\ty{\Sigma'}}{N}{\tyJ}
         \\
         \incomp({\tyJ})
         \\
         \ty{d'}\in\tyJ
         \\
         \ty{d'}\sqsubseteqD\ty{d}
-      }{\seq{\ty{\Gamma}\sqcupG\ty{\Gamma'}}{\lvarget\;M\;N}{\tyD{d}}}
+      }{\seq{\ty{\Gamma}\sqcupG\ty{\Gamma'}}{\ty{\Sigma}\sqcupG\ty{\Sigma'}}{\lvarget\;M\;N}{\tyD{d}}}
     
       \inferrule*[lab=T-Put]{
-        \seq{\ty{\Gamma}}{M}{\tyL{\false}{d}}
+        \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyL{\false}{d}}
         \\
-        \seq{\ty{\Gamma'}}{N}{\tyD{d'}}
+        \seq{\ty{\Gamma'}}{\ty{\Sigma}}{N}{\tyD{d'}}
         \\
         \ty{d}\sqsubseteq\ty{d'}
-      }{\seq{\ty{\Gamma}\sqcupG\ty{\Gamma'}}{\lvarput\;M\;N}{1}}
+      }{\seq{\ty{\Gamma}\sqcupG\ty{\Gamma'}}{\ty{\Sigma}\sqcupG\ty{\Sigma'}}{\lvarput\;M\;N}{1}}
     \end{mathpar}
   \end{minipage}
   \bigskip
   \\
   \begin{minipage}[t]{0.5\textwidth}
-    \fbox{$\seqC{\ty{\Gamma}}{C}{T}$}\hfill
+    \fbox{$\seqC{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$}\hfill
     \\
     \begin{mathpar}
       \inferrule*[lab=T-Conf]{
-        \seq{\ty{\Gamma}}{M}{T}
+        \seq{\ty{\Gamma}}{\ty{\Sigma'}}{M}{T}
         \\
-        \seqS{\ty{\Gamma'}}{S}
+        \seqS{\ty{\Sigma}}{S}
         \\
-        \ty{\Gamma}\sqsubseteqG\ty{\Gamma'}
-      }{\seqC{\ty{\Gamma'}}{\config{M}{S}}{T}}
+        \ty{\Sigma}\sqsubseteqG\ty{\Sigma'}
+      }{\seqC{\ty{\Gamma}}{\ty{\Sigma'}}{\config{M}{S}}{T}}
     \end{mathpar}
   \end{minipage}%
   \begin{minipage}[t]{0.5\textwidth}
@@ -93,13 +101,13 @@
     \\
     \begin{mathpar}
       \inferrule*[lab=T-Store-Emp]{
-      }{\seqS{\ty{\Gamma}}{\storeemp}}
+      }{\seqS{\ty{\Sigma}}{\storeemp}}
       
       \inferrule*[lab=T-Store-Ext]{
-        \seqS{\ty{\Gamma}}{S}
+        \seqS{\ty{\Sigma}}{S}
         \\
-        \tmty{l}{\tyL{\frz}{d}}\in\ty{\Gamma}
-      }{\seqS{\ty{\Gamma}}{S, l \mapsto\st{d}{\frz}}}
+        \tmty{l}{\tyL{\frz}{d}}\in\ty{\Sigma}
+      }{\seqS{\ty{\Sigma}}{\storeext{S}{l}{\st{d}{\frz}}}}
     \end{mathpar}
   \end{minipage}
   \caption{Typing rules for \typedlambdalvar.}
