@@ -40,8 +40,8 @@ The type $\tyL{\frz}{d}$ types locations which store values of type $\tyD{d}$.
 Thresholds occur on both the type- and term-level. Each threshold type $\tyJ$ has only one inhabitant, which is the same threshold $\tmJ$ on the term-level.
 
 We extend $\sqcup$ and $\sqsubseteq$ to store typing environments.
-The operation $\sqcup$ takes two store typing environments with identical structure \emph{up to domain bounds}, and returns the store typing environment with the pointwise maximum of each domain bound. Notably, \emph{status bits are unaffected by $\sqcup$}.
-The relation $\sqsubseteq$ takes two store typing environments with identical structure up to domain bounds \emph{and status bits}, and checks if each domain bound or status bit in the first argument is smaller than the corresponding domain bound or status bit in the second argument.
+The operation $\sqcup$ takes two store typing environments with identical structure \emph{up to domain bounds}, and returns the store typing environment with the pointwise maximum of each domain bound. Notably, status bits are unaffected by $\sqcup$.
+The relation $\sqsubseteq$ takes two store typing environments with identical structure up to domain bounds and status bits, and checks if each domain bound or status bit in the first argument is smaller than the corresponding domain bound or status bit in the second argument.
 \begin{mathpar}
   \setlength{\arraycolsep}{2pt}
   \begin{array}{lclcl}

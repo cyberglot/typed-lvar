@@ -58,7 +58,7 @@ Configurations ($\tm{C}$), stores ($\tm{S}$), states ($\tm{p}$), and status bits
 \]
 A~configuration $\tm{\config{M}{S}}$ consists of a term $\tm{M}$ and a store $\tm{S}$. A~store is a partial function from locations $\tm{l}$ to states $\tm{p}$. A~state consists of a domain value $\tm{d}$ and a status bit $\tm{\frz}$. The status bit records if that particular location has been frozen. We write $\tm{\storeext{S}{l}{p}}$ for the \emph{extension} of a store $\tm{S}$ with state $\tm{p}$ at a \emph{fresh} location $\tm{l}$. We write $\tm{\storeupd{S}{l}{p}}$ for the \emph{update} of a store with state $\tm{p}$ at an \emph{existing} location $\tm{l}$.
 
-We write $\tm{\frz}\sqcup\tm{\frz'}$ for the maximum on status bits, which is standard Boolean disjunction, and $\tm{\frz}\sqsubseteq\tm{\frz'}$ for the \emph{total} order on status bits, which is standard Boolean implication.
+We write $\tm{\frz}\sqcup\tm{\frz'}$ for the maximum on status bits, which is standard Boolean disjunction, and $\tm{\frz}\sqsubseteq\tm{\frz'}$ for the total order on status bits, which is standard Boolean implication.
 
 \paragraph*{Syntactic sugar}
 We use syntactic sugar to make terms more readable: we write $\tm{\andthen{M}{N}}$ in place of $\tm{\letunit{M}{N}}$, $\tm{\letbind{x}{M}{N}}$ in place of $\tm{(\lambda x.N)\;M}$, and pattern matching functions $\tm{\lambda\unit.M}$ in place of $\tm{\lambda z.\letunit{z}{M}}$ and $\tm{\lambda\pair{x}{y}.M}$ in place of $\tm{\lambda z.\letpair{x}{y}{z}{M}}$.
