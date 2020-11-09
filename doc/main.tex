@@ -125,12 +125,11 @@
   % evaluation contexts
   \providecommand{\hole}[0]{\ensuremath{\square}}
   % typing judgements
-  \providecommand{\seq}[3]{\ensuremath{#1\vdash\tmty{#2}{#3}}}
+  \providecommand{\seq}[4]{\ensuremath{#1\vert#2\vdash\tmty{#3}{#4}}}
   \providecommand{\seqS}[2]{\ensuremath{#1\vdash_{\scriptscriptstyle{S}}\tm{#2}}}
-  \providecommand{\seqs}[3]{\ensuremath{#1\vdash_{\scriptscriptstyle{p}}\tmty{#2}{#3}}}
-  \providecommand{\seqC}[3]{\ensuremath{#1\vdash_{\scriptscriptstyle{C}}\tmty{#2}{#3}}}
+  \providecommand{\seqC}[4]{\ensuremath{#1\vert#2\vdash_{\scriptscriptstyle{C}}\tmty{#3}{#4}}}
   % reduction relations
-  \providecommand{\red}[0]{\ensuremath{\hookrightarrow}}
+  \providecommand{\redc}[0]{\ensuremath{\hookrightarrow}}
   \providecommand{\rede}[0]{\ensuremath{\mapsto}}
   % stores
   \providecommand{\storeemp}{\cdot}
