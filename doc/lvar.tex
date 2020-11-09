@@ -42,19 +42,18 @@ Configurations ($\tm{C}$), stores ($\tm{S}$), states ($\tm{p}$), and status bits
 \begin{array}{lrll}
   \tm{C}, \tm{D}
   & \coloneqq & \tm{\config{M}{S}}
-    \sep        \tm{\error}        & \text{configurations}
+    \sep        \tm{\error}             & \text{configurations}
   \\
   \tm{S}
   & \coloneqq & \tm{\storeemp}
     \sep        \tm{\storeext{S}{l}{p}} & \text{stores}
   \\
   \tm{p}
-  & \coloneqq & \tm{\langle \frz, d \rangle} & \text{states}
+  & \coloneqq & \tm{\st{d}{\frz}}       & \text{states}
   \\
   \tm{\frz}
   & \coloneqq & \tm{\true}
-    \sep        \tm{\false}
-                                    & \text{status bits}
+    \sep        \tm{\false}             & \text{status bits}
   \end{array}
 \]
 A~configuration $\tm{\config{M}{S}}$ consists of a term $\tm{M}$ and a store $\tm{S}$. A~store is a partial function from locations $\tm{l}$ to states $\tm{p}$. A~state consists of a domain value $\tm{d}$ and a status bit $\tm{\frz}$. The status bit records if that particular location has been frozen. We write $\tm{\storeext{S}{l}{p}}$ for the \emph{extension} of a store $\tm{S}$ with state $\tm{p}$ at a \emph{fresh} location $\tm{l}$. We write $\tm{\storeupd{S}{l}{p}}$ for the \emph{update} of a store with state $\tm{p}$ at an \emph{existing} location $\tm{l}$.
