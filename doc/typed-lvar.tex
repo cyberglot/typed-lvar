@@ -11,6 +11,11 @@
   that it will allow us to rid ourselves of the error reductions and the
   $\tm{\error}$ configuration.}
 
+\todo{%
+  If a location is typed with upper bound $d$, then it must eventually contain
+  $d$ after fully evaluating the program. Otherwise, we can use the upper bound
+  to write a get expression which blocks forever, and hence we'd lose progress.}
+
 \paragraph*{Types}
 Types ($\ty{T}$, $\ty{U}$),  and typing environments ($\ty{\Gamma}$) are defined by the following grammar:
 \[
@@ -52,7 +57,6 @@ We extend $\sqsubseteq$ to location types and store typing environments:
 
 \paragraph{Typing rules}%
 \label{sec:lvar-typing}
-\input{fig/subtyping}
 \input{fig/typing}
 \input{fig/typing-configurations}
 See~\cref{fig:typing,fig:typing-configurations}.

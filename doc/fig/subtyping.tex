@@ -38,10 +38,10 @@
     }{\tySource{\frz}{d}\sqsubseteq\tySource{\frz'}{d'}}
 
     \inferrule*{
-      \ty{\frz'}\sqsubseteq\ty{\frz}
+      \ty{\frz'}\sqsupseteq\ty{\frz}
       \\
-      \ty{d'}\sqsubseteq\ty{d}
-    }{\tySink{\frz}{d}\sqsubseteq\tySink{\frz'}{d'}}
+      \ty{d'}\sqsupseteq\ty{d}
+    }{\tySink{\frz'}{d'}\sqsubseteq\tySink{\frz}{d}}
   \end{mathpar}
   \caption{Subtyping relation $\sqsubseteq$.}
   \label{fig:subtyping}

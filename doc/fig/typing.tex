@@ -4,59 +4,52 @@
     \\
     \inferrule*[lab=T-Var]{
       \ty{\Gamma(x)}=\ty{T}
-    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{x}{T}}
+    }{\seq{\ty{\Gamma}}{\envemp}{x}{T}}
   
     \inferrule*[lab=T-Lam]{
-      \seq{\ty{\Gamma},\tmty{x}{T}}{\ty{\Sigma'}}{M}{U}
-      \\
-      \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
-    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lambda x.M}{\tyfun{T}{U}}}
+      \seq{\ty{\Gamma},\tmty{x}{T}}{\ty{\Sigma}}{M}{U}
+    }{\seq{\ty{\Gamma}}{\storeemp}{\lambda x.M}{\tyfun[\Sigma]{T}{U}}}
   
     \inferrule*[lab=T-App]{
-      \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyfun{T}{U}}
+      \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyfun[\Sigma'']{T}{U}}
       \\
-      \seq{\ty{\Gamma}}{\ty{\Sigma}}{N}{T}
-    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{M\;N}{U}}
+      \seq{\ty{\Gamma}}{\ty{\Sigma'}}{N}{T}
+      \\
+      \ty{\Sigma}\sqcup\ty{\Sigma'}\sqsubseteq\ty{\Sigma''}
+    }{\seq{\ty{\Gamma}}{\ty{\Sigma}\sqcup\ty{\Sigma'}\sqcup\ty{\Sigma''}}{M\;N}{U}}
 
     \inferrule*[lab=T-Unit]{
-    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\unit}{\tyunit}}
+    }{\seq{\ty{\Gamma}}{\storeemp}{\unit}{\tyunit}}
     
-    \inferrule*[lab=T-Sub]{
-      \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{T}
-      \\
-      \ty{T}\sqsubseteq\ty{U}
-    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{U}}
-
     \inferrule*[lab=T-Domain]{
     }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{d}{\tyD{d}}}
 
     \inferrule*[lab=T-Location]{
-      \ty{\Sigma(l)}=\ty{\tyRef{\frz}{d}}
-    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{l}{\tyRef{\frz}{d}}}
+    }{\seq{\ty{\Gamma}}{\tmty{l}{\tyL{\frz}{d}}}{l}{\tyL{\frz}{d}}}
   
     \inferrule*[lab=T-Threshold]{
       \incomp({\tyJ})
-    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\tmJ}{\tyJ}}
-    \\ 
+    }{\seq{\ty{\Gamma}}{\storeemp}{\tmJ}{\tyJ}}
+
     \inferrule*[lab=T-New]{
-    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lvarnew}{\tyRef{\false}{\bot}}}
+    }{\seq{\ty{\Gamma}}{\storeemp}{\lvarnew}{\tyL{\false}{\bot}}}
   
     \inferrule*[lab=T-Freeze]{
-      \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tySource{\true}{d}}
-    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lvarfreeze\;M}{\tyD{d}}}
-    \\ 
+      \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyL{\true}{d}}
+    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lvarfreeze\;M}{\tyunit}}
+
     \inferrule*[lab=T-Get]{
-      \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tySource{\frz}{d}}
+      \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyL{\frz}{d}}
       \\
-      \seq{\ty{\Gamma}}{\ty{\Sigma}}{N}{\tyJ}
+      \seq{\ty{\Gamma}}{\ty{\Sigma'}}{N}{\tyJ}
       \\
       \ty{d'}\in\tyJ
       \\
       \ty{d'}\sqsubseteq\ty{d}
-    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lvarget\;M\;N}{\tyD{d}}}
+    }{\seq{\ty{\Gamma}}{\ty{\Sigma}\sqcup\ty{\Sigma'}}{\lvarget\;M\;N}{\tyD{d}}}
   
     \inferrule*[lab=T-Put]{
-      \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tySink{\false}{d}}
+      \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyL{\false}{d}}
       \\
       \seq{\ty{\Gamma}}{\ty{\Sigma}}{N}{\tyD{d}}
     }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lvarput\;M\;N}{1}}

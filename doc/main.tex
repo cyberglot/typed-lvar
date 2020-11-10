@@ -76,7 +76,7 @@
 \newcommand{\sep}{\;\mid\;}
 
 %% Environments and hyper-environments
-\newcommand{\envemp}{\cdot}
+\newcommand{\envemp}{\varnothing}
 \newcommand{\envext}[3]{#1,\tmty{#2}{#3}}
 \newcommand{\envupd}[3]{#1[\tmty{#2}{#3}]}
 
@@ -101,7 +101,7 @@
   \providecommand{\typrod}[2]{\ensuremath{{#1}\mathbin{\ty{\times}}{#2}}}
   \providecommand{\tysum}[2]{\ensuremath{{#1}\mathbin{\ty{+}}{#2}}}
   \providecommand{\tylolli}[2]{\ensuremath{{#1}\mathbin{\ty{\multimap}}{#2}}}
-  \providecommand{\tyfun}[2]{\ensuremath{{#1}\mathbin{\ty{\rightarrow}}{#2}}}
+  \providecommand{\tyfun}[3][]{\ensuremath{{#2}\mathbin{\ty{\xrightarrow{#1}}}{#3}}}
   \providecommand{\tyD}[1]{\ensuremath{\ty{\mathcal{D}^{#1}}}}
   \providecommand{\tyL}[2]{\ensuremath{\ty{\mathcal{L}_{#1}^{#2}}}}
   \providecommand{\tySource}[2]{\ensuremath{\ty{\mathbf{Source}_{#1}^{#2}}}}
@@ -137,14 +137,14 @@
   % evaluation contexts
   \providecommand{\hole}[0]{\ensuremath{\square}}
   % typing judgements
-  \providecommand{\seq}[4]{\ensuremath{#1\vert#2\vdash\tmty{#3}{#4}}}
-  \providecommand{\seqS}[2]{\ensuremath{#1\vdash_{\scriptscriptstyle{S}}\tm{#2}}}
-  \providecommand{\seqC}[4]{\ensuremath{#1\vert#2\vdash_{\scriptscriptstyle{C}}\tmty{#3}{#4}}}
+  \providecommand{\seq}[4]{\ensuremath{#1\mathbin{{\vert}}#2\mathbin{{\vdash}}\tmty{#3}{#4}}}
+  \providecommand{\seqS}[2]{\ensuremath{#1\mathbin{\vdash_{\scriptscriptstyle{S}}}\tm{#2}}}
+  \providecommand{\seqC}[4]{\ensuremath{#1\mathbin{\vert}#2\mathbin{\vdash_{\scriptscriptstyle{C}}}\tmty{#3}{#4}}}
   % reduction relations
   \providecommand{\redc}[0]{\ensuremath{\hookrightarrow}}
   \providecommand{\rede}[0]{\ensuremath{\mapsto}}
   % stores
-  \providecommand{\storeemp}{\bl{\cdot}}
+  \providecommand{\storeemp}{\varnothing}
   \providecommand{\storeext}[3]{{#1},{#2}\mapsto{#3}}
   \providecommand{\storeupd}[3]{{#1}[{#2}\mapsto{#3}]}
 }{}
