@@ -25,40 +25,40 @@
 \bibliographystyle{ACM-Reference-Format}
 \citestyle{acmauthoryear}
 
-% Gives you \ie, \eg, \etc
+%% Gives you \ie, \eg, \etc
 \usepackage[all]{foreign}
 
-% Mathematical symbols
+%% Mathematical symbols
 \usepackage{stmaryrd}
 \usepackage{mathtools}
 \usepackage{textgreek}
 \usepackage{centernot}
 \usepackage{rotating}
 
-% Useful for defining commands to use in text mode
+%% Useful for defining commands to use in text mode
 \usepackage{xspace}
 \newcommand{\lambdalvar}[0]{\ensuremath{\lambda_{\text{lvar}}}\xspace}
 \newcommand{\lambdalvish}[0]{\ensuremath{\lambda_{\text{lvish}}}\xspace}
 \newcommand{\typedlambdalvar}[0]{\ensuremath{\text{Typed }\lambda_{\text{lvar}}}\xspace}
 
-% Theorems and inference rules
+%% Theorems and inference rules
 \usepackage{mathpartir}
 \usepackage{thmtools,thm-restate}
 \newenvironment{case}[1]{\trivlist \item\relax\textbf{Case}~(#1).}{\endtrivlist}
 \newenvironment{subcase}[1]{\trivlist \item\relax\textbf{Subcase}~(#1).}{\endtrivlist}
 
-% Landscape pages using \begin{landscape}\end{landscape}
+%% Landscape pages using \begin{landscape}\end{landscape}
 \usepackage{pdflscape}
 
-% 'em colours
+%% Colours
 \usepackage{xcolor}
 \usepackage{latexcolor}
 
-% Code
+%% Code
 \usepackage{listings}
 \usepackage{lsthaskell}
 
-% Gotta have a todo command
+%% Gotta have a todo command
 \usepackage{todonotes}
 \usepackage{regexpatch}
 \makeatletter
@@ -66,19 +66,19 @@
 \makeatother
 \newcommand{\remember}[2][]{\todo[color=pink!40,#1]{#2}}
 
-% Sort macros
+%% Sort macros
 \newcommand{\tm}[1]{\ensuremath{{\color[HTML]{E15CFF}#1}}}
 \newcommand{\ty}[1]{\ensuremath{{\color[HTML]{6e4cef}#1}}}
 \newcommand{\cs}[1]{\ensuremath{{\color[HTML]{009180}#1}}}
 \newcommand{\tmty}[2]{\ensuremath{\tm{#1}:\ty{#2}}}
 
-% Definitions
+%% Definitions
 \newcommand{\sep}{\;\mid\;}
 
-% Environments and hyper-environments
+%% Environments and hyper-environments
 \newcommand{\emptyenv}{\cdot}
 
-% Common operations
+%% Common operations
 \newcommand{\subst}[4][]{\ifstrempty{#1}{\ensuremath{#2\{#3/#4\}}}{\ensuremath{#2(\{#3/#4\}\cup#1)}}}
 \newcommand{\plug}[2]{\ensuremath{#1[#2]}}
 \DeclarePairedDelimiter{\trans}{\lfloor}{\rfloor}
@@ -87,11 +87,11 @@
 \DeclareMathOperator{\cod}{cod}
 \DeclareMathOperator{\incomp}{incomp}
 
-% Namespaces
+%% Namespaces
 \usepackage{namespc}
 
-% Namespace for lvars
-% Open globally with \usingnamespace{lvar}, locally with \lvar{}
+%% Namespace for lvars
+%% Open globally with \usingnamespace{lvar}, locally with \lvar{}
 \namespace*{lvar}{
   % types
   \providecommand{\tyunit}[0]{\ensuremath{\ty{\mathbf{1}}}}
@@ -145,7 +145,7 @@
 }{}
 \newcommand{\lvar}[1]{\namespace*{lvar}{}{#1}}
 
-% References
+%% References
 \usepackage{varioref}
 \usepackage{hyperref}
 \usepackage{cleveref}
@@ -164,8 +164,8 @@
 
 
 %% Title information
-\title{Typed LVar}
-\subtitle{Deterministic Parallelism with Mutable Shared State}
+\title{Typed Lattice Variables}
+\subtitle{Safe Deterministic Parallelism with Mutable Shared State}
 
 %% Author information
 %% Contents and number of authors suppressed with 'anonymous'.
@@ -218,7 +218,6 @@ Text of abstract \ldots.
 \end{CCSXML}
 
 %% Keywords
-%% comma separated list
 \keywords{keyword1, keyword2, keyword3}
 
 %% \maketitle
@@ -239,14 +238,19 @@ Text of abstract \ldots.
 \section{Omitted proofs}
 \begingroup
 \usingnamespace{lvar}
+
 \lemsubstitution*
 \input{fig/lem-substitution}
+
 \lemsubjectreductionredc*
 \input{fig/lem-subject-reduction-redc}
+
 \thmsubjectreductionrede*
 \input{fig/thm-subject-reduction-rede}
+
 \thmprogressrede*
 \input{fig/thm-progress-rede}
+
 \endgroup
 
 \end{document}

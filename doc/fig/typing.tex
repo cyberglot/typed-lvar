@@ -7,7 +7,9 @@
     }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{x}{T}}
   
     \inferrule*[lab=T-Lam]{
-      \seq{\ty{\Gamma},\tmty{x}{T}}{\ty{\Sigma}}{M}{U}
+      \seq{\ty{\Gamma},\tmty{x}{T}}{\ty{\Sigma'}}{M}{U}
+      \\
+      \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
     }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lambda x.M}{\tyfun{T}{U}}}
   
     \inferrule*[lab=T-App]{
@@ -20,11 +22,11 @@
     }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\unit}{\tyunit}}
   
     \inferrule*[lab=T-LetUnit]{
-      \seq{\ty{\Gamma}}{\ty{\Sigma'}}{M}{\tyunit}
+      \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyunit}
       \\
-      \seq{\ty{\Gamma}}{\ty{\Sigma}}{N}{T}
+      \seq{\ty{\Gamma}}{\ty{\Sigma'}}{N}{T}
       \\
-      \ty{\Sigma'}\sqsubseteq\ty{\Sigma}
+      \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
     }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\letunit{M}{N}}{T}}
     \\ 
     \inferrule*[lab=T-Pair]{
@@ -34,11 +36,11 @@
     }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\pair{M}{N}}{\typrod{T}{U}}}
   
     \inferrule*[lab=T-LetPair]{
-      \seq{\ty{\Gamma}}{\ty{\Sigma'}}{M}{\typrod{T}{T'}}
+      \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\typrod{T}{T'}}
       \\
-      \seq{\ty{\Gamma},\tmty{x}{T},\tmty{y}{T'}}{\ty{\Sigma}}{N}{U}
+      \seq{\ty{\Gamma},\tmty{x}{T},\tmty{y}{T'}}{\ty{\Sigma'}}{N}{U}
       \\
-      \ty{\Sigma'}\sqsubseteq\ty{\Sigma}
+      \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
     }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\letpair{x}{y}{M}{N}}{U}}
     \\
     \inferrule*[lab=T-Dom]{
@@ -84,29 +86,3 @@
   \caption{Typing rules for \lambdalvar terms.}
   \label{fig:typing}
 \end{figure*}
-
-\begin{figure}
-  \begin{mathpar}
-    \fbox{$\seqC{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$}\hfill
-    \\
-    \inferrule*[lab=T-Conf]{
-      \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{T}
-      \\
-      \seqS{\ty{\Sigma'}}{S}
-      \\
-      \ty{\Sigma'}\sqsubseteq\ty{\Sigma}
-    }{\seqC{\ty{\Gamma}}{\ty{\Sigma}}{\config{M}{S}}{T}}
-  \end{mathpar}
-  \begin{mathpar}
-    \fbox{$\seqS{\ty{\Sigma}}{S}$}\hfill
-    \\
-    \inferrule*[lab=T-Store-Emp]{
-    }{\seqS{\ty{\emptyenv}}{\storeemp}}
-    
-    \inferrule*[lab=T-Store-Ext]{
-      \seqS{\ty{\Sigma}}{S}
-    }{\seqS{\ty{\Sigma},\tmty{l}{\tyL{\frz}{d}}}{\storeext{S}{l}{\st{d}{\frz}}}}
-  \end{mathpar}
-  \caption{Typing rules for \lambdalvar configurations and stores}
-  \label{fig:typing-configurations}
-\end{figure}
