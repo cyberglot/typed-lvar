@@ -13,9 +13,9 @@
     \inferrule*[lab=T-App]{
       \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyfun{T}{U}}
       \\
-      \seq{\ty{\Gamma}}{\ty{\Sigma'}}{N}{T}
-    }{\seq{\ty{\Gamma}}{\ty{\Sigma}\sqcup\ty{\Sigma'}}{M\;N}{U}}
-  
+      \seq{\ty{\Gamma}}{\ty{\Sigma}}{N}{T}
+    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{M\;N}{U}}
+    \\
     \inferrule*[lab=T-Unit]{
     }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\unit}{\tyunit}}
   
@@ -26,12 +26,12 @@
       \\
       \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
     }{\seq{\ty{\Gamma}}{\ty{\Sigma'}}{\letunit{M}{N}}{T}}
-  
+    \\ 
     \inferrule*[lab=T-Pair]{
       \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{T}
       \\
-      \seq{\ty{\Gamma}}{\ty{\Sigma'}}{N}{U}
-    }{\seq{\ty{\Gamma}}{\ty{\Sigma}\sqcup\ty{\Sigma'}}{\pair{M}{N}}{\typrod{T}{U}}}
+      \seq{\ty{\Gamma}}{\ty{\Sigma}}{N}{U}
+    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\pair{M}{N}}{\typrod{T}{U}}}
   
     \inferrule*[lab=T-LetPair]{
       \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\typrod{T}{T'}}
@@ -40,14 +40,14 @@
       \\
       \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
     }{\seq{\ty{\Gamma}}{\ty{\Sigma'}}{\letpair{x}{y}{M}{N}}{U}}
-
+    \\
     \inferrule*[lab=T-Dom]{
       \tm{d'}\sqsubseteq\ty{d}
     }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{d'}{\tyD{d}}}
 
     \inferrule*[lab=T-Loc]{
-      \tmty{l}{\tyL{d}{\frz}} \in \ty{\Sigma}
-    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{l}{\tyL{d}{\frz}}}
+      \tmty{l}{\tyL{\frz}{d}} \in \ty{\Sigma}
+    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{l}{\tyL{\frz}{d}}}
   
     \inferrule*[lab=T-Threshold]{
       \incomp({\tyJ})
@@ -68,13 +68,13 @@
       \tm{d'}\in\tyJ
       \\
       \tm{d'}\sqsubseteq\ty{d}
-    }{\seq{\ty{\Gamma}}{\ty{\Sigma}\sqcup\ty{\Sigma'}}{\lvarget\;M\;N}{\tyD{d}}}
+    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lvarget\;M\;N}{\tyD{d}}}
   
     \inferrule*[lab=T-Put]{
       \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyL{\false}{d}}
       \\
       \seq{\ty{\Gamma}}{\ty{\Sigma}}{N}{\tyD{d}}
-    }{\seq{\ty{\Gamma}}{\ty{\Sigma}\sqcup\ty{\Sigma'}}{\lvarput\;M\;N}{1}}
+    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lvarput\;M\;N}{1}}
   \end{mathpar}
   \caption{Typing rules for \lambdalvar terms.}
   \label{fig:typing}

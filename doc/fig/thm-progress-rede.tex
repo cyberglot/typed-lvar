@@ -1,0 +1,16 @@
+\begin{proof}
+  By induction on the structure of $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$.
+  \todo{%
+    Examine each possible typing rule which could result in $\tm{C}$ being
+    well-typed, and show that for each of them, either $\tm{C}$ can reduce, or
+    it is a value.}
+  \todo{%
+    I~think it's easier to prove this \emph{directly} on $\rede$, since
+    otherwise you'd have to give a statement of progress with a third case,
+    which is that $\tm{C}$ is of the form $\tm{\config{\plug{E}{M}}{S}}$, where
+    $\tm{\config{M}{S}}$ can reduce.}
+  \todo{%
+    This proof \emph{contains} the core of what used to be reflection, since we
+    remove the error configuration and hence any term which would originally
+    error would now be stuck, violating progress.}
+\end{proof}

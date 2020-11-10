@@ -1,6 +1,6 @@
 \begin{proof}
-  By induction on the structure of $\tm{C}\redc\tm{C'}$.
-  The cases can be found in~\cref{fig:subject-reduction-1,fig:subject-reduction-2}.
+  By induction on the derivation of $\tm{C}\redc\tm{C'}$.
+  The cases can be found in~\cref{fig:subject-reduction-redc-1,fig:subject-reduction-redc-2}.
 \end{proof}
 
 \begin{figure*}
@@ -11,23 +11,21 @@
         \inferrule*{
           \seq{\ty{\Gamma},\tmty{x}{T}}{\ty{\Sigma}}{M}{\tyfun{T}{U}}
           \\
-          \seq{\ty{\Gamma}}{\ty{\Sigma'}}{V}{T}
-        }{\seq{\ty{\Gamma}}{\ty{\Sigma}\sqcup\ty{\Sigma'}}{(\lambda x.M)\;V}{U}}
+          \seq{\ty{\Gamma}}{\ty{\Sigma}}{V}{T}
+        }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{(\lambda x.M)\;V}{U}}
         \\
-        \seqS{\ty{\Sigma''}}{S}
+        \seqS{\ty{\Sigma'}}{S}
         \\
-        \ty{\Sigma''}\sqsubseteq\ty{\Sigma}\sqcup\ty{\Sigma'}
-      }{\seqC{\ty{\Gamma}}{\ty{\Sigma}\sqcup\ty{\Sigma'}}{\config{(\lambda x.M)\;V}{S}}{U}}
+        \ty{\Sigma'}\sqsubseteq\ty{\Sigma}
+      }{\seqC{\ty{\Gamma}}{\ty{\Sigma}}{\config{(\lambda x.M)\;V}{S}}{U}}
 
       \inferrule*[left=\redc]{
-        \seq{\ty{\Gamma}}{\ty{\Sigma}\sqcup\ty{\Sigma'}}{\subst{M}{V}{x}}{U}
+        \seq{\ty{\Gamma}}{\ty{\Sigma}}{\subst{M}{V}{x}}{U}
         \\
-        \seqS{\ty{\Sigma''}}{S}
+        \seqS{\ty{\Sigma'}}{S}
         \\
-        \ty{\Sigma''}\sqsubseteq\ty{\Sigma}\sqcup\ty{\Sigma'}
-      }{\seqC
-        {\ty{\Gamma}}{\ty{\Sigma}\sqcup\ty{\Sigma'}}
-        {\config{\subst{M}{V}{x}}{S}}{U}}
+        \ty{\Sigma'}\sqsubseteq\ty{\Sigma}
+      }{\seqC{\ty{\Gamma}}{\ty{\Sigma}}{\config{\subst{M}{V}{x}}{S}}{U}}
     \end{mathpar}
   \end{case}
   \begin{case}{\LabTirName{E-Unit}}
@@ -45,7 +43,7 @@
         \seqS{\ty{\Sigma''}}{S}
         \\
         \ty{\Sigma''}\sqsubseteq\ty{\Sigma}
-      }{\seqC{\ty{\Gamma'}}{\ty{\Sigma}}{\config{\letunit{\unit}{M}}{S}}{T}}
+      }{\seqC{\ty{\Gamma}}{\ty{\Sigma}}{\config{\letunit{\unit}{M}}{S}}{T}}
 
       \inferrule*[left=\redc]{
         \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{T}
@@ -59,38 +57,44 @@
     \end{mathpar}
   \end{case}
   \begin{case}{\LabTirName{E-Pair}}
+    \remember{%
+      If
+      $\seq{\ty{\Gamma},\tmty{x}{T}}{\ty{\Sigma}}{M}{U}$,
+      $\seq{\ty{\Gamma}}{\ty{\Sigma'}}{V}{T}$ and
+      $\ty{\Sigma'}\sqsubseteq\ty{\Sigma}$,
+      then $\seq{\ty{\Gamma}}{\ty{\Sigma}}{\subst{M}{V}{x}}{U}$.}
     \begin{mathpar}
       \inferrule*{
         \inferrule*{
           \inferrule*{
             \seq{\ty{\Gamma}}{\ty{\Sigma'}}{V}{T}
             \\
-            \seq{\ty{\Gamma}}{\ty{\Sigma''}}{W}{T'}
-          }{\seq{\ty{\Gamma}}{\ty{\Sigma'}\sqcup\ty{\Sigma''}}{\pair{V}{W}}{\typrod{T}{T'}}}
+            \seq{\ty{\Gamma}}{\ty{\Sigma'}}{W}{T'}
+          }{\seq{\ty{\Gamma}}{\ty{\Sigma'}}{\pair{V}{W}}{\typrod{T}{T'}}}
           \\
           \seq{\ty{\Gamma},\tmty{x}{T},\tmty{y}{T'}}{\ty{\Sigma}}{M}{U}
           \\
-          \ty{\Sigma'}\sqcup\ty{\Sigma''}\sqsubseteq\ty{\Sigma}
+          \ty{\Sigma'}\sqsubseteq\ty{\Sigma}
         }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\letpair{x}{y}{\pair{V}{W}}{M}}{U}}
         \\
-        \seqS{\ty{\Sigma'''}}{S}
+        \seqS{\ty{\Sigma''}}{S}
         \\
-        \ty{\Sigma'''}\sqsubseteq\ty{\Sigma}
+        \ty{\Sigma''}\sqsubseteq\ty{\Sigma}
       }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\config{\letpair{x}{y}{\pair{V}{W}}{M}}{S}}{U}}
 
       \inferrule*[left=\redc]{
         \seq{\ty{\Gamma}}{\ty{\Sigma}}{\subst{\subst{M}{V}{x}}{W}{y}}{U}
         \\
-        \seqS{\ty{\Sigma'''}}{S}
+        \seqS{\ty{\Sigma''}}{S}
         \\
-        \ty{\Sigma'''}\sqsubseteq\ty{\Sigma'}\sqcup\ty{\Sigma''}\sqsubseteq\ty{\Sigma}
+        \ty{\Sigma''}\sqsubseteq\ty{\Sigma}
       }{\seq
         {\ty{\Gamma}}{\ty{\Sigma}}
         {\config{\subst{\subst{M}{V}{x}}{W}{y}}{S}}{U}}
     \end{mathpar}
   \end{case}
   \caption{Subject reduction for $\redc$ (\LabTirName{E-Lam}, \LabTirName{E-Unit}, and \LabTirName{E-Pair}).}
-  \label{fig:subject-reduction-1}
+  \label{fig:subject-reduction-redc-1}
 \end{figure*}
 
 \begin{figure*}
@@ -209,5 +213,5 @@
     \end{mathpar}
   \end{case}
   \caption{Subject reduction for $\redc$ (\LabTirName{E-New}, \LabTirName{E-Freeze}, \LabTirName{E-Get}, and \LabTirName{E-Put}).}
-  \label{fig:subject-reduction-2}
+  \label{fig:subject-reduction-redc-2}
 \end{figure*}
