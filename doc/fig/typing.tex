@@ -20,12 +20,12 @@
     }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\unit}{\tyunit}}
   
     \inferrule*[lab=T-LetUnit]{
-      \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyunit}
+      \seq{\ty{\Gamma}}{\ty{\Sigma'}}{M}{\tyunit}
       \\
       \seq{\ty{\Gamma}}{\ty{\Sigma}}{N}{T}
       \\
-      \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
-    }{\seq{\ty{\Gamma}}{\ty{\Sigma'}}{\letunit{M}{N}}{T}}
+      \ty{\Sigma'}\sqsubseteq\ty{\Sigma}
+    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\letunit{M}{N}}{T}}
     \\ 
     \inferrule*[lab=T-Pair]{
       \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{T}
@@ -34,12 +34,12 @@
     }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\pair{M}{N}}{\typrod{T}{U}}}
   
     \inferrule*[lab=T-LetPair]{
-      \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\typrod{T}{T'}}
+      \seq{\ty{\Gamma}}{\ty{\Sigma'}}{M}{\typrod{T}{T'}}
       \\
-      \seq{\ty{\Gamma},\tmty{x}{T},\tmty{y}{T'}}{\ty{\Sigma'}}{N}{U}
+      \seq{\ty{\Gamma},\tmty{x}{T},\tmty{y}{T'}}{\ty{\Sigma}}{N}{U}
       \\
-      \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
-    }{\seq{\ty{\Gamma}}{\ty{\Sigma'}}{\letpair{x}{y}{M}{N}}{U}}
+      \ty{\Sigma'}\sqsubseteq\ty{\Sigma}
+    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\letpair{x}{y}{M}{N}}{U}}
     \\
     \inferrule*[lab=T-Dom]{
     }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{d}{\tyD{d}}}
@@ -68,11 +68,11 @@
     \inferrule*[lab=T-Get]{
       \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyL{\frz}{d}}
       \\
-      \seq{\ty{\Gamma}}{\ty{\Sigma'}}{N}{\tyJ}
+      \seq{\ty{\Gamma}}{\ty{\Sigma}}{N}{\tyJ}
       \\
-      \tm{d'}\in\tyJ
+      \ty{d'}\in\tyJ
       \\
-      \tm{d'}\sqsubseteq\ty{d}
+      \ty{d'}\sqsubseteq\ty{d}
     }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lvarget\;M\;N}{\tyD{d}}}
   
     \inferrule*[lab=T-Put]{
