@@ -69,14 +69,16 @@
 %% Sort macros
 \newcommand{\tm}[1]{\ensuremath{{\color[HTML]{E15CFF}#1}}}
 \newcommand{\ty}[1]{\ensuremath{{\color[HTML]{6e4cef}#1}}}
-\newcommand{\cs}[1]{\ensuremath{{\color[HTML]{009180}#1}}}
-\newcommand{\tmty}[2]{\ensuremath{\tm{#1}:\ty{#2}}}
+\newcommand{\bl}[1]{\ensuremath{{\color{black}#1}}}
+\newcommand{\tmty}[2]{\ensuremath{\tm{#1}\mathbin{\bl{:}}\ty{#2}}}
 
 %% Definitions
 \newcommand{\sep}{\;\mid\;}
 
 %% Environments and hyper-environments
-\newcommand{\emptyenv}{\cdot}
+\newcommand{\envemp}{\cdot}
+\newcommand{\envext}[3]{#1,\tmty{#2}{#3}}
+\newcommand{\envupd}[3]{#1[\tmty{#2}{#3}]}
 
 %% Common operations
 \newcommand{\subst}[4][]{\ifstrempty{#1}{\ensuremath{#2\{#3/#4\}}}{\ensuremath{#2(\{#3/#4\}\cup#1)}}}
@@ -102,6 +104,9 @@
   \providecommand{\tyfun}[2]{\ensuremath{{#1}\mathbin{\ty{\rightarrow}}{#2}}}
   \providecommand{\tyD}[1]{\ensuremath{\ty{\mathcal{D}^{#1}}}}
   \providecommand{\tyL}[2]{\ensuremath{\ty{\mathcal{L}_{#1}^{#2}}}}
+  \providecommand{\tySource}[2]{\ensuremath{\ty{\mathbf{Source}_{#1}^{#2}}}}
+  \providecommand{\tySink}[2]{\ensuremath{\ty{\mathbf{Sink}_{#1}^{#2}}}}
+  \providecommand{\tyRef}[2]{\ensuremath{\ty{\mathbf{Ref}_{#1}^{#2}}}}
   \providecommand{\tyJ}[0]{\ensuremath{\ty{\mathcal{J}}}}
   % terms
   \providecommand{\tmJ}[0]{\ensuremath{\tm{\mathcal{J}}}}
@@ -139,7 +144,7 @@
   \providecommand{\redc}[0]{\ensuremath{\hookrightarrow}}
   \providecommand{\rede}[0]{\ensuremath{\mapsto}}
   % stores
-  \providecommand{\storeemp}{\cdot}
+  \providecommand{\storeemp}{\bl{\cdot}}
   \providecommand{\storeext}[3]{{#1},{#2}\mapsto{#3}}
   \providecommand{\storeupd}[3]{{#1}[{#2}\mapsto{#3}]}
 }{}

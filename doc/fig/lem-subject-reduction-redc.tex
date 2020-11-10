@@ -8,65 +8,61 @@
   \begin{case}{\LabTirName{E-Lam}}
     \begin{mathpar}
       \inferrule*{
+        \seqS{\ty{\Sigma}}{S}
+        \\
         \inferrule*{
-          \seq{\ty{\Gamma},\tmty{x}{T}}{\ty{\Sigma'}}{M}{\tyfun{T}{U}}
+          \seq{\ty{\Gamma},\tmty{x}{T}}{\ty{\Sigma''}}{M}{\tyfun{T}{U}}
           \\
-          \seq{\ty{\Gamma}}{\ty{\Sigma}}{V}{T}
+          \seq{\ty{\Gamma}}{\ty{\Sigma'}}{V}{T}
           \\
-          \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
-        }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{(\lambda x.M)\;V}{U}}
+          \ty{\Sigma'}\sqsubseteq\ty{\Sigma''}
+        }{\seq{\ty{\Gamma}}{\ty{\Sigma'}}{(\lambda x.M)\;V}{U}}
         \\
-        \seqS{\ty{\Sigma''}}{S}
-        \\
-        \ty{\Sigma''}\sqsubseteq\ty{\Sigma}
+        \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
       }{\seqC{\ty{\Gamma}}{\ty{\Sigma}}{\config{(\lambda x.M)\;V}{S}}{U}}
-
+      \\
       \inferrule*[left=\redc]{
-        \seq{\ty{\Gamma}}{\ty{\Sigma}}{\subst{M}{V}{x}}{U}
+        \seqS{\ty{\Sigma}}{S}
         \\
-        \seqS{\ty{\Sigma''}}{S}
+        \seq{\ty{\Gamma}}{\ty{\Sigma'}}{\subst{M}{V}{x}}{U}
         \\
-        \ty{\Sigma''}\sqsubseteq\ty{\Sigma}
+        \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
       }{\seqC{\ty{\Gamma}}{\ty{\Sigma}}{\config{\subst{M}{V}{x}}{S}}{U}}
     \end{mathpar}
   \end{case}
+
   % \begin{case}{\LabTirName{E-Unit}}
   %   \begin{mathpar}
   %     \inferrule*{
+  %       \seqS{\ty{\Sigma}}{S}
+  %       \\
   %       \inferrule*{
   %         \inferrule*{
   %         }{\seq{\ty{\Gamma}}{\ty{\Sigma'}}{\unit}{\tyunit}}
   %         \\
-  %         \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{T}
+  %         \seq{\ty{\Gamma}}{\ty{\Sigma''}}{M}{T}
   %         \\
-  %         \ty{\Sigma'}\sqsubseteq\ty{\Sigma}
-  %       }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\letunit{\unit}{M}}{T}}
+  %         \ty{\Sigma'}\sqsubseteq\ty{\Sigma''}
+  %       }{\seq{\ty{\Gamma}}{\ty{\Sigma'}}{\letunit{\unit}{M}}{T}}
   %       \\
-  %       \seqS{\ty{\Sigma''}}{S}
-  %       \\
-  %       \ty{\Sigma''}\sqsubseteq\ty{\Sigma}
+  %       \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
   %     }{\seqC{\ty{\Gamma}}{\ty{\Sigma}}{\config{\letunit{\unit}{M}}{S}}{T}}
-
+  %     \\
   %     \inferrule*[left=\redc]{
-  %       \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{T}
+  %       \seqS{\ty{\Sigma}}{S}
   %       \\
-  %       \seqS{\ty{\Sigma''}}{S}
+  %       \seq{\ty{\Gamma}}{\ty{\Sigma''}}{M}{T}
   %       \\
-  %       \ty{\Sigma''}\sqsubseteq\ty{\Sigma}
-  %     }{\seq
-  %       {\ty{\Gamma}}{\ty{\Sigma}}
-  %       {\config{M}{S}}{T}}
+  %       \ty{\Sigma}\sqsubseteq\ty{\Sigma'}\sqsubseteq\ty{\Sigma''}
+  %     }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\config{M}{S}}{T}}
   %   \end{mathpar}
   % \end{case}
+
   % \begin{case}{\LabTirName{E-Pair}}
-  %   \remember{%
-  %     If
-  %     $\seq{\ty{\Gamma},\tmty{x}{T}}{\ty{\Sigma}}{M}{U}$,
-  %     $\seq{\ty{\Gamma}}{\ty{\Sigma'}}{V}{T}$ and
-  %     $\ty{\Sigma'}\sqsubseteq\ty{\Sigma}$,
-  %     then $\seq{\ty{\Gamma}}{\ty{\Sigma}}{\subst{M}{V}{x}}{U}$.}
   %   \begin{mathpar}
   %     \inferrule*{
+  %       \seqS{\ty{\Sigma}}{S}
+  %       \\
   %       \inferrule*{
   %         \inferrule*{
   %           \seq{\ty{\Gamma}}{\ty{\Sigma'}}{V}{T}
@@ -74,22 +70,20 @@
   %           \seq{\ty{\Gamma}}{\ty{\Sigma'}}{W}{T'}
   %         }{\seq{\ty{\Gamma}}{\ty{\Sigma'}}{\pair{V}{W}}{\typrod{T}{T'}}}
   %         \\
-  %         \seq{\ty{\Gamma},\tmty{x}{T},\tmty{y}{T'}}{\ty{\Sigma}}{M}{U}
+  %         \seq{\ty{\Gamma},\tmty{x}{T},\tmty{y}{T'}}{\ty{\Sigma''}}{M}{U}
   %         \\
-  %         \ty{\Sigma'}\sqsubseteq\ty{\Sigma}
-  %       }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\letpair{x}{y}{\pair{V}{W}}{M}}{U}}
+  %         \ty{\Sigma'}\sqsubseteq\ty{\Sigma''}
+  %       }{\seq{\ty{\Gamma}}{\ty{\Sigma'}}{\letpair{x}{y}{\pair{V}{W}}{M}}{U}}
   %       \\
-  %       \seqS{\ty{\Sigma''}}{S}
-  %       \\
-  %       \ty{\Sigma''}\sqsubseteq\ty{\Sigma}
+  %       \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
   %     }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\config{\letpair{x}{y}{\pair{V}{W}}{M}}{S}}{U}}
-
+  %     \\
   %     \inferrule*[left=\redc]{
-  %       \seq{\ty{\Gamma}}{\ty{\Sigma}}{\subst{\subst{M}{V}{x}}{W}{y}}{U}
+  %       \seqS{\ty{\Sigma}}{S}
   %       \\
-  %       \seqS{\ty{\Sigma''}}{S}
+  %       \seq{\ty{\Gamma}}{\ty{\Sigma''}}{\subst{\subst{M}{V}{x}}{W}{y}}{U}
   %       \\
-  %       \ty{\Sigma''}\sqsubseteq\ty{\Sigma}
+  %       \ty{\Sigma}\sqsubseteq\ty{\Sigma'}\sqsubseteq\ty{\Sigma''}
   %     }{\seq
   %       {\ty{\Gamma}}{\ty{\Sigma}}
   %       {\config{\subst{\subst{M}{V}{x}}{W}{y}}{S}}{U}}
@@ -104,87 +98,100 @@
     $\tm{l}\not\in\dom(\tm{S})$
     \begin{mathpar}
       \inferrule*{
+        \seqS{\ty{\Sigma}}{S}
+        \\
         \inferrule*{
-        }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lvarnew}{\tyL{\false}{\bot}}}
+        }{\seq{\ty{\Gamma}}{\ty{\Sigma'}}{\lvarnew}{\tyL{\false}{\bot}}}
         \\
-        \seqS{\ty{\Sigma'}}{S}
-        \\
-        \ty{\Sigma'}\sqsubseteq\ty{\Sigma}
+        \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
       }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\config{\lvarnew}{S}}{\tyL{\false}{\bot}}}
 
       \inferrule*[left=\redc]{
         \inferrule*{
-        }{\seq{\ty{\Gamma}}{\ty{\Sigma},\tmty{l}{\tyL{\false}{\bot}}}{l}{\tyL{\false}{\bot}}}
+          \seqS{\ty{\Sigma}}{S}  
+        }{\seqS{\ty{\Sigma},\tmty{l}{\tyL{\false}{\bot}}}{\storeext{S}{l}{\st{\bot}{\false}}}}
         \\
         \inferrule*{
-          \seqS{\ty{\Sigma'}}{S}  
-        }{\seqS{\ty{\Sigma'},\tmty{l}{\tyL{\false}{\bot}}}{\storeext{S}{l}{\st{\bot}{\false}}}}
+        }{\seq{\ty{\Gamma}}{\ty{\Sigma'},\tmty{l}{\tyL{\false}{\bot}}}{l}{\tyL{\false}{\bot}}}
         \\
-        \ty{\Sigma'},\tmty{l}{\tyL{\false}{\bot}}\sqsubseteq\ty{\Sigma},\tmty{l}{\tyL{\false}{\bot}}
-      }{\seq
+        \ty{\Sigma},\tmty{l}{\tyL{\false}{\bot}}
+        \sqsubseteq
+        \ty{\Sigma'},\tmty{l}{\tyL{\false}{\bot}}
+      }{\seq%
         {\ty{\Gamma}}{\ty{\Sigma},\tmty{l}{\tyL{\false}{\bot}}}
         {\config{l}{\storeext{S}{l}{\st{\bot}{\false}}}}{\tyL{\false}{\bot}}}
     \end{mathpar}
   \end{case}
+
   \begin{case}{\LabTirName{E-Freeze}}
+    $\tm{S(l)}=\tm{\st{\frz}{d'}}$
+    $\ty{\Sigma(l)}={\tyL{\frz}{d'}}\sqsubseteq{\tyL{\true}{d}}$
+    $\ty{d'}\sqsubseteq\ty{d}$
     \begin{mathpar}
       \inferrule*{
+        \seqS{\ty{\Sigma}}{S} %,\tmty{l}{\tyL{\frz}{d'}}
+        \\
         \inferrule*{
           \inferrule*{
-          }{\seq{\ty{\Gamma}}{\ty{\Sigma},\tmty{l}{\tyL{\true}{d}}}{l}{\tyL{\true}{d}}}
-        }{\seq{\ty{\Gamma}}{\ty{\Sigma},\tmty{l}{\tyL{\true}{d}}}{\lvarfreeze\;l}{\tyD{d}}}
+            \ty{\Sigma'(l)}=\tyL{\true}{d}
+          }{\seq{\ty{\Gamma}}{\ty{\Sigma'}}{l}{\tyL{\true}{d}}}
+        }{\seq{\ty{\Gamma}}{\ty{\Sigma'}}{\lvarfreeze\;l}{\tyD{d}}}
         \\
-        \seqS{\ty{\Sigma'},\tmty{l}{\tyL{\frz}{d'}}}{S}
-        \\
-        \ty{\Sigma'},\tmty{l}{\tyL{\frz}{d'}}\sqsubseteq\ty{\Sigma},\tmty{l}{\tyL{\true}{d}}
-      }{\seq{\ty{\Gamma}}{\ty{\Sigma},\tmty{l}{\tyL{\frz}{d}}}{\config{\lvarfreeze\;l}{S}}{\tyD{d}}}
+        \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
+      }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\config{\lvarfreeze\;l}{S}}{\tyD{d}}}
 
       \inferrule*[left=\redc]{
+        \seqS{\ty{\envupd{\Sigma}{l}{\tyL{\true}{d'}}}}{\storeupd{S}{l}{\st{d'}{\true}}}
+        \\
         \inferrule*{
-          \tm{d'}\sqsubseteq\ty{d}
-        }{\seq{\ty{\Gamma}}{\ty{\Sigma},\tmty{l}{\tyL{\true}{d}}}{d'}{\tyD{d}}}
+          \ty{d'}\sqsubseteq\ty{d}
+        }{\seq{\ty{\Gamma}}{\ty{\Sigma'}}{d'}{\tyD{d}}}
         \\
-        \seqS{\ty{\Sigma'},\tmty{l}{\tyL{\true}{d'}}}{\storeupd{S}{l}{\st{d'}{\true}}}
-        \\
-        \ty{\Sigma'},\tmty{l}{\tyL{\true}{d}}\sqsubseteq\ty{\Sigma},\tmty{l}{\tyL{\true}{d}}
+        \ty{\envupd{\Sigma}{l}{\tyL{\true}{d'}}}
+        \sqsubseteq
+        \ty{\Sigma'}
       }{\seq
-        {\ty{\Gamma}}{\ty{\Sigma},\tmty{l}{\tyL{\true}{d}}}
+        {\ty{\Gamma}}{\ty{\envupd{\Sigma}{l}{\tyL{\true}{d'}}}}
         {\config{d'}{\storeupd{S}{l}{\st{d'}{\true}}}}{\tyD{d}}}
     \end{mathpar}
   \end{case}
+
   \begin{case}{\LabTirName{E-Get}}
     \begin{mathpar}
       \inferrule*{
+        \seqS{\ty{\Sigma}}{S}
+        \\
         \inferrule*{
-          \seq{\ty{\Gamma}}{\ty{\Sigma}}{l}{\tyL{\frz}{d}}
+          \inferrule*{
+            \ty{\Sigma(l)}=\tyL{\frz}{d}
+          }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{l}{\tyL{\frz}{d}}}
           \\
           \inferrule*{
             \incomp({\tyJ})
-          }{\seq{\ty{\Gamma}}{\ty{\Sigma'}}{\tmJ}{\tyJ}}
+          }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\tmJ}{\tyJ}}
           \\
           \ty{d'}\in\tyJ
           \\
           \ty{d'}\sqsubseteq\ty{d}
-        }{\seq{\ty{\Gamma}}{\ty{\Sigma}\sqcup\ty{\Sigma'}}{\lvarget\;l\;\tmJ}{\tyD{d}}}
+        }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lvarget\;l\;\tmJ}{\tyD{d}}}
         \\
-        \seqS{\ty{\Sigma}}{S}
-        \\
-        \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
-      }{\seq{\ty{\Gamma}}{\ty{\Sigma'}}{\config{\lvarget\;l\;\tmJ}{S}}{\tyD{d}}}
+        \ty{\Sigma}\sqsubseteq\ty{\Sigma}
+      }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\config{\lvarget\;l\;\tmJ}{S}}{\tyD{d}}}
 
       \inferrule*[left=\redc]{
-        \inferrule*{
-          \tm{d'}\sqsubseteq\ty{d}
-        }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{d'}{\tyD{d}}}
-        \\
         \seqS{\ty{\Sigma}}{S}
         \\
-        \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
+        \inferrule*{
+          \ty{d'}\sqsubseteq\ty{d}
+        }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{d'}{\tyD{d}}}
+        \\
+        \ty{\Sigma}\sqsubseteq\ty{\Sigma}
       }{\seq
-        {\ty{\Gamma}}{\ty{\Sigma'}}
+        {\ty{\Gamma}}{\ty{\Sigma}}
         {\config{d'}{S}}{\tyD{d}}}
     \end{mathpar}
   \end{case}
+
   \begin{case}{\LabTirName{E-Put}}
     \begin{mathpar}
       \inferrule*{

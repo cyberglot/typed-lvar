@@ -1,0 +1,48 @@
+\begin{figure*}
+  \begin{mathpar}
+    \inferrule*{
+    }{\ty{\tyunit}\sqsubseteq\ty{\tyunit}}
+
+    \inferrule*{
+      \ty{T}\sqsubseteq\ty{T'}
+      \\
+      \ty{U}\sqsubseteq\ty{U'}
+    }{\ty{\typrod{T}{U}}\sqsubseteq\ty{\typrod{T'}{U'}}}
+
+    \inferrule*{
+      \ty{T'}\sqsubseteq\ty{T}
+      \\
+      \ty{U}\sqsubseteq\ty{U'}
+    }{\ty{\tyfun{T}{U}}\sqsubseteq\ty{\tyfun{T'}{U'}}}
+
+    \inferrule*{
+      \ty{d}\sqsubseteq\ty{d'}
+    }{\tyD{d}\sqsubseteq\tyD{d'}}
+
+    \inferrule*{
+    }{\tyJ\sqsubseteq\tyJ}
+    \\
+    \inferrule*{
+    }{\tyRef{\frz}{d}\sqsubseteq\tyRef{\frz}{d}}
+
+    \inferrule*{
+    }{\tyRef{\frz}{d}\sqsubseteq\tySource{\frz}{d}}
+
+    \inferrule*{
+    }{\tyRef{\frz}{d}\sqsubseteq\tySink{\frz}{d}}
+
+    \inferrule*{
+      \ty{\frz}\sqsubseteq\ty{\frz'}
+      \\
+      \ty{d}\sqsubseteq\ty{d'}
+    }{\tySource{\frz}{d}\sqsubseteq\tySource{\frz'}{d'}}
+
+    \inferrule*{
+      \ty{\frz'}\sqsubseteq\ty{\frz}
+      \\
+      \ty{d'}\sqsubseteq\ty{d}
+    }{\tySink{\frz}{d}\sqsubseteq\tySink{\frz'}{d'}}
+  \end{mathpar}
+  \caption{Subtyping relation $\sqsubseteq$.}
+  \label{fig:subtyping}
+\end{figure*}
