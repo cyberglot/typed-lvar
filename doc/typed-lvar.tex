@@ -25,7 +25,7 @@ Types ($\ty{T}$, $\ty{U}$),  and typing environments ($\ty{\Gamma}$) are defined
   & \sep      & \ty{\typrod{T}{U}}                        & \text{pairs}\\
   & \sep      & \ty{\tyfun[\ty{\Sigma}]{T}{U}}            & \text{functions}\\
   & \sep      & \ty{\tyD{d}}                              & \text{domain values }{\sqsubseteq d}\\
-  & \sep      & \ty{\tyL{\frz}{d}}                        & \text{location with values }{\sqsubseteq d}\\
+  & \sep      & \ty{\tyL{\frz}{g,p}}                      & \text{locations}\\
   & \sep      & \ty{\tyJ}                                 & \text{thresholds}
   \\
   \ty{\Gamma}
@@ -59,17 +59,17 @@ We extend the lattice operations $\sqcup$ and $\sqsubseteq$ to store typing envi
     & \text{if }\ty{\ell}\in\dom(\ty{\Sigma'})
   \end{cases}
   \\
-  \ty{\tyL{\frz}{l,u}}\sqcup\ty{\tyL{\frz}{l,u'}}
+  \ty{\tyL{\frz}{g,p}}\sqcup\ty{\tyL{\frz}{g',p'}}
   =
-  \ty{\tyL{\frz}{{l},{u}\sqcup{u'}}}
+  \ty{\tyL{\frz}{{g}\sqcup{g'},{p}\sqcup{p'}}}
   \\
   \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
   =
   \forall(\ty{\ell}\in\dom({\ty{\Sigma}})).\ty{\Sigma(\ell)}\sqsubseteq\ty{\Sigma'(\ell)}
   \\
-  \ty{\tyL{\frz}{l,u}}\sqsubseteq\ty{\tyL{\frz'}{l',u'}}
+  \ty{\tyL{\frz}{g,p}}\sqsubseteq\ty{\tyL{\frz'}{g',p'}}
   =
-  \ty{\frz}\sqsubseteq\ty{\frz'}\text{ and }\ty{l}\sqsubseteq\ty{l'}\sqsubseteq\ty{u}\sqsubseteq\ty{u'}
+  \ty{\frz}\sqsubseteq\ty{\frz'}\text{ and }\ty{g}\sqsubseteq\ty{g'}\text{ and }\ty{p}\sqsubseteq\ty{p'}
 \end{mathpar}
 
 \paragraph{Typing rules}%

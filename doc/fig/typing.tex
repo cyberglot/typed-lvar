@@ -24,8 +24,11 @@
     \inferrule*[lab=T-Domain]{
     }{\seq{\ty{\Gamma}}{\ty{\envemp}}{d}{\tyD{d}}}
 
-    \inferrule*[lab=T-Location]{
-    }{\seq{\ty{\Gamma}}{\tmty{\ell}{\tyL{\frz}{l,u}}}{\ell}{\tyL{\frz}{l,u}}}
+    \inferrule*[lab=T-Source]{
+    }{\seq{\ty{\Gamma}}{\tmty{\ell}{\tyL{\frz}{g,\bot}}}{\ell}{\tyL{\frz}{g,\bot}}}
+
+    \inferrule*[lab=T-Sink]{
+    }{\seq{\ty{\Gamma}}{\tmty{\ell}{\tyL{\frz}{\bot,p}}}{\ell}{\tyL{\frz}{\bot,p}}}
 
     \inferrule*[lab=T-Threshold]{
       \incomp({\tyJ})
@@ -35,23 +38,23 @@
     }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lvarnew}{\tyL{\false}{\bot,\bot}}}
 
     \inferrule*[lab=T-Freeze]{
-      \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyL{\true}{l,u}}
-    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lvarfreeze\;M}{\tyL{\true}{l,u}}}
+      \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyL{\true}{g,p}}
+    }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lvarfreeze\;M}{\tyL{\true}{g,p}}}
 
     \inferrule*[lab=T-Get]{
-      \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyL{\frz}{l,u}}
+      \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyL{\frz}{g,p}}
       \\
       \seq{\ty{\Gamma}}{\ty{\Sigma'}}{N}{\tyJ}
       \\
       \ty{d}\in\tyJ
       \\
-      \ty{d}\sqsubseteq\ty{u}
+      \ty{d}\sqsubseteq\ty{g}
     }{\seq{\ty{\Gamma}}{\ty{\Sigma}\sqcup\ty{\Sigma'}}{\lvarget\;M\;N}{\tyD{d}}}
   
     \inferrule*[lab=T-Put]{
-      \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyL{\false}{l,d}}
+      \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyL{\false}{g,p}}
       \\
-      \seq{\ty{\Gamma}}{\ty{\Sigma'}}{N}{\tyD{d}}
+      \seq{\ty{\Gamma}}{\ty{\Sigma'}}{N}{\tyD{p}}
     }{\seq{\ty{\Gamma}}{\ty{\Sigma}\sqcup\ty{\Sigma'}}{\lvarput\;M\;N}{1}}
   \end{mathpar}
   \caption{Typing rules for \lambdalvar terms.}
