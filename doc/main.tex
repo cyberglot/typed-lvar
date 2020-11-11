@@ -84,6 +84,7 @@
 \newcommand{\subst}[4][]{\ifstrempty{#1}{\ensuremath{#2\{#3/#4\}}}{\ensuremath{#2(\{#3/#4\}\cup#1)}}}
 \newcommand{\plug}[2]{\ensuremath{#1[#2]}}
 \DeclarePairedDelimiter{\trans}{\lfloor}{\rfloor}
+\DeclareMathOperator{\un}{un}
 \DeclareMathOperator{\fv}{fv}
 \DeclareMathOperator{\dom}{dom}
 \DeclareMathOperator{\cod}{cod}
@@ -96,17 +97,16 @@
 %% Open globally with \usingnamespace{lvar}, locally with \lvar{}
 \namespace*{lvar}{
   % types
-  \providecommand{\tyunit}[0]{\ensuremath{\ty{\mathbf{1}}}}
-  \providecommand{\tyvoid}[0]{\ensuremath{\ty{\mathbf{0}}}}
-  \providecommand{\typrod}[2]{\ensuremath{{#1}\mathbin{\ty{\times}}{#2}}}
-  \providecommand{\tysum}[2]{\ensuremath{{#1}\mathbin{\ty{+}}{#2}}}
-  \providecommand{\tylolli}[2]{\ensuremath{{#1}\mathbin{\ty{\multimap}}{#2}}}
-  \providecommand{\tyfun}[3][]{\ensuremath{{#2}\mathbin{\ty{\xrightarrow{#1}}}{#3}}}
+  \providecommand{\tyunit}[0]{\ensuremath{\mathbf{1}}}
+  \providecommand{\tyvoid}[0]{\ensuremath{\mathbf{0}}}
+  \providecommand{\typrod}[2]{\ensuremath{{#1}\times{#2}}}
+  \providecommand{\tysum}[2]{\ensuremath{{#1}+{#2}}}
+  \providecommand{\tyfun}[3][]{\ensuremath{{#2}\xrightarrow{#1}{#3}}}
   \providecommand{\tyD}[1]{\ensuremath{\ty{\mathcal{D}^{#1}}}}
   \providecommand{\tyL}[2]{\ensuremath{\ty{\mathcal{L}_{#1}^{#2}}}}
-  \providecommand{\tySource}[2]{\ensuremath{\ty{\mathbf{Source}_{#1}^{#2}}}}
-  \providecommand{\tySink}[2]{\ensuremath{\ty{\mathbf{Sink}_{#1}^{#2}}}}
-  \providecommand{\tyRef}[2]{\ensuremath{\ty{\mathbf{Ref}_{#1}^{#2}}}}
+  \providecommand{\tyref}[2]{\ensuremath{\ty{\mathbf{Ref}^{#1}_{#2}}}}
+  \providecommand{\tysource}[2]{\ensuremath{\ty{\mathbf{Source}^{#1}_{#2}}}}
+  \providecommand{\tysink}[2]{\ensuremath{\ty{\mathbf{Sink}^{#1}_{#2}}}}
   \providecommand{\tyJ}[0]{\ensuremath{\ty{\mathcal{J}}}}
   % terms
   \providecommand{\tmJ}[0]{\ensuremath{\tm{\mathcal{J}}}}
@@ -137,7 +137,7 @@
   % evaluation contexts
   \providecommand{\hole}[0]{\ensuremath{\square}}
   % typing judgements
-  \providecommand{\seq}[4]{\ensuremath{#1\mathbin{{\vert}}#2\mathbin{{\vdash}}\tmty{#3}{#4}}}
+  \providecommand{\seq}[4]{\ensuremath{{#1}\mathbin{\vert}{#2}\mathbin{\vdash}\tmty{#3}{#4}}}
   \providecommand{\seqS}[2]{\ensuremath{#1\mathbin{\vdash_{\scriptscriptstyle{S}}}\tm{#2}}}
   \providecommand{\seqC}[4]{\ensuremath{#1\mathbin{\vert}#2\mathbin{\vdash_{\scriptscriptstyle{C}}}\tmty{#3}{#4}}}
   % reduction relations
@@ -145,8 +145,8 @@
   \providecommand{\rede}[0]{\ensuremath{\mapsto}}
   % stores
   \providecommand{\storeemp}{\varnothing}
-  \providecommand{\storeext}[3]{{#1},{#2}\mapsto{#3}}
-  \providecommand{\storeupd}[3]{{#1}[{#2}\mapsto{#3}]}
+  \providecommand{\storeext}[3]{{#1},\tm{#2}\mapsto\ty{#3}}
+  \providecommand{\storeupd}[3]{{#1}[\tm{#2}\mapsto\ty{#3}]}
 }{}
 \newcommand{\lvar}[1]{\namespace*{lvar}{}{#1}}
 
@@ -245,16 +245,16 @@ Text of abstract \ldots.
 \usingnamespace{lvar}
 
 \lemsubstitution*
-\input{fig/lem-substitution}
+% \input{fig/lem-substitution}
 
 \lemsubjectreductionredc*
-\input{fig/lem-subject-reduction-redc}
+% \input{fig/lem-subject-reduction-redc}
 
 \thmsubjectreductionrede*
-\input{fig/thm-subject-reduction-rede}
+% \input{fig/thm-subject-reduction-rede}
 
 \thmprogressrede*
-\input{fig/thm-progress-rede}
+% \input{fig/thm-progress-rede}
 
 \endgroup
 

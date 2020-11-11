@@ -21,76 +21,93 @@ Types ($\ty{T}$, $\ty{U}$),  and typing environments ($\ty{\Gamma}$) are defined
 \[
 \begin{array}{lrll}
   \ty{T}, \ty{U}
-  & \coloneqq & \ty{\tyunit}        & \text{units} \\
-  & \sep      & \ty{\typrod{T}{U}}  & \text{pairs} \\
-  & \sep      & \ty{\tyfun{T}{U}}   & \text{functions}\\
-  & \sep      & \ty{\tyD{d}}        & \text{domain values }{\sqsubseteq d}\\
-  & \sep      & \ty{\tyL{\frz}{d}}  & \text{location with values }{\sqsubseteq d}\\
-  & \sep      & \ty{\tyJ}           & \text{thresholds}
+  & \coloneqq & \ty{\tyunit}                              & \text{units}\\
+  & \sep      & \ty{\typrod{T}{U}}                        & \text{pairs}\\
+  & \sep      & \ty{\tyfun[\ty{\Sigma}]{T}{U}}            & \text{functions}\\
+  & \sep      & \ty{\tyD{d}}                              & \text{domain values }{\sqsubseteq d}\\
+  & \sep      & \ty{\tyL{\frz}{d}}                        & \text{location with values }{\sqsubseteq d}\\
+  & \sep      & \ty{\tyJ}                                 & \text{thresholds}
   \\
   \ty{\Gamma}
   & \coloneqq & \ty{\envemp}
-    \sep        \ty{\ty{\Gamma},\tmty{x}{T}}
-                                    & \text{typing environments}
+    \sep        \envext{\ty{\Gamma}}{x}{T}                & \text{typing environments}
   \\
-  \ty{\Sigma}
+  \ty{\Sigma},\ty{\Pi}
   & \coloneqq & \ty{\envemp}
-    \sep        \ty{\ty{\Sigma},\tmty{l}{\tyL{d}{\frz}}}
-                                    & \text{store typing environments}
+    \sep        \envext{\ty{\Sigma}}{\ell}{\tyL{\frz}{d}} & \text{store typing environments}
 \end{array}
 \]
-Types $\ty{\tyunit}$, $\ty{\typrod{T}{U}}$, and $\ty{\tyfun{T}{U}}$ are the standard unit, pair, and function types.
+Types $\ty{\tyunit}$ and $\ty{\typrod{T}{U}}$ are the standard unit and pair types.
+The type $\ty{\tyfun[\ty{\Sigma}]{T}{U}}$ is the standard function type, annotated with its pre- and post-conditions on the store. We write $\ty{\tyfun{T}{U}}$ for the type of \emph{pure functions}, \ie $\ty{\tyfun[\envemp]{T}{U}}$.
 The type $\tyD{d}$ types domain values with the upper bound $d$.
 The type $\tyL{\frz}{d}$ types locations which store values of type $\tyD{d}$.
 Thresholds occur on both the type- and term-level. Each threshold type $\tyJ$ has only one inhabitant, which is the same threshold $\tmJ$ on the term-level.
-
-We extend $\sqsubseteq$ to location types and store typing environments:
+Typing environments $\ty{\Gamma}$ are partial functions which associate names with types.
+Store typing environments $\ty{\Sigma}$ are partial functions which associate locations with location types.
+We extend the lattice operations $\sqcup$ and $\sqsubseteq$ to store typing environments:
 \begin{mathpar}
-  \ty{\tyL{\frz}{d}}\sqsubseteq\ty{\tyL{\frz'}{d'}}
+  (\ty{\Sigma}\sqcup\ty{\Sigma'})(\ty{\ell})
   =
-  \ty{\frz}\sqsubseteq\ty{\frz'}\text{ and }\ty{d}\sqsubseteq\ty{d'}
+  \begin{cases}
+    \ty{\Sigma}(\ty{\ell})\sqcup\ty{\Sigma'}(\ty{\ell}),
+    & \text{if }\ty{\ell}\in\dom(\ty{\Sigma})\cup\dom(\ty{\Sigma'})
+    \\
+    \ty{\Sigma}(\ty{\ell}),
+    & \text{if }\ty{\ell}\in\dom(\ty{\Sigma})
+    \\
+    \ty{\Sigma'}(\ty{\ell}),
+    & \text{if }\ty{\ell}\in\dom(\ty{\Sigma'})
+  \end{cases}
+  \\
+  \ty{\tyL{\frz}{l,u}}\sqcup\ty{\tyL{\frz}{l,u'}}
+  =
+  \ty{\tyL{\frz}{{l},{u}\sqcup{u'}}}
   \\
   \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
   =
-  \forall(\ty{l}\in\dom({\ty{\Sigma}})).\ty{\Sigma(l)}\sqsubseteq\ty{\Sigma'(l)}
+  \forall(\ty{\ell}\in\dom({\ty{\Sigma}})).\ty{\Sigma(\ell)}\sqsubseteq\ty{\Sigma'(\ell)}
+  \\
+  \ty{\tyL{\frz}{l,u}}\sqsubseteq\ty{\tyL{\frz'}{l',u'}}
+  =
+  \ty{\frz}\sqsubseteq\ty{\frz'}\text{ and }\ty{l}\sqsubseteq\ty{l'}\sqsubseteq\ty{u}\sqsubseteq\ty{u'}
 \end{mathpar}
 
 \paragraph{Typing rules}%
 \label{sec:lvar-typing}
 \input{fig/typing}
-\input{fig/typing-configurations}
-See~\cref{fig:typing,fig:typing-configurations}.
+% \input{fig/typing-configurations}
+% See~\cref{fig:typing,fig:typing-configurations}.
 
 \subsection{Metatheory}
 
 \begin{restatable}[Substitution]{lemma}{lemsubstitution}
   \label{lem:substitution}
-  If $\seq{\ty{\Gamma}\tmty{x}{T}}{\ty{\Sigma'}}{M}{U}$,
-  $\seq{\ty{\Gamma}}{\ty{\Sigma}}{V}{T}$, and
-  $\ty{\Sigma}\sqsubseteq\ty{\Sigma'}$, then\dots
+%   If $\seq{\ty{\Gamma}\tmty{x}{T}}{\ty{\Sigma'}}{M}{U}$,
+%   $\seq{\ty{\Gamma}}{\ty{\Sigma}}{V}{T}$, and
+%   $\ty{\Sigma}\sqsubseteq\ty{\Sigma'}$, then\dots
 \end{restatable}
 
 \begin{restatable}[Subject reduction, $\redc$]{lemma}{lemsubjectreductionredc}
   \label{lem:subject-reduction-redc}
-  If $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$ and $\tm{C}\redc\tm{C'}$,
-  then $\seq{\ty{\Gamma}}{\ty{\Sigma'}}{C'}{T}$
-  for some $\ty{\Sigma'}$ such that $\ty{\Sigma}\sqsubseteq\ty{\Sigma'}$.
+%   If $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$ and $\tm{C}\redc\tm{C'}$,
+%   then $\seq{\ty{\Gamma}}{\ty{\Sigma'}}{C'}{T}$
+%   for some $\ty{\Sigma'}$ such that $\ty{\Sigma}\sqsubseteq\ty{\Sigma'}$.
 \end{restatable}
 
 \begin{restatable}[Subject reduction, $\rede$]{theorem}{thmsubjectreductionrede}
   \label{thm:subject-reduction-rede}
-  If $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$ and $\tm{C}\rede\tm{C'}$,
-  then $\seq{\ty{\Gamma}}{\ty{\Sigma'}}{C'}{T}$
-  for some $\ty{\Sigma'}$ such that $\ty{\Sigma}\sqsubseteq\ty{\Sigma'}$.
+%   If $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$ and $\tm{C}\rede\tm{C'}$,
+%   then $\seq{\ty{\Gamma}}{\ty{\Sigma'}}{C'}{T}$
+%   for some $\ty{\Sigma'}$ such that $\ty{\Sigma}\sqsubseteq\ty{\Sigma'}$.
 \end{restatable}
 
 \begin{restatable}[Progress, $\rede$]{theorem}{thmprogressrede}
   \label{thm:progress}
-  If $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$, then:
-  \begin{itemize}
-  \item $\tm{C}\rede\tm{C'}$ for some $\tm{C'}$; or
-  \item $\tm{C}=\tm{\config{V}{S}}$ for some $\tm{V}$ and $\tm{S}$.
-  \end{itemize}
+%   If $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$, then:
+%   \begin{itemize}
+%   \item $\tm{C}\rede\tm{C'}$ for some $\tm{C'}$; or
+%   \item $\tm{C}=\tm{\config{V}{S}}$ for some $\tm{V}$ and $\tm{S}$.
+%   \end{itemize}
 \end{restatable}
 
 \begin{corollary}[Generalised Independence]
