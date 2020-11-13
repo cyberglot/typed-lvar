@@ -112,6 +112,8 @@
   \providecommand{\tmJ}[0]{\ensuremath{\tm{\mathcal{J}}}}
   \providecommand{\andthen}[2]{\ensuremath{#1;#2}}
   \providecommand{\letbind}[3]{\ensuremath{\mathbf{let}\;#1\mathbin{=}#2\;\mathbf{in}\;#3}}
+  \providecommand{\do}[3]{\ensuremath{\mathbf{do}\;\{x_{1} \leftarrow #1, ... ,x_{n} \leftarrow #2\}_{n \geq 1}\mathbf{in}\;#3}}
+  \providecommand{\do1}[4]{\ensuremath{\mathbf{do}\;\{x_{#1} \leftarrow #2, ... ,x_{n} \leftarrow #3\}_{n \geq 1}\mathbf{in}\;#4}}
   \providecommand{\pair}[2]{\ensuremath{(#1,#2)}}
   \providecommand{\letpair}[4]{\ensuremath{\letbind{\pair{#1}{#2}}{#3}{#4}}}
   \providecommand{\labinl}[0]{\ensuremath{\mathbf{inl}}}
@@ -127,6 +129,7 @@
   \providecommand{\lvarget}[0]{\ensuremath{\mathbf{get}}}
   \providecommand{\lvarfreeze}[0]{\ensuremath{\mathbf{freeze}}}
   \providecommand{\lvarrun}[0]{\ensuremath{\mathbf{withLVar}}}
+  \providecommand{\return}[0]{\ensuremath{\mathbf{return}}}
   \providecommand{\lvarerror}[0]{\ensuremath{\mathbf{error}}}
   \providecommand{\frz}[0]{\ensuremath{\textit{frz}}}
   \providecommand{\true}[0]{\ensuremath{\mathbf{true}}}

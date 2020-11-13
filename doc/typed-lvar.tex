@@ -23,18 +23,30 @@ Types ($\ty{T}$, $\ty{U}$),  and typing environments ($\ty{\Gamma}$) are defined
   \ty{T}, \ty{U}
   & \coloneqq & \ty{\tyunit}                              & \text{units}\\
   & \sep      & \ty{\typrod{T}{U}}                        & \text{pairs}\\
-  & \sep      & \ty{\tyfun[\ty{\Sigma}]{T}{U}}            & \text{functions}\\
+  & \sep      & \ty{\tyfun{T}{U}}            & \text{functions}\\
   & \sep      & \ty{\tyD{d}}                              & \text{domain values }{\sqsubseteq d}\\
-  & \sep      & \ty{\tyL{\frz}{g,p}}                      & \text{locations}\\
-  & \sep      & \ty{\tyJ}                                 & \text{thresholds}
+  % & \sep      & \ty{\tyL{\frz}{g,p}}                 & \text{locations}\\
+  & \sep      & \ty{\tyJ}                                 & \text{thresholds} \\
+  & \sep     & \ty{E^I}                                   & \text{effects indexed by instances}
+  \\
+  \ty{E}
+  & \coloneqq  & \texttt{lvar}
+  \\
+  \ty{C}, \ty{D}
+  & \coloneqq & T ! \Delta
+  \\
+  \ty{I, J}
+  & \coloneqq & \{\iota_1, ..., \iota_n\}
+  \\
+  \ty{\Delta}
+  & \coloneqq & \{\iota_1\#put, \iota_1\#get, \\
+  & &                   ..., \iota_n\#put, \iota_n\#get\}
   \\
   \ty{\Gamma}
   & \coloneqq & \ty{\envemp}
     \sep        \envext{\ty{\Gamma}}{x}{T}                & \text{typing environments}
   \\
-  \ty{\Sigma},\ty{\Pi}
-  & \coloneqq & \ty{\envemp}
-    \sep        \envext{\ty{\Sigma}}{\ell}{\tyL{\frz}{d}} & \text{store typing environments}
+
 \end{array}
 \]
 Types $\ty{\tyunit}$ and $\ty{\typrod{T}{U}}$ are the standard unit and pair types.
@@ -43,38 +55,40 @@ The type $\tyD{d}$ types domain values with the upper bound $d$.
 The type $\tyL{\frz}{d}$ types locations which store values of type $\tyD{d}$.
 Thresholds occur on both the type- and term-level. Each threshold type $\tyJ$ has only one inhabitant, which is the same threshold $\tmJ$ on the term-level.
 Typing environments $\ty{\Gamma}$ are partial functions which associate names with types.
-Store typing environments $\ty{\Sigma}$ are partial functions which associate locations with location types.
-We extend the lattice operations $\sqcup$ and $\sqsubseteq$ to store typing environments:
-\begin{mathpar}
-  (\ty{\Sigma}\sqcup\ty{\Sigma'})(\ty{\ell})
-  =
-  \begin{cases}
-    \ty{\Sigma}(\ty{\ell})\sqcup\ty{\Sigma'}(\ty{\ell}),
-    & \text{if }\ty{\ell}\in\dom(\ty{\Sigma})\cup\dom(\ty{\Sigma'})
-    \\
-    \ty{\Sigma}(\ty{\ell}),
-    & \text{if }\ty{\ell}\in\dom(\ty{\Sigma})
-    \\
-    \ty{\Sigma'}(\ty{\ell}),
-    & \text{if }\ty{\ell}\in\dom(\ty{\Sigma'})
-  \end{cases}
-  \\
-  \ty{\tyL{\frz}{g,p}}\sqcup\ty{\tyL{\frz}{g',p'}}
-  =
-  \ty{\tyL{\frz}{{g}\sqcup{g'},{p}\sqcup{p'}}}
-  \\
-  \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
-  =
-  \forall(\ty{\ell}\in\dom({\ty{\Sigma}})).\ty{\Sigma(\ell)}\sqsubseteq\ty{\Sigma'(\ell)}
-  \\
-  \ty{\tyL{\frz}{g,p}}\sqsubseteq\ty{\tyL{\frz'}{g',p'}}
-  =
-  \ty{\frz}\sqsubseteq\ty{\frz'}\text{ and }\ty{g}\sqsubseteq\ty{g'}\text{ and }\ty{p}\sqsubseteq\ty{p'}
-\end{mathpar}
+
+% Store typing environments $\ty{\Sigma}$ are partial functions which associate locations with location types.
+% We extend the lattice operations $\sqcup$ and $\sqsubseteq$ to store typing environments:
+% \begin{mathpar}
+%   (\ty{\Sigma}\sqcup\ty{\Sigma'})(\ty{\ell})
+%   =
+%   \begin{cases}
+%     \ty{\Sigma}(\ty{\ell})\sqcup\ty{\Sigma'}(\ty{\ell}),
+%     & \text{if }\ty{\ell}\in\dom(\ty{\Sigma})\cup\dom(\ty{\Sigma'})
+%     \\
+%     \ty{\Sigma}(\ty{\ell}),
+%     & \text{if }\ty{\ell}\in\dom(\ty{\Sigma})
+%     \\
+%     \ty{\Sigma'}(\ty{\ell}),
+%     & \text{if }\ty{\ell}\in\dom(\ty{\Sigma'})
+%   \end{cases}
+%   \\
+%   \ty{\tyL{\frz}{g,p}}\sqcup\ty{\tyL{\frz}{g',p'}}
+%   =
+%   \ty{\tyL{\frz}{{g}\sqcup{g'},{p}\sqcup{p'}}}
+%   \\
+%   \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
+%   =
+%   \forall(\ty{\ell}\in\dom({\ty{\Sigma}})).\ty{\Sigma(\ell)}\sqsubseteq\ty{\Sigma'(\ell)}
+%   \\
+%   \ty{\tyL{\frz}{g,p}}\sqsubseteq\ty{\tyL{\frz'}{g',p'}}
+%   =
+%   \ty{\frz}\sqsubseteq\ty{\frz'}\text{ and }\ty{g}\sqsubseteq\ty{g'}\text{ and }\ty{p}\sqsubseteq\ty{p'}
+% \end{mathpar}
 
 \paragraph{Typing rules}%
 \label{sec:lvar-typing}
 \input{fig/typing}
+% \input{fig/typing}
 % \input{fig/typing-configurations}
 % See~\cref{fig:typing,fig:typing-configurations}.
 

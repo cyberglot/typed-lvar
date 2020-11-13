@@ -1,0 +1,52 @@
+\begin{figure*}
+  \begin{mathpar}
+    \fbox{$\tm{C}\redc\tm{C'}$}\hfill
+    \\
+    \begin{array}{llrl}
+      \LabTirName{E-Lam}     & \tm{\config{(\lambda x.K)\;M}{S}}
+      & \redc & \tm{\config{\subst{K}{M}{x}}{S}}
+      \\
+      \LabTirName{E-Unit}    & \tm{\config{\letunit{\unit}{M}}{S}}
+      & \redc & \tm{\config{M}{S}}
+      \\
+      \LabTirName{E-Pair}    & \tm{\config{\letpair{x}{y}{\pair{K}{K'}}{M}}{S}}
+      & \redc & \tm{\config{\subst{\subst{M}{V}{x}}{W}{y}}{S}}
+      \\
+      \LabTirName{E-Do-Ret}    & \tm{\config{\do{\return M}{K_n}{K}}{S}}
+      & \redc & \tm{\config{\do1{n-1}{K_{n-1}}{K_n}{\subst{K}{M}{x_1}}}{S}}
+    \end{array}
+    \\
+    \inferrule*[lab=E-Get]{
+      \tm{S(l)} = \tm{\st{d}{\frz}}
+      \\
+      \incomp({\tmJ})
+      \\
+      \tm{d'}\in\tmJ
+      \\
+      \tm{d'}\sqsubseteq\tm{d}
+    }{\tm{\config{\lvarrun\;(\lvarget\;l\;\tmJ)}{S}}
+      \redc
+      \tm{\config{d'}{S}}}
+
+    \inferrule*[lab=E-Put]{
+      \tm{{d}\sqcup{d'}} \neq \tm{\top}
+    }{\tm{\config{\lvarput\;l\;d'}{S}}
+      \redc
+      \tm{\config{\unit}{\storeupd{S}{l}{d'}}}}
+      \end{mathpar}
+  \caption{Operational semantics for \lambdalvar ($\redc$).}
+  \label{fig:semantics}
+\end{figure*}
+\begin{figure}
+  \begin{mathpar}
+    \fbox{$\tm{C}\rede\tm{C'}$}\hfill
+    \\
+    \inferrule*[lab=E-Lift]{
+      \tm{\config{M}{S}} \redc \tm{\config{N}{S'}}
+    }{\tm{\config{\plug{E}{M}}{S}}
+      \rede
+      \tm{\config{\plug{E}{N}}{S'}}}
+  \end{mathpar}
+  \caption{Operational semantics for \lambdalvar ($\rede$).}
+  \label{fig:semantics-nd}
+\end{figure}
