@@ -1,0 +1,136 @@
+\begin{proof}
+  By induction on the derivation of $\seq{\ty{\Gamma},\tmty{x}{T}}{\ty{\Sigma}}{M}{U}$.
+
+  % \begin{case}{\LabTirName{T-Var}}
+  %   \begin{mathpar}
+  %   \inferrule*{
+  %     \tmty{x}{T} \in \ty{\Gamma}
+  %   }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{x}{T}}
+  %   \end{mathpar}
+  % \end{case} 
+
+  % \begin{case}{\LabTirName{Lam}}
+  %   \begin{mathpar}
+  %   \inferrule*{
+  %     \seq{\ty{\Gamma},\tmty{x}{T}}{\ty{\Sigma'}}{M}{U}
+  %     \\
+  %     \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
+  %   }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lambda x.M}{\tyfun{T}{U}}}
+  %   \end{mathpar}
+  % \end{case} 
+
+  % \begin{case}{\LabTirName{App}}
+  %   \begin{mathpar}
+  %   \inferrule*{
+  %     \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyfun{T}{U}}
+  %     \\
+  %     \seq{\ty{\Gamma}}{\ty{\Sigma}}{N}{T}
+  %   }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{M\;N}{U}}
+  %   \end{mathpar}
+  % \end{case}
+
+  % \begin{case}{\LabTirName{Unit}}
+  %   \begin{mathpar}
+  %   \inferrule*{
+  %   }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\unit}{\tyunit}}
+  %   \end{mathpar}
+  % \end{case} 
+
+  % \begin{case}{\LabTirName{LetUnit}}
+  %   \begin{mathpar}
+  %   \inferrule*{
+  %     \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyunit}
+  %     \\
+  %     \seq{\ty{\Gamma}}{\ty{\Sigma'}}{N}{T}
+  %     \\
+  %     \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
+  %   }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\letunit{M}{N}}{T}}
+  %   \\ 
+  %   \end{mathpar}
+  % \end{case} 
+
+  % \begin{case}{\LabTirName{Pair}}
+  %   \begin{mathpar}
+  %   \inferrule*{
+  %     \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{T}
+  %     \\
+  %     \seq{\ty{\Gamma}}{\ty{\Sigma}}{N}{U}
+  %   }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\pair{M}{N}}{\typrod{T}{U}}}
+  %   \end{mathpar}
+  % \end{case} 
+  
+  % \begin{case}{\LabTirName{LetPair}}
+  %   \begin{mathpar}
+  %   \inferrule*{
+  %     \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\typrod{T}{T'}}
+  %     \\
+  %     \seq{\ty{\Gamma},\tmty{x}{T},\tmty{y}{T'}}{\ty{\Sigma'}}{N}{U}
+  %     \\
+  %     \ty{\Sigma}\sqsubseteq\ty{\Sigma'}
+  %   }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\letpair{x}{y}{M}{N}}{U}}
+  %   \end{mathpar}
+  % \end{case} 
+  
+  % \begin{case}{\LabTirName{Dom}}
+  %   \begin{mathpar}
+  %   \inferrule*{
+  %     \ty{d'}\sqsubseteq\ty{d}
+  %   }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{d}{\tyD{d}}}
+  %   \end{mathpar}
+  % \end{case} 
+
+  % \begin{case}{\LabTirName{Loc}}
+  %   \begin{mathpar}
+  %   \inferrule*{
+  %     \tmty{l}{\tyL{\frz}{d}} \in \ty{\Sigma}
+  %   }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{l}{\tyL{\frz}{d}}}
+  %   \end{mathpar}
+  % \end{case} 
+  
+  % \begin{case}{\LabTirName{Threshold}}
+  %   \begin{mathpar}
+  %   \inferrule*{
+  %     \incomp({\tyJ})
+  %   }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\tmJ}{\tyJ}}
+  %   \end{mathpar}
+  % \end{case} 
+  
+  % \begin{case}{\LabTirName{New}}
+  %   \begin{mathpar}
+  %   \inferrule*{
+  %   }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lvarnew}{\tyL{\false}{\bot}}}
+  %   \end{mathpar}
+  % \end{case} 
+  
+  % \begin{case}{\LabTirName{Freeze}}
+  %   \begin{mathpar}
+  %   \inferrule*{
+  %     \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyL{\true}{d}}
+  %   }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lvarfreeze\;M}{\tyD{d}}}
+  %   \end{mathpar}
+  % \end{case} 
+  
+  % \begin{case}{\LabTirName{Get}}
+  %   \begin{mathpar}
+  %   \inferrule*{
+  %     \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyL{\frz}{d}}
+  %     \\
+  %     \seq{\ty{\Gamma}}{\ty{\Sigma}}{N}{\tyJ}
+  %     \\
+  %     \ty{d'}\in\tyJ
+  %     \\
+  %     \ty{d'}\sqsubseteq\ty{d}
+  %   }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lvarget\;M\;N}{\tyD{d}}}
+  %   \end{mathpar}
+  % \end{case} 
+  
+  % \begin{case}{\LabTirName{Put}}
+  %   \begin{mathpar}
+  %   \inferrule*{
+  %     \seq{\ty{\Gamma}}{\ty{\Sigma}}{M}{\tyL{\false}{d}}
+  %     \\
+  %     \seq{\ty{\Gamma}}{\ty{\Sigma}}{N}{\tyD{d}}
+  %   }{\seq{\ty{\Gamma}}{\ty{\Sigma}}{\lvarput\;M\;N}{1}}
+  %   \end{mathpar}
+  % \end{case} 
+\end{proof}

@@ -1,0 +1,146 @@
+\begin{mathpar}
+  \begin{array}{lcll}
+    \tm{\trans{\config{\lvarget\;l\;\tmJ}{S}}}
+    & = & \config{S}{\lvarget\;l\;P}
+    \\ & & \multicolumn{2}{l}{\text{where } p_1 \cong s \text{ and } P \cong \tmJ}
+    \\
+    \tm{\trans{\config{\lvarput\;l\;d'}{S}}}
+    & = & \config{S}{\lvarput_{i}\;l}
+    \\ & & \multicolumn{2}{l}{\text{where }u_{p_{i}}\coloneqq\lambda{d_i}.d\sqcup{d_i}}
+    \\
+    \tm{\trans{\config{\lvarnew}{S}}}
+    & = & \config{S}{\lvarnew}
+    \\
+    \tm{\trans{\config{\lvarfreeze\;l}{S}}}
+    & = & \config{S}{\lvarfreeze\;l}
+    \\
+    \tm{\trans{\config{\lambda x.M}{S}}}
+    & = & \config{S}{\lambda x.e}
+    \\
+    \tm{\trans{\config{M\;N}{S}}}
+    & = & \config{S}{e\;e'}
+    \\
+    \tm{\trans{\config{()}{S}}}
+    & = & \config{S}{()}
+    \\
+    \tm{\trans{\config{\letunit{M}{N}}{S}}}
+    & = & \config{S}{\lambda ().e}
+    \\
+    \tm{\trans{\config{\pair{M}{N}}{S}}}
+    & = & \config{S}{(\lambda x. \lambda y.\lambda f. f x y)\;e\;e'}
+    \\
+    \tm{\trans{\config{\letpair{x}{y}{M}{N}}{S}}}
+    & = & \config{S}{e\;(\lambda x.\lambda y. e')}
+    \\
+    \tm{\trans{\config{M}{\storeext{S}{l}{(0, d)}}}}
+    & = & \config{\storeext{S}{l}{\st{d}{\false}}}{e}
+    \\
+    \tm{\trans{\config{M}{S, l \mapsto (1, d)}}}
+    & = & \config{\storeext{S}{l}{\st{d}{\true}}}{e}
+  \end{array}
+\end{mathpar}
+
+\begin{lemma}[Translation, \typedlambdalvar  $\rightsquigarrow$ \lambdalvar]
+  For any translation $\zeta$,
+  \begin{itemize}
+    \item if $C \red C'$ and $\sigma\red\sigma'$ and $\zeta(C) =
+      \sigma$ , then $\zeta(C') = \sigma'$;
+    \item if $C \rede C'$ and $\sigma\rede\sigma'$ and $\zeta(C) =
+      \sigma$ , then $\zeta(C') = \sigma'$.
+  \end{itemize}
+\end{lemma}
+
+\begin{proof}
+  By induction on the structure of $C$. All cases are straight-forward, except
+  for the introduction and elimination of pairs.
+
+  \begin{case}{%
+      $C = \config{\lvarerror}{S}$,
+      $\sigma = \config{S}{\lvarerror}$}
+    $C$ and $\sigma$ cannot step. Hence, the translation is vacuously valid.
+  \end{case}
+
+  \begin{case}{%
+      $C = \config{\lvarget\;l\;J}{S}$,
+      $\sigma = \config{S}{\lvarget\;l\;P}$}
+    Given the operational semantics, $C$ steps to $C' = \config{s'}{S, l \mapsto (b, d)}$. And given $\lambda_{\text{LVar}}$'s operational semantics, $\sigma$ steps to $\sigma' = \config{S}{p_2}$. Applying $\zeta (C')$, we get $\config{S}{p_2}$. \typedlambdalvar maintains the same number of steps and there is no unwanted synchronisation introduced. Hence, this translation is valid.
+  \end{case}
+
+  \begin{case}{%
+      $C = \config{\lvarput\;l\;d'}{S}$,
+      $\sigma = \config{S}{\lvarput_{i}\;l}$}
+    Given the operational semantics, $C$ can either error or take a step.
+    \begin{subcase}{$C' = \config{s'}{S, l \mapsto s'}$}
+      Given $\lambda_{\text{LVar}}$'s operational semantics, $\sigma$ steps to $\sigma' = \config{S}{p_2}$ if $d \sqcup d_{i} \neq \top$, which is exactly the same as applying $\zeta$ to $C'$. \typedlambdalvar maintains the same number of steps and there is no unwanted synchronisation introduced.
+    \end{subcase}
+    \begin{subcase}{$C' = \lvarerror$}
+      Given $\lambda_{\text{LVar}}$'s operational semantics, $\sigma$ steps to $\sigma' = \lvarerror$ if $d \sqcup d_{i} = \top$, which is exactly the same as applying $\zeta$ to $C'$. \typedlambdalvar maintains the same number of steps and there is no unwanted synchronisation introduced. Hence, this translation is valid.
+    \end{subcase}
+  \end{case}
+
+  \begin{case}{%
+      $C = \config{\lvarnew}{S}$,
+      $\sigma = \config{S}{\lvarnew}$}
+    $C'$ steps to $\config{l}{S, l \mapsto (0, \bot)}$ which is equivalent to $\config{S[l \mapsto (\bot, false)]}{l}$, as showed in the last two cases of the proof. \typedlambdalvar maintains the same number of steps and there is no unwanted synchronisation introduced. Hence, this translation is valid.
+  \end{case}
+
+  \begin{case}{%
+      $C = \config{\lvarfreeze}{S}$,
+      $\sigma = \config{S}{\lvarfreeze}$}
+    $C'$ steps to $\config{d}{S, l \mapsto (1, d)}$ which is equivalent to $\config{S[l \mapsto (p, true)]}{p}$, as showed in the last two cases of the proof. \typedlambdalvar maintains the same number of steps and there is no unwanted synchronisation introduced. Hence, this translation is valid.
+  \end{case}
+
+  \begin{case}{%
+      $C = \config{\lambda x.M}{S}$,
+      $\sigma = \config{S}{\lambda x.e}$}
+    $C$ and $\sigma$ do not step since lambda abstractions are values. Also, $C$ and $\sigma$ are immediately equivalent up to $\alpha$-equivalence.
+  \end{case}
+
+  \begin{case}{%
+      $\config{M\;N}{S}$,
+      $ \sigma = \config{S}{e\;e'}$}
+    The application case is simple, where expressions take one step each in parallel in both languages. \typedlambdalvar maintains the same number of steps and there is no unwanted synchronisation introduced. Hence, this translation is valid.
+  \end{case}
+
+  \begin{case}{%
+      $ C = \config{()}{S}$,
+      $\sigma = \config{S}{()}$}
+    $C$ and $\sigma$ do not step since unit is a value. Also, $C$ and $\sigma$ are immediately equivalent.
+  \end{case}
+
+  \begin{case}{%
+      $ C = \config{\letunit{M}{N}}{S}$,
+      $\sigma = \config{S}{(\lambda (). e')  e}$}
+    The \lambdalvar calculus does not provide an elimination rule for unit, since it introduces an explicit synchronisation construct. However, such construct is easily defined by forcing $e$ to evaluate before $e'$ via the introduction and elimination a lambda abstraction. \citet{kuper15} informally uses a generalised version of this construct. Both $C$ and $\sigma$ steps to the outermost expression, $N$ and $e'$, respectively. Explicit unit elimination here is used to synchronise and necessary for \texttt{runLVars} to work. No extra steps are taken in the translation, hence, this translation is valid.
+  \end{case}
+
+  \begin{case}{%
+      $ C = \config{\pair{M}{N}}{S}$,
+      $\sigma = \config{S}{(\lambda x. \lambda y.\lambda f. f x y)\;e\;e'}$}
+    In \typedlambdalvar, pair components are evaluated in parallel and the next step will be blocked until both components are evaluated to a value. The \lambdalvar calculus does not provide pairs, therefore we encode them using lambda abstractions. In our encoding, a function takes two values and returns function that takes both values. According to the semantics of the \lambdalvar  calculus, when those two expressions are passed to a function, they are evaluated in parallel. Hence, our encoding does not introduce synchronisation, blocking the next step unnecessarily. The translation maintains the same number of steps and, hence, is valid.
+  \end{case}
+
+  \begin{case}{%
+      $C = \config{\letpair{x}{y}{M}{N}}{S}$,
+      $\sigma = \config{S}{e' \;(\lambda x.\lambda y. e)}$}
+    In \typedlambdalvar, the elimination rule for pairs require that both components are values, and those are substituted within the next computation by using two fresh variables. Given that we encoded pairs as a function that takes a function with two arguments, we need to create said function in order to eliminate pairs. The eliminating function has to make the values within the pair available to the next computation, in this case $e'$. According to the \lambdalvar calculus, parameters must be fully evaluated before being passed on to a lambda abstraction - fact easily verifiable since \lambdalvar has call-by-value semantics. Therefore, our encoding does not introduce synchronisation, blocking the next step unnecessarily, and maintains the same number of steps. Hence, this translation is valid.
+  \end{case}
+
+  \begin{case}{%
+      $C = \config{M}{S, l \mapsto (0, d)}$,
+      $\sigma = \config{S[l \mapsto (d, \tt{false})]}{e}$}
+    The encoding of LVar's writeability status in \typedlambdalvar uses $0$ and $1$,
+    while in \lambdalvar, they are encoded as regular booleans. Irregardless of the most
+    common representation of booleans as numbers, the LVar should be initialised
+    with one status and switch to a different one once frozen, which happens in
+    both \lambdalvar and \typedlambdalvar.
+  \end{case}
+
+  \begin{case}{%
+      $C = \config{M}{S, l \mapsto (1, d)}$,
+      $ \sigma = \config{S[l \mapsto (d, \tt{true})]}{e}$}
+    Follows an analogous argument as previous case.
+  \end{case}
+
+  \remember{Add case for lifted evaluation contexts.}
+\end{proof}
