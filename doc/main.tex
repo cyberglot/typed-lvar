@@ -1,264 +1,329 @@
-\documentclass[sigplan,10pt,review,anonymous]{acmart}
-\settopmatter{printfolios=true,printccs=false,printacmref=false}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% kaobook
+% LaTeX Template
+% Version 1.2 (4/1/2020)
+%
+% This template originates from:
+% https://www.LaTeXTemplates.com
+%
+% For the latest template development version and to make contributions:
+% https://github.com/fmarotta/kaobook
+%
+% Authors:
+% Federico Marotta (federicomarotta@mail.com)
+% Based on the doctoral thesis of Ken Arroyo Ohori (https://3d.bk.tudelft.nl/ken/en)
+% and on the Tufte-LaTeX class.
+% Modified for LaTeX Templates by Vel (vel@latextemplates.com)
+%
+% License:
+% CC0 1.0 Universal (see included MANIFEST.md file)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% Conference information
-%% Supplied to authors by publisher for camera-ready submission;
-%% use defaults for review submission.
-\acmConference[PL'18]{ACM SIGPLAN Conference on Programming Languages}{January 01--03, 2018}{New York, NY, USA}
-\acmYear{2018}
-\acmISBN{} % \acmISBN{978-x-xxxx-xxxx-x/YY/MM}
-\acmDOI{} % \acmDOI{10.1145/nnnnnnn.nnnnnnn}
-\startPage{1}
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
 
-%% Separate compilation of subfiles
+\documentclass[
+	fontsize=10pt, % Base font size
+	twoside=false, % Use different layouts for even and odd pages (in particular, if twoside=true, the margin column will be always on the outside)
+	%open=any, % If twoside=true, uncomment this to force new chapters to start on any page, not only on right (odd) pages
+	%chapterprefix=true, % Uncomment to use the word "Chapter" before chapter numbers everywhere they appear
+	%chapterentrydots=true, % Uncomment to output dots from the chapter name to the page number in the table of contents
+	numbers=noenddot, % Comment to output dots after chapter numbers; the most common values for this option are: enddot, noenddot and auto (see the KOMAScript documentation for an in-depth explanation)
+	%draft=true, % If uncommented, rulers will be added in the header and footer
+	%overfullrule=true, % If uncommented, overly long lines will be marked by a black box; useful for correcting spacing problems
+]{kaobook}
+
+% Set the language
+\usepackage[english]{babel} % Load characters and hyphenation
+\usepackage[english=british]{csquotes} % English quotes
+
+% Load packages for testing
+\usepackage{blindtext}
+%\usepackage{showframe} % Uncomment to show boxes around the text area, margin, header and footer
+%\usepackage{showlabels} % Uncomment to output the content of \label commands to the document where they are used
+
+% Load the bibliography package
+\usepackage{styles/kaobiblio}
+\addbibresource{main.bib} % Bibliography file
+
+% Load mathematical packages for theorems and related environments. NOTE: choose only one between 'mdftheorems' and 'plaintheorems'.
+\usepackage{styles/mdftheorems}
+\usepackage{styles/plt}
+% \usepackage{styles/plaintheorems}
+
+\graphicspath{{/figures/}{images/}} % Paths in which to look for images
+
+\makeindex[columns=3, title=Alphabetical Index, intoc] % Make LaTeX produce the files required to compile the index
+
+% \makeglossaries % Make LaTeX produce the files required to compile the glossary
+
+% \makenomenclature % Make LaTeX produce the files required to compile the nomenclature
+
+% Reset sidenote counter at chapters
+%\counterwithin*{sidenote}{chapter}
+
 \usepackage{subfiles}
 \newcommand{\onlyinsubfile}[1]{#1}
 \newcommand{\notinsubfile}[1]{}
+% \usepackage[all]{foreign}
 
-%% Copyright information
-%% Supplied to authors (based on authors' rights management selection;
-%% see authors.acm.org) by publisher for camera-ready submission;
-%% use 'none' for review submission.
-\setcopyright{none}
-
-%% Bibliography and citation style
-\bibliographystyle{ACM-Reference-Format}
-\citestyle{acmauthoryear}
-
-%% Gives you \ie, \eg, \etc
-\usepackage[all]{foreign}
-
-%% Mathematical symbols
-\usepackage{stmaryrd}
-\usepackage{mathtools}
-\usepackage{textgreek}
-\usepackage{centernot}
-\usepackage{rotating}
-
-%% Useful for defining commands to use in text mode
-\usepackage{xspace}
-\newcommand{\lambdalvar}[0]{\ensuremath{\lambda_{\text{lvar}}}\xspace}
-\newcommand{\lambdalvish}[0]{\ensuremath{\lambda_{\text{lvish}}}\xspace}
-\newcommand{\typedlambdalvar}[0]{\ensuremath{\text{Typed }\lambda_{\text{lvar}}}\xspace}
-
-%% Theorems and inference rules
-\usepackage{mathpartir}
-\usepackage{thmtools,thm-restate}
-\newenvironment{case}[1]{\trivlist \item\relax\textbf{Case}~(#1).}{\endtrivlist}
-\newenvironment{subcase}[1]{\trivlist \item\relax\textbf{Subcase}~(#1).}{\endtrivlist}
-
-%% Landscape pages using \begin{landscape}\end{landscape}
-\usepackage{pdflscape}
-
-%% Colours
-\usepackage{xcolor}
-\usepackage{latexcolor}
-
-%% Code
-\usepackage{listings}
-\usepackage{lsthaskell}
-
-%% Gotta have a todo command
-\usepackage{todonotes}
-\usepackage{regexpatch}
-\makeatletter
-\xpatchcmd{\@todo}{\setkeys{todonotes}{#1}}{\setkeys{todonotes}{inline,#1}}{}{}
-\makeatother
-\newcommand{\remember}[2][]{\todo[color=pink!40,#1]{#2}}
-
-%% Sort macros
-\newcommand{\tm}[1]{\ensuremath{{\color[HTML]{E15CFF}#1}}}
-\newcommand{\ty}[1]{\ensuremath{{\color[HTML]{6e4cef}#1}}}
-\newcommand{\bl}[1]{\ensuremath{{\color{black}#1}}}
-\newcommand{\tmty}[2]{\ensuremath{\tm{#1}\mathbin{\bl{:}}\ty{#2}}}
-
-%% Definitions
-\newcommand{\sep}{\;\mid\;}
-
-%% Environments and hyper-environments
-\newcommand{\envemp}{\varnothing}
-\newcommand{\envext}[3]{#1,\tmty{#2}{#3}}
-\newcommand{\envupd}[3]{#1[\tmty{#2}{#3}]}
-
-%% Common operations
-\newcommand{\subst}[4][]{\ifstrempty{#1}{\ensuremath{#2\{#3/#4\}}}{\ensuremath{#2(\{#3/#4\}\cup#1)}}}
-\newcommand{\plug}[2]{\ensuremath{#1[#2]}}
-\DeclarePairedDelimiter{\trans}{\lfloor}{\rfloor}
-\DeclareMathOperator{\un}{un}
-\DeclareMathOperator{\fv}{fv}
-\DeclareMathOperator{\dom}{dom}
-\DeclareMathOperator{\cod}{cod}
-\DeclareMathOperator{\incomp}{incomp}
-
-%% Namespaces
-\usepackage{namespc}
-
-%% Namespace for lvars
-%% Open globally with \usingnamespace{lvar}, locally with \lvar{}
-\namespace*{lvar}{
-  % types
-  \providecommand{\tyunit}[0]{\ensuremath{\mathbf{1}}}
-  \providecommand{\tyvoid}[0]{\ensuremath{\mathbf{0}}}
-  \providecommand{\typrod}[2]{\ensuremath{{#1}\times{#2}}}
-  \providecommand{\tysum}[2]{\ensuremath{{#1}+{#2}}}
-  \providecommand{\tyfun}[3][]{\ensuremath{{#2}\xrightarrow{#1}{#3}}}
-  \providecommand{\tyD}[1]{\ensuremath{\ty{\mathcal{D}^{#1}}}}
-  \providecommand{\tyL}[2]{\ensuremath{\ty{\mathcal{L}_{#1}^{#2}}}}
-  \providecommand{\tyref}[2]{\ensuremath{\ty{\mathbf{Ref}^{#1}_{#2}}}}
-  \providecommand{\tysource}[2]{\ensuremath{\ty{\mathbf{Source}^{#1}_{#2}}}}
-  \providecommand{\tysink}[2]{\ensuremath{\ty{\mathbf{Sink}^{#1}_{#2}}}}
-  \providecommand{\tyJ}[0]{\ensuremath{\ty{\mathcal{J}}}}
-  % terms
-  \providecommand{\tmJ}[0]{\ensuremath{\tm{\mathcal{J}}}}
-  \providecommand{\andthen}[2]{\ensuremath{#1;#2}}
-  \providecommand{\letbind}[3]{\ensuremath{\mathbf{let}\;#1\mathbin{=}#2\;\mathbf{in}\;#3}}
-  \providecommand{\doh}[3]{\ensuremath{\mathbf{do}\;\{x_{1} \leftarrow #1, ... ,x_{n} \leftarrow #2\}_{n \geq 1}\;\mathbf{in}\;#3}}
-  \providecommand{\dohh}[4]{\ensuremath{\mathbf{do}\;\{x_{#1} \leftarrow #2, ... ,x_{n} \leftarrow #3\}_{n \geq 1}\;\mathbf{in}\;#4}}
-  \providecommand{\pair}[2]{\ensuremath{(#1,#2)}}
-  \providecommand{\letpair}[4]{\ensuremath{\letbind{\pair{#1}{#2}}{#3}{#4}}}
-  \providecommand{\labinl}[0]{\ensuremath{\mathbf{inl}}}
-  \providecommand{\labinr}[0]{\ensuremath{\mathbf{inr}}}
-  \providecommand{\inl}[1]{\ensuremath{\labinl\;#1}}
-  \providecommand{\inr}[1]{\ensuremath{\labinr\;#1}}
-  \providecommand{\casesum}[5]{\ensuremath{\mathbf{case}\;#1\;\left\{\inl{#2}\mapsto{#3};\;\inr{#4}\mapsto{#5}\right\}}}
-  \providecommand{\unit}[0]{\ensuremath{()}}
-  \providecommand{\letunit}[2]{\ensuremath{\letbind{\unit}{#1}{#2}}}
-  \providecommand{\absurd}[1]{\ensuremath{\mathbf{absurd}\;#1}}
-  \providecommand{\lvarnew}[0]{\ensuremath{\mathbf{new}}}
-  \providecommand{\lvarput}[0]{\ensuremath{\mathbf{put}}}
-  \providecommand{\lvarget}[0]{\ensuremath{\mathbf{get}}}
-  \providecommand{\lvarfreeze}[0]{\ensuremath{\mathbf{freeze}}}
-  \providecommand{\lvarrun}[0]{\ensuremath{\mathbf{withLVar}}}
-  \providecommand{\return}[0]{\ensuremath{\mathbf{return}}}
-  \providecommand{\lvarerror}[0]{\ensuremath{\mathbf{error}}}
-  \providecommand{\frz}[0]{\ensuremath{\textit{frz}}}
-  \providecommand{\true}[0]{\ensuremath{\mathbf{true}}}
-  \providecommand{\false}[0]{\ensuremath{\mathbf{false}}}
-  \providecommand{\st}[2]{\ensuremath{\langle {#1}, {#2} \rangle}}
-  \providecommand{\config}[2]{\ensuremath{\langle {#2}; {#1} \rangle}}
-  \providecommand{\error}[0]{\ensuremath{\mathbf{error}}}
-  % evaluation contexts
-  \providecommand{\hole}[0]{\ensuremath{\square}}
-  % typing judgements
-  \providecommand{\seq}[3]{\ensuremath{{#1}\mathbin{\vdash}\tmty{#2}{#3}}}
-  \providecommand{\seqS}[2]{\ensuremath{#1\mathbin{\vdash_{\scriptscriptstyle{S}}}\tm{#2}}}
-  \providecommand{\seqC}[4]{\ensuremath{#1\mathbin{\vert}#2\mathbin{\vdash_{\scriptscriptstyle{C}}}\tmty{#3}{#4}}}
-  % reduction relations
-  \providecommand{\redc}[0]{\ensuremath{\hookrightarrow}}
-  \providecommand{\rede}[0]{\ensuremath{\mapsto}}
-  % stores
-  \providecommand{\storeemp}{\varnothing}
-  \providecommand{\storeext}[3]{{#1},\tm{#2}\mapsto\ty{#3}}
-  \providecommand{\storeupd}[3]{{#1}[\tm{#2}\mapsto\ty{#3}]}
-}{}
-\newcommand{\lvar}[1]{\namespace*{lvar}{}{#1}}
-
-%% References
-\usepackage{varioref}
-\usepackage{hyperref}
-\usepackage{cleveref}
+%----------------------------------------------------------------------------------------
 
 \begin{document}
 
-%% Author information
-%% Contents and number of authors suppressed with 'anonymous'.
-%% Each author should be introduced by \author, followed by
-%% \authornote (optional), \orcid (optional), \affiliation, and
-%% \email.
-%% An author may have multiple affiliations and/or emails; repeat the
-%% appropriate command.
-%% Many elements are not rendered, but should be provided for metadata
-%% extraction tools.
+%----------------------------------------------------------------------------------------
+%	BOOK INFORMATION
+%----------------------------------------------------------------------------------------
 
+% \titlehead{Typed LVar}
 
-%% Title information
-\title{Typed Lattice Variables}
+\title[Typed Lattice Variables]{Typed Lattice Variables}
 \subtitle{Safe Deterministic Parallelism with Mutable Shared State}
 
-%% Author information
-%% Contents and number of authors suppressed with 'anonymous'.
-%% Each author should be introduced by \author, followed by
-%% \authornote (optional), \orcid (optional), \affiliation, and
-%% \email.
-%% An author may have multiple affiliations and/or emails; repeat the
-%% appropriate command.
-%% Many elements are not rendered, but should be provided for metadata
-%% extraction tools.
+\author[April Gonçalves \& Wen Kokke]{April Gonçalves \& Wen Kokke}
 
-\author{April Gon\c{c}alves}
-\affiliation{
-  \institution{Roskilde University}
-  %\city{Roskilde}
-  \country{Denmark}
-}
-\email{april@cyberglot.me}
+\date{\today}
 
-\author{Wen Kokke}
-\affiliation{
-  %\department{School of Informatics}
-  \institution{University of Edinburgh}
-  %\streetaddress{10 Crichton Street}
-  %\city{Edinburgh}
-  %\postcode{EH8 9AB}
-  \country{Scotland}
-}
-\email{wen.kokke@ed.ac.uk}
-\affiliation{
-  %\department{School of Mathematical and Computer Sciences}
-  \institution{Heriot-Watt University}
-  %\streetaddress{First Gait}
-  %\city{Edinburgh}
-  %\postcode{EH14 4AS}
-  \country{Scotland}
-}
-\email{k.kokke@hw.ac.uk}
+% \publishers{An Awesome Publisher}
 
-%% Abstract
-%% Note: \begin{abstract}...\end{abstract} environment must come
-%% before \maketitle command
-\begin{abstract}
-Text of abstract \ldots.
-\end{abstract}
+%----------------------------------------------------------------------------------------
 
-%% 2012 ACM Computing Classification System (CSS) concepts
-%% Generate at 'http://dl.acm.org/ccs/ccs.cfm'.
-\begin{CCSXML}
-\end{CCSXML}
+\frontmatter % Denotes the start of the pre-document content, uses roman numerals
 
-%% Keywords
-\keywords{keyword1, keyword2, keyword3}
+%----------------------------------------------------------------------------------------
+%	OPENING PAGE
+%----------------------------------------------------------------------------------------
 
-%% \maketitle
-%% Note: \maketitle command must come after title commands, author
-%% commands, abstract environment, Computing Classification System
-%% environment and commands, and keywords command.
+%\makeatletter
+%\extratitle{
+%	% In the title page, the title is vspaced by 9.5\baselineskip
+%	\vspace*{9\baselineskip}
+%	\vspace*{\parskip}
+%	\begin{center}
+%		% In the title page, \huge is set after the komafont for title
+%		\usekomafont{title}\huge\@title
+%	\end{center}
+%}
+%\makeatother
+
+%----------------------------------------------------------------------------------------
+%	COPYRIGHT PAGE
+%----------------------------------------------------------------------------------------
+
+% \makeatletter
+% \uppertitleback{\@titlehead} % Header
+
+% \lowertitleback{
+% 	\textbf{Disclaimer}\\
+% 	You can edit this page to suit your needs. For instance, here we have a no copyright statement, a colophon and some other information. This page is based on the corresponding page of Ken Arroyo Ohori's thesis, with minimal changes.
+
+% 	\medskip
+
+% 	\textbf{No copyright}\\
+% 	\cczero\ This book is released into the public domain using the CC0 code. To the extent possible under law, I waive all copyright and related or neighbouring rights to this work.
+
+% 	To view a copy of the CC0 code, visit: \\\url{http://creativecommons.org/publicdomain/zero/1.0/}
+
+% 	\medskip
+
+% 	\textbf{Colophon} \\
+% 	This document was typeset with the help of \href{https://sourceforge.net/projects/koma-script/}{\KOMAScript} and \href{https://www.latex-project.org/}{\LaTeX} using the \href{https://github.com/fmarotta/kaobook/}{kaobook} class.
+
+% 	The source code of this book is available at:\\\url{https://github.com/fmarotta/kaobook}
+
+% 	(You are welcome to contribute!)
+
+% 	\medskip
+
+% 	\textbf{Publisher} \\
+% 	First printed in May 2019 by \@publishers
+% }
+% \makeatother
+
+%----------------------------------------------------------------------------------------
+%	DEDICATION
+%----------------------------------------------------------------------------------------
+
+% \dedication{
+% 	The harmony of the world is made manifest in Form and Number, and the heart and soul and all the poetry of Natural Philosophy are embodied in the concept of mathematical beauty.\\
+% 	\flushright -- D'Arcy Wentworth Thompson
+% }
+
+%----------------------------------------------------------------------------------------
+%	OUTPUT TITLE PAGE AND PREVIOUS
+%----------------------------------------------------------------------------------------
+
+% Note that \maketitle outputs the pages before here
+
+% If twoside=false, \uppertitleback and \lowertitleback are not printed
+% To overcome this issue, we set twoside=semi just before printing the title pages, and set it back to false just after the title pages
+\KOMAoptions{twoside=semi}
 \maketitle
+\KOMAoptions{twoside=false}
 
-\subfile{introduction}
-\subfile{lvar}
-\subfile{typed-lvar}
+%----------------------------------------------------------------------------------------
+%	PREFACE
+%----------------------------------------------------------------------------------------
 
-%% Bibliography
-\bibliography{main}
+%\input{chapters/preface.tex}
 
-%% Appendix
-\appendix
-\section{Omitted proofs}
-\begingroup
-\usingnamespace{lvar}
+%----------------------------------------------------------------------------------------
+%	TABLE OF CONTENTS & LIST OF FIGURES/TABLES
+%----------------------------------------------------------------------------------------
 
-\lemsubstitution*
-% \input{fig/lem-substitution}
+\begingroup % Local scope for the following commands
 
-\lemsubjectreductionredc*
-% \input{fig/lem-subject-reduction-redc}
+% Define the style for the TOC, LOF, and LOT
+%\setstretch{1} % Uncomment to modify line spacing in the ToC
+%\hypersetup{linkcolor=blue} % Uncomment to set the colour of links in the ToC
+\setlength{\textheight}{23cm} % Manually adjust the height of the ToC pages
 
-\thmsubjectreductionrede*
-% \input{fig/thm-subject-reduction-rede}
+% Turn on compatibility mode for the etoc package
+\etocstandarddisplaystyle % "toc display" as if etoc was not loaded
+\etocstandardlines % toc lines as if etoc was not loaded
 
-\thmprogressrede*
-% \input{fig/thm-progress-rede}
+% \tableofcontents % Output the table of contents
+
+% \listoffigures % Output the list of figures
+
+% Comment both of the following lines to have the LOF and the LOT on different pages
+\let\cleardoublepage\bigskip
+\let\clearpage\bigskip
+
+% \listoftables % Output the list of tables
 
 \endgroup
+
+%----------------------------------------------------------------------------------------
+%	MAIN BODY
+%----------------------------------------------------------------------------------------
+
+\mainmatter % Denotes the start of the main document content, resets page numbering and uses arabic numbers
+\setchapterstyle{kao} % Choose the default chapter heading style
+
+\subfile{chapters/introduction.tex}
+
+% \pagelayout{wide} % No margins
+% \pagelayout{margin} % Restore margins
+
+\subfile{chapters/lvar.tex}
+\subfile{chapters/typed-lvar.tex}
+% \input{chapters/references.tex}
+
+% \pagelayout{wide} % No margins
+% \addpart{Design and Additional Features}
+% \pagelayout{margin} % Restore margins
+
+% \input{chapters/layout.tex}
+% \input{chapters/mathematics.tex}
+
+% \appendix % From here onwards, chapters are numbered with letters, as is the appendix convention
+
+% \pagelayout{wide} % No margins
+% \addpart{Appendix}
+% \pagelayout{margin} % Restore margins
+
+% \subfile{chapters/dump.tex}
+
+%----------------------------------------------------------------------------------------
+
+\backmatter % Denotes the end of the main document content
+\setchapterstyle{plain} % Output plain chapters from this point onwards
+
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+
+% The bibliography needs to be compiled with biber using your LaTeX editor, or on the command line with 'biber main' from the template directory
+
+\defbibnote{bibnote}{Here are the references in citation order.\par\bigskip} % Prepend this text to the bibliography
+\printbibliography[heading=bibintoc, title=Bibliography, prenote=bibnote] % Add the bibliography heading to the ToC, set the title of the bibliography and output the bibliography note
+
+%----------------------------------------------------------------------------------------
+%	NOMENCLATURE
+%----------------------------------------------------------------------------------------
+
+% The nomenclature needs to be compiled on the command line with 'makeindex main.nlo -s nomencl.ist -o main.nls' from the template directory
+
+% \nomenclature{$c$}{Speed of light in a vacuum inertial frame}
+% \nomenclature{$h$}{Planck constant}
+
+% \renewcommand{\nomname}{Notation} % Rename the default 'Nomenclature'
+% \renewcommand{\nompreamble}{The next list describes several symbols that will be later used within the body of the document.} % Prepend this text to the nomenclature
+
+% \printnomenclature % Output the nomenclature
+
+%----------------------------------------------------------------------------------------
+%	GREEK ALPHABET
+% 	Originally from https://gitlab.com/jim.hefferon/linear-algebra
+%----------------------------------------------------------------------------------------
+
+% \vspace{1cm}
+
+% {\usekomafont{chapter}Greek Letters with Pronounciation} \\[2ex]
+% \begin{center}
+% 	\newcommand{\pronounced}[1]{\hspace*{.2em}\small\textit{#1}}
+% 	\begin{tabular}{l l @{\hspace*{3em}} l l}
+% 		\toprule
+% 		Character & Name & Character & Name \\
+% 		\midrule
+% 		$\alpha$ & alpha \pronounced{AL-fuh} & $\nu$ & nu \pronounced{NEW} \\
+% 		$\beta$ & beta \pronounced{BAY-tuh} & $\xi$, $\Xi$ & xi \pronounced{KSIGH} \\
+% 		$\gamma$, $\Gamma$ & gamma \pronounced{GAM-muh} & o & omicron \pronounced{OM-uh-CRON} \\
+% 		$\delta$, $\Delta$ & delta \pronounced{DEL-tuh} & $\pi$, $\Pi$ & pi \pronounced{PIE} \\
+% 		$\epsilon$ & epsilon \pronounced{EP-suh-lon} & $\rho$ & rho \pronounced{ROW} \\
+% 		$\zeta$ & zeta \pronounced{ZAY-tuh} & $\sigma$, $\Sigma$ & sigma \pronounced{SIG-muh} \\
+% 		$\eta$ & eta \pronounced{AY-tuh} & $\tau$ & tau \pronounced{TOW (as in cow)} \\
+% 		$\theta$, $\Theta$ & theta \pronounced{THAY-tuh} & $\upsilon$, $\Upsilon$ & upsilon \pronounced{OOP-suh-LON} \\
+% 		$\iota$ & iota \pronounced{eye-OH-tuh} & $\phi$, $\Phi$ & phi \pronounced{FEE, or FI (as in hi)} \\
+% 		$\kappa$ & kappa \pronounced{KAP-uh} & $\chi$ & chi \pronounced{KI (as in hi)} \\
+% 		$\lambda$, $\Lambda$ & lambda \pronounced{LAM-duh} & $\psi$, $\Psi$ & psi \pronounced{SIGH, or PSIGH} \\
+% 		$\mu$ & mu \pronounced{MEW} & $\omega$, $\Omega$ & omega \pronounced{oh-MAY-guh} \\
+% 		\bottomrule
+% 	\end{tabular} \\[1.5ex]
+% 	Capitals shown are the ones that differ from Roman capitals.
+% \end{center}
+
+%----------------------------------------------------------------------------------------
+%	GLOSSARY
+%----------------------------------------------------------------------------------------
+
+% The glossary needs to be compiled on the command line with 'makeglossaries main' from the template directory
+
+% \newglossaryentry{computer}{
+% 	name=computer,
+% 	description={is a programmable machine that receives input, stores and manipulates data, and provides output in a useful format}
+% }
+
+% % Glossary entries (used in text with e.g. \acrfull{fpsLabel} or \acrshort{fpsLabel})
+% \newacronym[longplural={Frames per Second}]{fpsLabel}{FPS}{Frame per Second}
+% \newacronym[longplural={Tables of Contents}]{tocLabel}{TOC}{Table of Contents}
+
+% \setglossarystyle{listgroup} % Set the style of the glossary (see https://en.wikibooks.org/wiki/LaTeX/Glossary for a reference)
+% \printglossary[title=Special Terms, toctitle=List of Terms] % Output the glossary, 'title' is the chapter heading for the glossary, toctitle is the table of contents heading
+
+%----------------------------------------------------------------------------------------
+%	INDEX
+%----------------------------------------------------------------------------------------
+
+% The index needs to be compiled on the command line with 'makeindex main' from the template directory
+
+\printindex % Output the index
+
+%----------------------------------------------------------------------------------------
+%	BACK COVER
+%----------------------------------------------------------------------------------------
+
+% If you have a PDF/image file that you want to use as a back cover, uncomment the following lines
+
+%\clearpage
+%\thispagestyle{empty}
+%\null%
+%\clearpage
+%\includepdf{cover-back.pdf}
+
+%----------------------------------------------------------------------------------------
 
 \end{document}
