@@ -1,38 +1,33 @@
 \ProvidesPackage{styles/plt}
 
 %% Mathematical symbols
-\RequirePackage{stmaryrd}
-\RequirePackage{mathtools}
-\RequirePackage{textgreek}
-\RequirePackage{centernot}
-\RequirePackage{rotating}
+\usepackage{mathtools}
+\usepackage{textgreek}
+\usepackage{centernot}
+\usepackage{rotating}
 
 %% Useful for defining commands to use in text mode
-\RequirePackage{xspace}
+\usepackage{xspace}
 \newcommand{\lambdalvar}[0]{\ensuremath{\lambda_{\text{lvar}}}\xspace}
 \newcommand{\lambdalvish}[0]{\ensuremath{\lambda_{\text{lvish}}}\xspace}
 \newcommand{\typedlambdalvar}[0]{\ensuremath{\text{Typed }\lambda_{\text{lvar}}}\xspace}
 
 %% Theorems and inference rules
-\RequirePackage{mathpartir}
-\RequirePackage{thmtools}
-\RequirePackage{thm-restate}
+\usepackage{mathpartir}
+\usepackage{thm-restate}
 \newenvironment{case}[1]{\trivlist \item\relax\textbf{Case}~(#1).}{\endtrivlist}
 \newenvironment{subcase}[1]{\trivlist \item\relax\textbf{Subcase}~(#1).}{\endtrivlist}
 
-%% Landscape pages using \begin{landscape}\end{landscape}
-\RequirePackage{pdflscape}
-
 %% Colours
-\RequirePackage{styles/latexcolor}
+\usepackage{styles/latexcolor}
 
 %% Code
-\RequirePackage{listings}
-\RequirePackage{styles/lsthaskell}
+\usepackage{listings}
+\usepackage{styles/lsthaskell}
 
 %% Gotta have a todo command
-\RequirePackage{todonotes}
-% \RequirePackage{regexpatch}
+\usepackage{todonotes}
+% \usepackage{regexpatch}
 \makeatletter
 \xpatchcmd{\@todo}{\setkeys{todonotes}{#1}}{\setkeys{todonotes}{inline,#1}}{}{}
 \makeatother
@@ -63,7 +58,7 @@
 \DeclareMathOperator{\incomp}{incomp}
 
 %% Namespaces
-\RequirePackage{namespc}
+\usepackage{namespc}
 
 %% Namespace for lvars
 %% Open globally with \usingnamespace{lvar}, locally with \lvar{}

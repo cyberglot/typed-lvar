@@ -1,10 +1,12 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
+\setchapterstyle{kao}
 
-\section{Typed LVars: deterministic parallelism}
+\chapter{Typed LVars: deterministic parallelism}
+
 \usingnamespace{lvar}
 
-\subsection{The \typedlambdalvar calculus}
+\section{The \typedlambdalvar calculus}
 
 \todo{%
   Describe \typedlambdalvar as a typing discipline for \lambdalvar, and explain
@@ -87,9 +89,8 @@ Typing environments $\ty{\Gamma}$ are partial functions which associate names wi
 
 \paragraph{Typing rules}%
 \label{sec:lvar-typing}
-\input{fig/typing}
-% \input{fig/typing}
-% \input{fig/typing-configurations}
+\input{figures/typing}
+\input{figures/typing-configurations}
 % See~\cref{fig:typing,fig:typing-configurations}.
 
 \subsection{Metatheory}

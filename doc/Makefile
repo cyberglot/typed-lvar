@@ -20,5 +20,4 @@ clean:
 	@latexmk -C $(MAIN:.pdf=.tex)
 
 $(MAIN): $(SOURCES)
-	@latexmk -pdf $(MAIN:.pdf=.tex) -halt-on-error
-
+	@latexmk -f -pdf $(MAIN:.pdf=.tex) -halt-on-error
