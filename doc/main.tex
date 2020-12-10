@@ -33,6 +33,7 @@
 	numbers=noenddot, % Comment to output dots after chapter numbers; the most common values for this option are: enddot, noenddot and auto (see the KOMAScript documentation for an in-depth explanation)
 	%draft=true, % If uncommented, rulers will be added in the header and footer
 	%overfullrule=true, % If uncommented, overly long lines will be marked by a black box; useful for correcting spacing problems
+  a4paperlandscape,
 ]{kaobook}
 
 % Set the language
@@ -51,8 +52,7 @@
 
 % Load mathematical packages for theorems and related environments. NOTE: choose only one between 'mdftheorems' and 'plaintheorems'.
 \usepackage{styles/mdftheorems}
-\usepackage{styles/plt}
-% \usepackage{styles/plaintheorems}
+ \usepackage{styles/plt}
 
 \graphicspath{{/figures/}{images/}} % Paths in which to look for images
 
@@ -64,7 +64,7 @@
 
 % Reset sidenote counter at chapters
 %\counterwithin*{sidenote}{chapter}
-
+\usepackage{namespc}
 \usepackage{subfiles}
 \newcommand{\onlyinsubfile}[1]{#1}
 \newcommand{\notinsubfile}[1]{}
@@ -83,7 +83,7 @@
 \title[Typed Lattice Variables]{Typed Lattice Variables}
 \subtitle{Safe Deterministic Parallelism with Mutable Shared State}
 
-\author[April Goncalves \& Wen Kokke]{April Goncalves \& Wen Kokke}
+\author[April Gonçalves \& Wen Kokke]{April Gonçalves \& Wen Kokke}
 
 \date{\today}
 
@@ -160,7 +160,6 @@
 
 % If twoside=false, \uppertitleback and \lowertitleback are not printed
 % To overcome this issue, we set twoside=semi just before printing the title pages, and set it back to false just after the title pages
-\KOMAoptions{twoside=semi}
 \maketitle
 \KOMAoptions{twoside=false}
 
@@ -182,16 +181,16 @@
 \setlength{\textheight}{23cm} % Manually adjust the height of the ToC pages
 
 % Turn on compatibility mode for the etoc package
-\etocstandarddisplaystyle % "toc display" as if etoc was not loaded
-\etocstandardlines % toc lines as if etoc was not loaded
+% \etocstandarddisplaystyle % "toc display" as if etoc was not loaded
+% \etocstandardlines % toc lines as if etoc was not loaded
 
 % \tableofcontents % Output the table of contents
 
 % \listoffigures % Output the list of figures
 
 % Comment both of the following lines to have the LOF and the LOT on different pages
-\let\cleardoublepage\bigskip
-\let\clearpage\bigskip
+% \let\cleardoublepage\bigskip
+% \let\clearpage\bigskip
 
 % \listoftables % Output the list of tables
 
@@ -206,11 +205,8 @@
 
 \subfile{chapters/introduction.tex}
 
-% \pagelayout{wide} % No margins
-% \pagelayout{margin} % Restore margins
-
 \subfile{chapters/lvar.tex}
-\subfile{chapters/typed-lvar.tex}
+ \subfile{chapters/typed-lvar.tex}
 % \input{chapters/references.tex}
 
 % \pagelayout{wide} % No margins
@@ -231,7 +227,7 @@
 %----------------------------------------------------------------------------------------
 
 \backmatter % Denotes the end of the main document content
-\setchapterstyle{plain} % Output plain chapters from this point onwards
+% \setchapterstyle{plain} % Output plain chapters from this point onwards
 
 %----------------------------------------------------------------------------------------
 %	BIBLIOGRAPHY

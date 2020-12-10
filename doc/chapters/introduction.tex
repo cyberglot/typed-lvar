@@ -1,16 +1,16 @@
 \documentclass[main.tex]{subfiles}
-\setchapterstyle{kao}
-\setchapterpreamble[u]{\margintoc}
+
 \begin{document}
+\setchapterstyle{kao}
 
 \chapter{Introduction}
 
 \section{Functional Parallel Programming}
 
-% \todo{Why are LVars important?}
-% \todo{Introduce variants of running example which error or get stuck.}
-% \todo{Why is typing LVars important?}
-% \todo{What are our contributions?}
+\todo{Why are LVars important?}
+\todo{Introduce variants of running example which error or get stuck.}
+\todo{Why is typing LVars important?}
+\todo{What are our contributions?}
 
 Parallel programming presents itself as a challenge; it usually requires a deterministic execution, \ie the programmer expects to observe an equivalent outcome from her program in the parallel and in the sequential setting. Pure functional programs can be trivially parallelised (meaning, executed in parallel) while maintaining determinism. It can be achieved by evaluating every argument within a function call:
 

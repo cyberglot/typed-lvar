@@ -2,11 +2,11 @@
 \begin{document}
 \setchapterstyle{kao}
 
-\chapter{Typed LVars: deterministic parallelism}
+\chapter{Typed LVars: Deterministic Parallelism}
 
 \usingnamespace{lvar}
 
-\section{The \typedlambdalvar calculus}
+\section[The Typed Lambda LVar calculus]{The \typedlambdalvar calculus}
 
 \todo{%
   Describe \typedlambdalvar as a typing discipline for \lambdalvar, and explain
@@ -89,41 +89,41 @@ Typing environments $\ty{\Gamma}$ are partial functions which associate names wi
 
 \paragraph{Typing rules}%
 \label{sec:lvar-typing}
-\input{figures/typing}
-\input{figures/typing-configurations}
+% \input{figures/typing}
+% \input{figures/typing-configurations}
 % See~\cref{fig:typing,fig:typing-configurations}.
 
 \subsection{Metatheory}
 
-\begin{restatable}[Substitution]{lemma}{lemsubstitution}
-  \label{lem:substitution}
-%   If $\seq{\ty{\Gamma}\tmty{x}{T}}{\ty{\Sigma'}}{M}{U}$,
-%   $\seq{\ty{\Gamma}}{\ty{\Sigma}}{V}{T}$, and
-%   $\ty{\Sigma}\sqsubseteq\ty{\Sigma'}$, then\dots
-\end{restatable}
+% \begin{restatable}[Substitution]{lemma}{lemsubstitution}
+%   \label{lem:substitution}
+% %   If $\seq{\ty{\Gamma}\tmty{x}{T}}{\ty{\Sigma'}}{M}{U}$,
+% %   $\seq{\ty{\Gamma}}{\ty{\Sigma}}{V}{T}$, and
+% %   $\ty{\Sigma}\sqsubseteq\ty{\Sigma'}$, then\dots
+% \end{restatable}
 
-\begin{restatable}[Subject reduction, $\redc$]{lemma}{lemsubjectreductionredc}
-  \label{lem:subject-reduction-redc}
-%   If $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$ and $\tm{C}\redc\tm{C'}$,
-%   then $\seq{\ty{\Gamma}}{\ty{\Sigma'}}{C'}{T}$
-%   for some $\ty{\Sigma'}$ such that $\ty{\Sigma}\sqsubseteq\ty{\Sigma'}$.
-\end{restatable}
+% \begin{restatable}[Subject reduction, $\redc$]{lemma}{lemsubjectreductionredc}
+%   \label{lem:subject-reduction-redc}
+% %   If $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$ and $\tm{C}\redc\tm{C'}$,
+% %   then $\seq{\ty{\Gamma}}{\ty{\Sigma'}}{C'}{T}$
+% %   for some $\ty{\Sigma'}$ such that $\ty{\Sigma}\sqsubseteq\ty{\Sigma'}$.
+% \end{restatable}
 
-\begin{restatable}[Subject reduction, $\rede$]{theorem}{thmsubjectreductionrede}
-  \label{thm:subject-reduction-rede}
-%   If $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$ and $\tm{C}\rede\tm{C'}$,
-%   then $\seq{\ty{\Gamma}}{\ty{\Sigma'}}{C'}{T}$
-%   for some $\ty{\Sigma'}$ such that $\ty{\Sigma}\sqsubseteq\ty{\Sigma'}$.
-\end{restatable}
+% \begin{restatable}[Subject reduction, $\rede$]{theorem}{thmsubjectreductionrede}
+%   \label{thm:subject-reduction-rede}
+% %   If $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$ and $\tm{C}\rede\tm{C'}$,
+% %   then $\seq{\ty{\Gamma}}{\ty{\Sigma'}}{C'}{T}$
+% %   for some $\ty{\Sigma'}$ such that $\ty{\Sigma}\sqsubseteq\ty{\Sigma'}$.
+% \end{restatable}
 
-\begin{restatable}[Progress, $\rede$]{theorem}{thmprogressrede}
-  \label{thm:progress}
-%   If $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$, then:
-%   \begin{itemize}
-%   \item $\tm{C}\rede\tm{C'}$ for some $\tm{C'}$; or
-%   \item $\tm{C}=\tm{\config{V}{S}}$ for some $\tm{V}$ and $\tm{S}$.
-%   \end{itemize}
-\end{restatable}
+% \begin{restatable}[Progress, $\rede$]{theorem}{thmprogressrede}
+%   \label{thm:progress}
+% %   If $\seq{\ty{\Gamma}}{\ty{\Sigma}}{C}{T}$, then:
+% %   \begin{itemize}
+% %   \item $\tm{C}\rede\tm{C'}$ for some $\tm{C'}$; or
+% %   \item $\tm{C}=\tm{\config{V}{S}}$ for some $\tm{V}$ and $\tm{S}$.
+% %   \end{itemize}
+% \end{restatable}
 
 \begin{corollary}[Generalised Independence]
 \end{corollary}
